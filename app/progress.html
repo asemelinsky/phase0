@@ -176,7 +176,47 @@
             width: 0%;
             transition: width 1s ease;
         }
-    </style>
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .stats {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stat-card {
+                flex: 1;
+            }
+
+            .map-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .level-card {
+                padding: 1rem;
+            }
+
+            .level-title {
+                font-size: 0.95rem;
+            }
+        }
+</style>
 </head>
 
 <body>
