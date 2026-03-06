@@ -3,6 +3,7 @@ const { Telegraf } = require('telegraf');
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -52,7 +53,7 @@ bot.command('start', (ctx) => {
 
     const uid = usersDB[chatId].uid;
     // URL to the learning app where UID parameter is passed (map by default)
-    const appUrl = `http://localhost:3000/app/progress.html?uid=${uid}`; // Change domain later
+    const appUrl = `https://phase0-five.vercel.app/app/progress.html?uid=${uid}`;
 
     ctx.reply(
         `Привіт! 👋 Я твій помічник у Кодомандрах.\n\n` +
@@ -78,7 +79,7 @@ bot.command('progress', (ctx) => {
         `📊 Твій прогрес:\n\n` +
         `Відкрито завдань: ${daysSinceReg} з 30\n` +
         `Твій UID: ${user.uid}\n\n` +
-        `Щоб переглянути всі завдання, відкрий мапу пригод: http://localhost:3000/app/progress.html?uid=${user.uid}`
+        `Щоб переглянути всі завдання, відкрий мапу пригод: https://phase0-five.vercel.app/app/progress.html?uid=${user.uid}`
     );
 });
 
@@ -88,7 +89,7 @@ function runDailyBroadcast() {
 
     for (const chatId in usersDB) {
         const user = usersDB[chatId];
-        const appUrl = `http://localhost:3000/app/task.html?uid=${user.uid}`;
+        const appUrl = `https://phase0-five.vercel.app/app/task.html?uid=${user.uid}`;
 
         bot.telegram.sendMessage(
             chatId,
@@ -119,7 +120,7 @@ bot.command('test_broadcast', (ctx) => {
     }
 
     const user = usersDB[chatId];
-    const appUrl = `http://localhost:3000/app/task.html?uid=${user.uid}`;
+    const appUrl = `https://phase0-five.vercel.app/app/task.html?uid=${user.uid}`;
 
     bot.telegram.sendMessage(
         chatId,
@@ -139,3 +140,14 @@ bot.launch().then(() => {
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+// --- Dummy HTTP Server for Render ---
+// Render Web Services require the app to bind to a port, otherwise the deploy fails.
+const PORT = process.env.PORT || 8080;
+http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write('Bot is running!\n');
+    res.end();
+}).listen(PORT, () => {
+    console.log(`Dummy health-check server listening on port ${PORT}`);
+});
