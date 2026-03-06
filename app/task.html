@@ -89,10 +89,26 @@
         main {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr;
+            grid-template-areas:
+                "hint  scene"
+                "code  scene";
             gap: 1rem;
             padding: 1rem;
             max-height: calc(100vh - 80px);
+        }
+
+        .hint-card {
+            grid-area: hint;
+        }
+
+        #blocklyArea {
+            grid-area: code;
+        }
+
+        .sidebar {
+            grid-area: scene;
         }
 
         #blocklyArea {
@@ -115,7 +131,6 @@
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
         }
 
         .preview-panel {
@@ -307,17 +322,8 @@
                 gap: 0.4rem;
             }
 
-            /* sidebar іде ПЕРШИМ у main (hint + canvas) */
-            .sidebar {
-                order: 1;
-                display: flex;
-                flex-direction: column;
-                gap: 0.4rem;
-            }
-
-            /* Всередині sidebar: hint-card іде ПЕРШИМ */
             .hint-card {
-                order: -1;
+                order: 1;
                 min-height: auto;
                 padding: 0.5rem 0.75rem;
             }
@@ -333,11 +339,14 @@
                 font-size: 0.8rem;
             }
 
-            /* preview-panel (canvas + кнопки) іде ДРУГИМ */
+            .sidebar {
+                order: 2;
+                flex-direction: column;
+            }
+
             .preview-panel {
-                order: 1;
                 flex: none;
-                height: 28vh;
+                height: 35vh;
             }
 
             #gameCanvas {
@@ -345,10 +354,9 @@
                 height: 100%;
             }
 
-            /* blocklyArea іде ОСТАННІМ */
             #blocklyArea {
-                order: 2;
-                height: 45vh;
+                order: 3;
+                height: 40vh;
                 flex-shrink: 0;
             }
         }
@@ -366,6 +374,13 @@
     </header>
 
     <main>
+        <div class="hint-card">
+            <div class="hint-avatar">🤖</div>
+            <div class="hint-text" id="hintBox">
+                Привіт! Я Скретчик. Давай почнемо програмувати разом!
+            </div>
+        </div>
+
         <div id="blocklyArea">
             <div id="blocklyDiv"></div>
         </div>
@@ -383,13 +398,6 @@
                 <div class="controls">
                     <button class="btn-run" id="runBtn">▶ Запустити</button>
                     <button class="btn-check" id="checkBtn">✅ Перевірити</button>
-                </div>
-            </div>
-
-            <div class="hint-card">
-                <div class="hint-avatar">🤖</div>
-                <div class="hint-text" id="hintBox">
-                    Привіт! Я Скретчик. Давай почнемо програмувати разом!
                 </div>
             </div>
         </div>
@@ -501,21 +509,31 @@
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
             const dpr = window.devicePixelRatio || 1;
-            canvas.width = canvas.clientWidth * dpr;
-            canvas.height = canvas.clientHeight * dpr;
-            ctx.scale(dpr, dpr);
+
+            const LOGICAL_W = 600;
+            const LOGICAL_H = 450;
+            const displayW = canvas.clientWidth;
+            const displayH = canvas.clientHeight;
+            const gameScale = Math.min(displayW / LOGICAL_W, displayH / LOGICAL_H);
+
+            canvas.width = displayW * dpr;
+            canvas.height = displayH * dpr;
+            ctx.scale(dpr * gameScale, dpr * gameScale);
+            canvas._gameScale = gameScale;
+            canvas._logicalW = LOGICAL_W;
+            canvas._logicalH = LOGICAL_H;
 
             charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
 
             function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
                 ctx.fillStyle = '#1e293b';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
 
                 // Draw Grid
                 ctx.strokeStyle = 'rgba(51, 65, 85, 0.5)';
-                for (let x = 0; x < canvas.width; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
-                for (let y = 0; y < canvas.height; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+                for (let x = 0; x < LOGICAL_W; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, LOGICAL_H); ctx.stroke(); }
+                for (let y = 0; y < LOGICAL_H; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(LOGICAL_W, y); ctx.stroke(); }
 
                 // Target Mapping
                 const targetEmojis = {
@@ -584,8 +602,9 @@
             }
             canvas.addEventListener('click', (e) => {
                 const rect = canvas.getBoundingClientRect();
-                const logicalX = e.clientX - rect.left;
-                const logicalY = e.clientY - rect.top;
+                const scale = canvas._gameScale || 1;
+                const logicalX = (e.clientX - rect.left) / scale;
+                const logicalY = (e.clientY - rect.top) / scale;
                 if (Math.abs(logicalX - charPos.x) < 30 && Math.abs(logicalY - charPos.y) < 30) {
                     runCode('click');
                 }
@@ -794,6 +813,7 @@
 
         window.addEventListener('resize', () => {
             if (workspace) Blockly.svgResize(workspace);
+            if (currentTask) initCanvas();
         });
     </script>
 </body>
