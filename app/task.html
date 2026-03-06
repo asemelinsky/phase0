@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кодомандри — Завдання дня</title>
+    <!-- Blockly Library -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #f43f5e;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --accent: #10b981;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.15) 0%, transparent 40%);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-info {
+            text-align: center;
+        }
+
+        .task-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .day-badge {
+            font-size: 0.8rem;
+            background: var(--glass);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            color: var(--primary-light);
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 1rem;
+            padding: 1rem;
+            max-height: calc(100vh - 80px);
+        }
+
+        #blocklyArea {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #blocklyDiv {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-panel {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            background: #1e293b;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+        }
+
+        .controls {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        button {
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            border: none;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-run {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-check {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .hint-card {
+            background: var(--glass);
+            backdrop-filter: blur(5px);
+            border: 1px dashed var(--glass-border);
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hint-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .hint-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+            font-style: italic;
+        }
+
+        .success-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Customize Blockly Scrollbars and Colors */
+        .blocklyMainBackground {
+            stroke: none !important;
+            fill: transparent !important;
+        }
+
+        .blocklyTreeLabel {
+            font-family: 'Outfit', sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">🚀 Кодомандри</div>
+        <div class="task-info">
+            <div class="day-badge" id="dayLabel">День 1</div>
+            <div class="task-title" id="taskTitle">Завантаження...</div>
+        </div>
+        <div class="user-streak" id="streakLabel">🔥 0 днів</div>
+    </header>
+
+    <main>
+        <div id="blocklyArea">
+            <div id="blocklyDiv"></div>
+        </div>
+
+        <div class="sidebar">
+            <div class="preview-panel">
+                <canvas id="gameCanvas"></canvas>
+                <div class="success-overlay" id="successOverlay">
+                    <div class="success-icon">🎉</div>
+                    <h2 style="font-family: 'Outfit'; margin-bottom: 0.5rem;">Чудово!</h2>
+                    <p id="successMessage">Ти виконав завдання дня!</p>
+                    <button class="btn-run" style="margin-top: 1.5rem;" onclick="location.reload()">Наступне
+                        завдання</button>
+                </div>
+                <div class="controls">
+                    <button class="btn-run" id="runBtn">▶ Запустити</button>
+                    <button class="btn-check" id="checkBtn">✅ Перевірити</button>
+                </div>
+            </div>
+
+            <div class="hint-card">
+                <div class="hint-avatar">🤖</div>
+                <div class="hint-text" id="hintBox">
+                    Привіт! Я Скретчик. Давай почнемо програмувати разом!
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Configuration & State ---
+        let currentTask = null;
+        let workspace = null;
+        let charPos = { x: 0, y: 0 };
+        let uid = new URLSearchParams(window.location.search).get('uid');
+
+        // Persistence for UID
+        if (!uid) {
+            uid = localStorage.getItem('last_uid') || 'guest_' + Math.random().toString(36).substr(2, 5);
+            localStorage.setItem('last_uid', uid);
+        }
+
+        // --- Core Logic ---
+        async function init() {
+            try {
+                const response = await fetch('../data/tasks.json');
+                const tasks = await response.json();
+
+                const regKey = `reg_${uid}`;
+                let regDate = localStorage.getItem(regKey);
+                if (!regDate) {
+                    regDate = new Date().toISOString();
+                    localStorage.setItem(regKey, regDate);
+                }
+
+                const urlTaskId = new URLSearchParams(window.location.search).get('task');
+
+                if (urlTaskId) {
+                    currentTask = tasks.find(t => t.id === urlTaskId);
+                }
+
+                if (!currentTask) {
+                    // Logic: 1 new task per day if no URL param or ID not found
+                    const diffTime = Math.abs(Date.now() - new Date(regDate));
+                    const daysSinceReg = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    const taskIndex = Math.min(daysSinceReg, tasks.length - 1);
+                    currentTask = tasks[taskIndex];
+                }
+
+                initBlockly();
+                updateUI();
+                initCanvas();
+            } catch (err) {
+                console.error("Failed to load task:", err);
+                document.getElementById('taskTitle').innerText = "Помилка завантаження";
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('taskTitle').innerText = currentTask.title;
+            document.getElementById('dayLabel').innerText = `Завдання #${currentTask.id.split('_')[1]}`;
+            document.getElementById('hintBox').innerText = currentTask.hints[0];
+
+            const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
+            document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
+        }
+
+        function initBlockly() {
+            const toolbox = {
+                'kind': 'flyoutToolbox',
+                'contents': currentTask.availableBlocks.map(blockId => ({
+                    'kind': 'block',
+                    'type': blockId
+                }))
+            };
+
+            // Custom block definitions (minimal set)
+            if (!Blockly.Blocks['move_right']) {
+                Blockly.defineBlocksWithJsonArray([
+                    { "type": "move_right", "message0": "йти вправо ➔", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_left", "message0": "йти вліво ⬅", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_up", "message0": "йти вгору ⬆", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_down", "message0": "йти вниз ⬇", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "jump", "message0": "стрибнути ⤊", "previousStatement": null, "nextStatement": null, "colour": 290 },
+                    { "type": "repeat_3", "message0": "повторити 3 рази %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 120 },
+                    { "type": "repeat_5", "message0": "повторити 5 разів %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 120 },
+                    { "type": "always", "message0": "завжди %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 120 },
+                    { "type": "if_obstacle", "message0": "якщо перешкода %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 20 },
+                    { "type": "event_flag", "message0": "коли натиснуто прапорець", "nextStatement": null, "colour": 65, "hat": "cap" },
+                    { "type": "event_click", "message0": "коли натиснуто на героя", "nextStatement": null, "colour": 65, "hat": "cap" },
+                    { "type": "say_alert", "message0": "сказати %1", "args0": [{ "type": "field_input", "name": "TEXT", "text": "Привіт!" }], "previousStatement": null, "nextStatement": null, "colour": 160 },
+                    { "type": "repair_bridge", "message0": "полагодити міст", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "hit_hammer", "message0": "вдарити молотком", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "use_water", "message0": "використати воду", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "strike_sword", "message0": "вдарити мечем", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "if_touching_sign", "message0": "якщо торкаєшся знака %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
+                    { "type": "if_near_creeper", "message0": "якщо поруч крипер %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
+                    { "type": "if_wall", "message0": "якщо стіна %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
+                    { "type": "if_dragon_fire", "message0": "якщо вогонь дракона %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
+                    { "type": "if_else_safe", "message0": "якщо безпечно %1 %2 інакше %3 %4", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }, { "type": "input_dummy" }, { "type": "input_statement", "name": "ELSE" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
+                    { "type": "if_else_bridge_ok", "message0": "якщо міст цілий %1 %2 інакше %3 %4", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }, { "type": "input_dummy" }, { "type": "input_statement", "name": "ELSE" }], "previousStatement": null, "nextStatement": null, "colour": 210 }
+                ]);
+            }
+
+            workspace = Blockly.inject('blocklyDiv', {
+                toolbox: toolbox,
+                theme: Blockly.Themes.Dark,
+                grid: { snap: true }
+            });
+        }
+
+        function initCanvas() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * dpr;
+            canvas.height = canvas.clientHeight * dpr;
+            ctx.scale(dpr, dpr);
+
+            charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw Grid
+                ctx.strokeStyle = 'rgba(51, 65, 85, 0.5)';
+                for (let x = 0; x < canvas.width; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+                for (let y = 0; y < canvas.height; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+                // Target Mapping
+                const targetEmojis = {
+                    'star': '⭐',
+                    'bone': '🦴',
+                    'branch': '🌿',
+                    'flower': '🌸',
+                    'leaf': '🍃',
+                    'carrot': '🥕',
+                    'battery': '🔋',
+                    'ocean': '🌊',
+                    'ribbon': '🎀',
+                    'nest': '🪹',
+                    'station': '🔌',
+                    'farm': '🏡',
+                    'beach': '🏖️',
+                    'cup': '🏆',
+                    'ender_sign': '🔮',
+                    'farmer': '👨‍🌾',
+                    'chest': '📦',
+                    'castle_gate': '🏰',
+                    'safe_zone': '🛡️',
+                    'blacksmith': '⚒️',
+                    'fox_byte': '🦊',
+                    'pixie': '🧚',
+                    'anvil': '🗜️',
+                    'ender_dragon': '🐉'
+                };
+                ctx.font = '32px serif';
+                const targetEmoji = targetEmojis[currentTask.canvas.target.type] || '⭐';
+                ctx.fillText(targetEmoji, currentTask.canvas.target.x, currentTask.canvas.target.y);
+
+                // Obstacles Mapping
+                if (currentTask.canvas.obstacles) {
+                    currentTask.canvas.obstacles.forEach(obs => {
+                        let obsEmoji = '🚧';
+                        if (obs.type === 'creeper_hole') obsEmoji = '🕳️';
+                        if (obs.type === 'unknown_path') obsEmoji = '❓';
+                        if (obs.type === 'arrow') obsEmoji = '🏹';
+                        if (obs.type === 'fire' || obs.type === 'dragon_fire') obsEmoji = '🔥';
+                        if (obs.type === 'pixel_wall' || obs.type === 'rock') obsEmoji = '🪨';
+                        if (obs.type === 'broken_bridge') obsEmoji = '🌉';
+                        if (obs.type === 'wind_zone') obsEmoji = '💨';
+
+                        ctx.fillText(obsEmoji, obs.x, obs.y);
+                    });
+                }
+
+                // Character Mapping
+                ctx.font = '40px serif';
+                const charEmojis = {
+                    'cat': '🐱',
+                    'dog': '🐶',
+                    'parrot': '🦜',
+                    'snail': '🐌',
+                    'frog': '🐸',
+                    'rabbit': '🐰',
+                    'robot': '🤖',
+                    'bee': '🐝',
+                    'turtle': '🐢',
+                    'pixel': '🧑‍💻'
+                };
+                const emoji = charEmojis[currentTask.character] || '🐱';
+                ctx.fillText(emoji, charPos.x, charPos.y);
+                requestAnimationFrame(draw);
+            }
+            canvas.addEventListener('click', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const logicalX = e.clientX - rect.left;
+                const logicalY = e.clientY - rect.top;
+                if (Math.abs(logicalX - charPos.x) < 30 && Math.abs(logicalY - charPos.y) < 30) {
+                    runCode('click');
+                }
+            });
+
+            draw();
+        }
+
+        // --- Допоміжна: перевірка чи герой досяг цілі ---
+        function reachedTarget() {
+            const tgt = currentTask.canvas.target;
+            return Math.abs(charPos.x - tgt.x) < 5 && Math.abs(charPos.y - tgt.y) < 5;
+        }
+
+        // --- Animation Engine ---
+        const EVENT_BLOCK_TYPES = ['event_flag', 'event_click'];
+
+        async function executeChain(startBlock) {
+            let block = startBlock;
+            while (block) {
+                const type = block.type;
+
+                if (type.startsWith('move_') || type === 'jump') {
+                    const hitObstacle = await move(type);
+                    if (hitObstacle) return false;
+                } else if (type === 'repeat_3' || type === 'repeat_5' || type === 'always') {
+                    const times = type === 'repeat_3' ? 3 : type === 'repeat_5' ? 5 : 20;
+                    for (let i = 0; i < times; i++) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                        if (type === 'always' && reachedTarget()) return true;
+                    }
+                } else if (type === 'say_alert') {
+                    const text = block.getFieldValue('TEXT') || 'Привіт!';
+                    alert(text);
+                } else if (type === 'repair_bridge' || type === 'hit_hammer' || type === 'use_water' || type === 'strike_sword') {
+                    await move(type);
+                } else if (type === 'if_obstacle') {
+                    if (checkCollision()) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    }
+                } else if (type === 'if_touching_sign') {
+                    const tgt = currentTask.canvas.target;
+                    const nearSign = tgt.type === 'ender_sign'
+                        ? (Math.abs(charPos.x - tgt.x) < 30 && Math.abs(charPos.y - tgt.y) < 30)
+                        : checkCollision('ender_sign');
+                    if (nearSign) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    }
+                } else if (type === 'if_near_creeper') {
+                    if (checkCollision('creeper_hole')) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    }
+                } else if (type === 'if_wall') {
+                    if (checkCollision('pixel_wall')) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    }
+                } else if (type === 'if_dragon_fire') {
+                    if (checkCollision('dragon_fire')) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    }
+                } else if (type === 'if_else_safe') {
+                    if (!checkCollision('unknown_path')) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    } else {
+                        const ok = await executeChain(block.getInputTargetBlock('ELSE'));
+                        if (!ok) return false;
+                    }
+                } else if (type === 'if_else_bridge_ok') {
+                    if (!checkCollision('broken_bridge')) {
+                        const ok = await executeChain(block.getInputTargetBlock('DO'));
+                        if (!ok) return false;
+                    } else {
+                        const ok = await executeChain(block.getInputTargetBlock('ELSE'));
+                        if (!ok) return false;
+                    }
+                }
+
+                block = block.getNextBlock();
+            }
+            return true;
+        }
+
+        async function runCode(trigger = 'flag') {
+            const topBlocks = workspace.getTopBlocks(true);
+            charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
+            document.getElementById('successOverlay').classList.remove('active');
+
+            for (let block of topBlocks) {
+                const type = block.type;
+                if (type === 'event_flag' && trigger === 'flag') {
+                    const ok = await executeChain(block.getNextBlock());
+                    if (!ok) return false;
+                } else if (type === 'event_click' && trigger === 'click') {
+                    const ok = await executeChain(block.getNextBlock());
+                    if (!ok) return false;
+                } else if (!EVENT_BLOCK_TYPES.includes(type) && trigger === 'flag') {
+                    const ok = await executeChain(block);
+                    if (!ok) return false;
+                }
+            }
+            return true;
+        }
+
+
+
+        function checkCollision(requiredType = null) {
+            if (!currentTask.canvas.obstacles) return false;
+
+            const roundedX = Math.round(charPos.x / 50) * 50;
+            const roundedY = Math.round(charPos.y / 50) * 50;
+
+            for (let obs of currentTask.canvas.obstacles) {
+                if (Math.abs(roundedX - obs.x) < 20 && Math.abs(roundedY - obs.y) < 20) {
+                    if (requiredType !== null) {
+                        if (obs.type === requiredType) return true;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function move(type) {
+            if (['repair_bridge', 'hit_hammer', 'use_water', 'strike_sword'].includes(type)) {
+                return new Promise(r => setTimeout(() => r(false), 500));
+            }
+            return new Promise(resolve => {
+                const step = 50;
+                let frames = 10;
+                const interval = setInterval(() => {
+                    if (type === 'jump') {
+                        if (frames > 5) {
+                            charPos.y -= 15;
+                        } else {
+                            charPos.y += 15;
+                        }
+                    } else if (type === 'move_right') charPos.x += step / 10;
+                    else if (type === 'move_left') charPos.x -= step / 10;
+                    else if (type === 'move_up') charPos.y -= step / 10;
+                    else if (type === 'move_down') charPos.y += step / 10;
+
+                    frames--;
+                    if (frames <= 0) {
+                        clearInterval(interval);
+                        charPos.x = Math.round(charPos.x / 50) * 50;
+                        charPos.y = Math.round(charPos.y / 50) * 50;
+
+                        // Якщо після кроку ми в перешкоді - повертаємо true (hit)
+                        if (type !== 'jump' && checkCollision()) {
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    }
+                }, 50);
+            });
+        }
+
+        // --- Interaction ---
+        document.getElementById('runBtn').onclick = () => runCode('flag');
+
+        document.getElementById('checkBtn').onclick = async () => {
+            // Спочатку виконати код щоб оновити позицію 캐릭터의
+            const successRun = await runCode('flag');
+
+            // Зачекати 500мс щоб показати фінальну позицію
+            await new Promise(r => setTimeout(r, 500));
+
+            // Якщо персонаж зараз на координатах цілі і не було зіткнень - перемога
+            const isCorrect = successRun && reachedTarget();
+
+            if (isCorrect) {
+                document.getElementById('successOverlay').classList.add('active');
+
+                let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
+                if (!progress.completedTasks.includes(currentTask.id)) {
+                    progress.completedTasks.push(currentTask.id);
+                    progress.streak = (progress.streak || 0) + 1;
+                    localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
+                    // Update UI immediately
+                    document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
+                }
+            } else {
+                // Повертаємо на початкову позицію
+                charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
+
+                const errorMsg = successRun ? currentTask.hints[1] : "Ой! Ти врізався в перешкоду. Спробуй ще раз.";
+                document.getElementById('hintBox').innerText = errorMsg;
+                document.getElementById('hintBox').style.color = '#f43f5e';
+                setTimeout(() => {
+                    document.getElementById('hintBox').style.color = '';
+                    document.getElementById('hintBox').innerText = currentTask.hints[0];
+                }, 3000);
+            }
+        };
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>

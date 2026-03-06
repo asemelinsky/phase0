@@ -1,0 +1,14 @@
+{
+    "name": "scratch-learning-bot",
+    "version": "1.0.0",
+    "description": "Telegram bot for Phase 0 validation",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "telegraf": "^4.15.0",
+        "dotenv": "^16.3.1",
+        "node-cron": "^3.0.3"
+    }
+}
