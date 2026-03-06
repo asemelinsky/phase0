@@ -261,7 +261,68 @@
         .blocklyTreeLabel {
             font-family: 'Outfit', sans-serif !important;
         }
-    </style>
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            header {
+                padding: 0.5rem 1rem;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .task-info {
+                order: 3;
+                width: 100%;
+                text-align: center;
+            }
+
+            .task-title {
+                font-size: 0.9rem;
+            }
+
+            .day-badge {
+                font-size: 0.7rem;
+            }
+
+            .user-streak {
+                font-size: 0.85rem;
+            }
+
+            main {
+                display: flex;
+                flex-direction: column;
+                max-height: none;
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+
+            #blocklyArea {
+                height: 50vh;
+                flex-shrink: 0;
+            }
+
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+            }
+
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4 / 3;
+            }
+        }
+</style>
 </head>
 
 <body>
@@ -700,6 +761,10 @@
         };
 
         window.onload = init;
+
+        window.addEventListener('resize', () => {
+            if (workspace) Blockly.svgResize(workspace);
+        });
     </script>
 </body>
 
