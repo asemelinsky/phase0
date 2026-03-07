@@ -1,7 +1,15 @@
 **/node_modules/
 .env
 .env.local
+.env*.local
 *.log
 .DS_Store
 .vercel
 bot/data/
+
+# Notion / API токени
+*.token
+secrets.json
+
+# Claude Code локальні налаштування
+.claude/settings.local.json
