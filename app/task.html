@@ -395,8 +395,7 @@
                     <div class="success-icon">🎉</div>
                     <h2 style="font-family: 'Outfit'; margin-bottom: 0.5rem;">Чудово!</h2>
                     <p id="successMessage">Ти виконав завдання дня!</p>
-                    <button class="btn-run" style="margin-top: 1.5rem;" onclick="location.reload()">Наступне
-                        завдання</button>
+                    <button class="btn-run" id="nextBtn" style="margin-top: 1.5rem;">Наступне завдання</button>
                 </div>
                 <div class="controls">
                     <button class="btn-run" id="runBtn">🚩 Запустити</button>
@@ -408,6 +407,7 @@
     <script>
         // --- Configuration & State ---
         let currentTask = null;
+        let allTasks = [];
         let workspace = null;
         let charPos = { x: 0, y: 0 };
         let uid = new URLSearchParams(window.location.search).get('uid');
@@ -423,6 +423,7 @@
             try {
                 const response = await fetch('../data/tasks.json');
                 const tasks = await response.json();
+                allTasks = tasks;
 
                 const regKey = `reg_${uid}`;
                 let regDate = localStorage.getItem(regKey);
@@ -819,6 +820,19 @@
                     progress.streak = (progress.streak || 0) + 1;
                     localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
                     document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
+                }
+                // Navigate to next task
+                const nextTask = allTasks.find(t =>
+                    t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1
+                ) || allTasks.find(t =>
+                    t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1
+                );
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextTask) {
+                    nextBtn.onclick = () => location.href = `task.html?task=${nextTask.id}&uid=${uid}`;
+                } else {
+                    nextBtn.textContent = 'До карти курсу';
+                    nextBtn.onclick = () => location.href = `progress.html?uid=${uid}`;
                 }
             } else {
                 charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
