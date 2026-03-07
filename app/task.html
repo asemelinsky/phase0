@@ -456,8 +456,15 @@
 
         function updateUI() {
             document.getElementById('taskTitle').innerText = currentTask.title;
-            document.getElementById('dayLabel').innerText = `Завдання #${currentTask.id.split('_')[1]}`;
-            document.getElementById('hintBox').innerText = currentTask.hints[0];
+            const dayLabel = currentTask.day
+                ? `День ${currentTask.day} · ${currentTask.type === 'challenge' ? '⭐ Челендж' : `Урок ${currentTask.order_in_day}`}`
+                : `Завдання #${currentTask.id.split('_')[1]}`;
+            document.getElementById('dayLabel').innerText = dayLabel;
+
+            const firstHint = (currentTask.hints && currentTask.hints.length > 0)
+                ? currentTask.hints[0]
+                : currentTask.audio?.intro || 'Удачі!';
+            document.getElementById('hintBox').innerText = firstHint;
 
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
             document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
@@ -820,7 +827,9 @@
                 charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
                 playFailSound();
                 triggerFailAnimation();
-                const errorMsg = successRun ? currentTask.hints[1] : "Ой! Ти врізався в перешкоду. Спробуй ще раз.";
+                const errorMsg = successRun
+                    ? (currentTask.hints && currentTask.hints[1]) || currentTask.audio?.hint || 'Спробуй ще раз!'
+                    : 'Ой! Ти врізався в перешкоду. Спробуй ще раз.';
                 document.getElementById('hintBox').innerText = errorMsg;
                 document.getElementById('hintBox').style.color = '#f43f5e';
                 setTimeout(() => {
