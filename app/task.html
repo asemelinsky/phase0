@@ -175,26 +175,29 @@
         }
 
         .btn-run {
-            background: var(--primary);
+            background: var(--accent);
             color: white;
+            font-size: 1.05rem;
+            padding: 0.65rem 1.5rem;
         }
 
         .btn-run:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-check {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-check:hover {
             opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
         }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            15%      { transform: translateX(-8px) rotate(-2deg); }
+            30%      { transform: translateX(8px)  rotate(2deg); }
+            45%      { transform: translateX(-6px) rotate(-1deg); }
+            60%      { transform: translateX(6px)  rotate(1deg); }
+            75%      { transform: translateX(-4px); }
+            90%      { transform: translateX(4px); }
+        }
+
+        .shake { animation: shake 0.55s ease; }
 
         .hint-card {
             background: var(--glass);
@@ -396,8 +399,7 @@
                         завдання</button>
                 </div>
                 <div class="controls">
-                    <button class="btn-run" id="runBtn">▶ Запустити</button>
-                    <button class="btn-check" id="checkBtn">✅ Перевірити</button>
+                    <button class="btn-run" id="runBtn">🚩 Запустити</button>
                 </div>
             </div>
         </div>
@@ -594,7 +596,7 @@
                     'robot': '🤖',
                     'bee': '🐝',
                     'turtle': '🐢',
-                    'pixel': '🧑‍💻'
+                    'pixel': '👾'
                 };
                 const emoji = charEmojis[currentTask.character] || '🐱';
                 ctx.fillText(emoji, charPos.x, charPos.y);
@@ -772,33 +774,52 @@
         }
 
         // --- Interaction ---
-        document.getElementById('runBtn').onclick = () => runCode('flag');
+        function playFailSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [523, 415, 330, 262]; // C5→Ab4→E4→C4 «вааа»
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sawtooth';
+                    osc.frequency.value = freq;
+                    const t = ctx.currentTime + i * 0.13;
+                    gain.gain.setValueAtTime(0.18, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+                    osc.start(t);
+                    osc.stop(t + 0.18);
+                });
+            } catch(e) {}
+        }
 
-        document.getElementById('checkBtn').onclick = async () => {
-            // Спочатку виконати код щоб оновити позицію 캐릭터의
+        function triggerFailAnimation() {
+            const panel = document.querySelector('.preview-panel');
+            panel.classList.remove('shake');
+            void panel.offsetWidth; // reflow
+            panel.classList.add('shake');
+            panel.addEventListener('animationend', () => panel.classList.remove('shake'), { once: true });
+        }
+
+        document.getElementById('runBtn').onclick = async () => {
             const successRun = await runCode('flag');
-
-            // Зачекати 500мс щоб показати фінальну позицію
             await new Promise(r => setTimeout(r, 500));
-
-            // Якщо персонаж зараз на координатах цілі і не було зіткнень - перемога
             const isCorrect = successRun && reachedTarget();
 
             if (isCorrect) {
                 document.getElementById('successOverlay').classList.add('active');
-
                 let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
                 if (!progress.completedTasks.includes(currentTask.id)) {
                     progress.completedTasks.push(currentTask.id);
                     progress.streak = (progress.streak || 0) + 1;
                     localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
-                    // Update UI immediately
                     document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
                 }
             } else {
-                // Повертаємо на початкову позицію
                 charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
-
+                playFailSound();
+                triggerFailAnimation();
                 const errorMsg = successRun ? currentTask.hints[1] : "Ой! Ти врізався в перешкоду. Спробуй ще раз.";
                 document.getElementById('hintBox').innerText = errorMsg;
                 document.getElementById('hintBox').style.color = '#f43f5e';
