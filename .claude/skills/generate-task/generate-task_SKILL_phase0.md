@@ -15,62 +15,73 @@ allowed-tools: read, write
 
 ---
 
-## JSON-формат завдання (всі поля)
+## JSON-формат завдання (плоска Notion-схема)
 
 ```json
 {
-  "id": "task_001",
+  "id": "task_d1_m1",
+  "title": "День 1 — Крок вправо",
   "day": 1,
   "order_in_day": 1,
   "type": "microlesson",
-  "level": "novice",
-  "title": "Котик і зірка",
   "character": "cat",
-  "description": "Допоможи котику дістатися до зірки!",
-  "objective": "Склади команди щоб котик пройшов до зірки",
-  "pencil_enabled": "__NO__",
-  "availableBlocks": ["move_right", "move_up"],
-  "solution": ["move_right", "move_right"],
-  "hints": [
-    "Котику потрібно рухатися вправо",
-    "Спробуй два кроки вправо",
-    "Вправо → вправо — і він у цілі!"
-  ],
+  "description": "Котик побачив яскраву зірочку і дуже захотів її дістати.",
+  "hint_1": "Бачиш синій блок? Він допомагає рухатись вправо!",
+  "hint_2": "Перетягни блок 'вправо' у робочу область.",
+  "hint_3": "Постав один блок 'вправо' і натисни прапорець!",
+  "available_blocks": ["move_right"],
+  "solution": ["move_right"],
   "stars": 1,
   "unlock_condition": "immediate",
   "unlock_after_challenge_id": "",
   "attempt_limit": 0,
   "rollback_to_day": 0,
-  "canvas": {
-    "character": "cat",
-    "startX": 50,
-    "startY": 200,
-    "target": { "type": "star", "x": 150, "y": 200 },
-    "obstacles": []
-  },
-  "audio": {
-    "intro": "Привіт! Допоможи мені дістатися до зірочки!",
-    "success": "Ура! Ти зробив це!",
-    "hint": "Спробуй рухатися вправо"
-  }
+  "pencil_enabled": false,
+  "startX": 50,
+  "startY": 300,
+  "target_type": "star",
+  "target_x": 100,
+  "target_y": 300,
+  "obstacles": [],
+  "audio_intro": "Привіт! Я котик! Допоможи мені дістатися до зірочки!",
+  "audio_success": "Ура! Ти зробив це!",
+  "audio_hint": "Спробуй перетягнути синій блок зі стрілкою вправо."
 }
 ```
 
 ---
 
-## Нові поля (обов'язково заповнювати)
+## Поля (всі обов'язкові)
 
 | Поле | Тип | Опис |
 |------|-----|------|
+| `id` | string | `task_dN_mM` для мікроуроків, `challenge_dN` для челенджів |
+| `title` | string | `День N — Назва` |
 | `day` | number | День курсу (1–10) |
 | `order_in_day` | number | Порядок у дні (1–5) |
-| `type` | select | `microlesson` або `challenge` або `final` |
-| `pencil_enabled` | text | `"__YES__"` якщо завдання малює, `"__NO__"` якщо ні |
+| `type` | string | `microlesson` або `challenge` |
+| `character` | string | Персонаж (cat, dog, parrot, тощо) |
+| `description` | string | Короткий опис для дитини (відображається в hintBox) |
+| `hint_1` | string | Загальна підказка |
+| `hint_2` | string | Конкретніша підказка (показується при провалі) |
+| `hint_3` | string | Майже рішення |
+| `available_blocks` | array | JSON-масив блоків у Blockly-тулбоксі |
+| `solution` | array | Правильне рішення (масив рядків або об'єктів) |
 | `stars` | number | 1 для мікроуроків, 3 для челенджів |
-| `unlock_condition` | select | `immediate` / `after_previous` / `next_day` |
-| `unlock_after_challenge_id` | text | ID челенджу-попередника (для `next_day`) |
-| `attempt_limit` | number | 0 = безліміт, 2 = челендж |
+| `unlock_condition` | string | `immediate` / `after_previous` / `next_day` |
+| `unlock_after_challenge_id` | string | ID попереднього челенджу (або `""`) |
+| `attempt_limit` | number | 0 = безліміт, 2 = для челенджів |
 | `rollback_to_day` | number | На який день повертати при провалі (0 = не повертати) |
+| `pencil_enabled` | boolean | `true` якщо завдання малює, `false` якщо ні |
+| `startX` | number | Стартова X-координата героя (50–300) |
+| `startY` | number | Стартова Y-координата героя (50–400) |
+| `target_type` | string | Тип цілі (star, bone, flower, тощо) |
+| `target_x` | number | X-координата цілі (100–550) |
+| `target_y` | number | Y-координата цілі (50–450) |
+| `obstacles` | array | Масив перешкод `[{"x":N,"y":N,"type":"fence"}]` або `[]` |
+| `audio_intro` | string | TTS на початку завдання |
+| `audio_success` | string | TTS при успіху |
+| `audio_hint` | string | TTS-підказка |
 
 ---
 
@@ -83,20 +94,20 @@ allowed-tools: read, write
 | `type` | `microlesson` | `challenge` |
 | `stars` | 1 | 3 |
 | `attempt_limit` | 0 | 2 |
-| `rollback_to_day` | 0 | N-1 (попередній день) |
-| `unlock_condition` | `immediate` або `after_previous` | `next_day` |
-| `hints` | 3 підказки | порожній масив `[]` (для дитини без підказок) |
+| `rollback_to_day` | 0 | N (поточний день) |
+| `unlock_condition` | `immediate` (m1) або `after_previous` | `after_previous` |
+| `hint_1/2/3` | 3 підказки | заповнити (челендж дає підказки) |
 
 **Розблокування челенджу:** `unlock_after_challenge_id` = ID челенджу попереднього дня.
-Челендж дня 1 — `unlock_condition: "immediate"`, `unlock_after_challenge_id: ""`.
+Челендж дня 1 — `unlock_after_challenge_id: ""`.
 
 ---
 
 ## Формат блоків з параметром (ВАЖЛИВО)
 
-Прості блоки — рядок:
+Прості блоки — рядок у масиві:
 ```json
-["move_right", "pencil_down", "pencil_up"]
+["move_right", "move_up"]
 ```
 
 Блоки з числовим параметром — об'єкт `{block, steps}`:
@@ -104,9 +115,9 @@ allowed-tools: read, write
 [{"block": "move_right_steps", "steps": 3}]
 ```
 
-Змішаний приклад (намалювати лінію):
+Змішаний приклад:
 ```json
-["pencil_down", {"block": "move_right_steps", "steps": 4}, "pencil_up"]
+[{"block": "move_up_steps", "steps": 1}, {"block": "move_right_steps", "steps": 5}, {"block": "move_down_steps", "steps": 1}]
 ```
 
 ---
@@ -116,13 +127,12 @@ allowed-tools: read, write
 **Базові рухи:**
 `move_right`, `move_left`, `move_up`, `move_down`, `jump`
 
-**Рухи з параметром (нові):**
+**Рухи з параметром:**
 `move_right_steps`, `move_left_steps`, `move_up_steps`, `move_down_steps`
 → використовувати у форматі `{"block": "move_right_steps", "steps": N}`
 
-**Олівець (нові):**
-`pencil_down` — починає малювати
-`pencil_up` — зупиняє малювання
+**Олівець:**
+`pencil_down`, `pencil_up`
 
 **Цикли:**
 `repeat_2`, `repeat_3`, `repeat_5`, `always`
@@ -139,21 +149,6 @@ allowed-tools: read, write
 **Дії (Pro):**
 `say_alert`, `repair_bridge`, `hit_hammer`, `use_water`, `strike_sword`
 
-**СТРУКТУРА solution для Pro-рівнів:**
-```json
-"solution": [
-    "event_flag",
-    [
-        "always",
-        [
-            "move_right",
-            "if_wall",
-            [ "jump" ]
-        ]
-    ]
-]
-```
-
 ---
 
 ## Персонажі
@@ -161,15 +156,15 @@ allowed-tools: read, write
 `cat` → 🐱, `dog` → 🐶, `parrot` → 🦜, `snail` → 🐌, `frog` → 🐸
 `rabbit` → 🐰, `robot` → 🤖, `bee` → 🐝, `turtle` → 🐢, `pixel` → 👾
 
-**pixel** — головний герой Pro-рівнів (Minecraft-сюжет).
+**pixel** — головний герой Дня 4+ (Minecraft-сюжет).
 
 ---
 
-## Цілі (canvas.target.type)
+## Цілі (target_type)
 
-`star`, `bone`, `flower`, `branch`, `leaf`, `carrot`, `battery`, `ocean`, `ribbon`, `nest`, `farm`, `beach`, `cup`, `ender_sign`, `farmer`, `chest`, `castle_gate`, `safe_zone`, `blacksmith`, `fox_byte`, `pixie`, `anvil`, `ender_dragon`, `station`
+`star`, `bone`, `flower`, `branch`, `leaf`, `carrot`, `battery`, `fish`, `ocean`, `ribbon`, `nest`, `farm`, `beach`, `cup`, `ender_sign`, `farmer`, `chest`, `castle_gate`, `safe_zone`, `blacksmith`, `fox_byte`, `pixie`, `anvil`, `ender_dragon`, `station`
 
-## Перешкоди (canvas.obstacles[].type)
+## Перешкоди (obstacles[].type)
 
 `fence`, `rock`, `creeper_hole`, `unknown_path`, `arrow`, `fire`, `dragon_fire`, `pixel_wall`, `broken_bridge`, `wind_zone`
 
@@ -180,18 +175,18 @@ allowed-tools: read, write
 1. Прочитай `data/tasks.json` — визнач останній `id` і `day`
 2. Визнач день курсу і тип (мікроурок / челендж)
 3. Для мікроуроків: нова концепція = +1 блок, 3 підказки, `stars: 1`
-4. Для челенджу: без підказок, `stars: 3`, `attempt_limit: 2`, `rollback_to_day: N-1`
+4. Для челенджу: підказки є, `stars: 3`, `attempt_limit: 2`, `rollback_to_day: N`
 5. Не повторювати персонажа підряд
-6. Перевір: `solution` містить тільки блоки з `availableBlocks`
-7. Перевір: координати canvas в межах 600×450 (startX 50–300, targetX 100–550)
-8. Збережи нові завдання (append до `data/tasks.json`, не перезаписуй)
+6. Перевір: `solution` містить тільки блоки з `available_blocks`
+7. Перевір: координати в межах 600×450, крок сітки = 50px
+8. Append нові завдання до `data/tasks.json` (не перезаписуй)
 
 ---
 
 ## Педагогічні правила
 
 - Нова концепція вводиться по одній (не два нових блоки одночасно)
-- Мікроурок має 3 підказки: загальна → конкретніша → майже рішення
+- hint_1 — загальна → hint_2 — конкретніша → hint_3 — майже рішення
 - Аудіо-фрази: короткі, радісні, для 6–9 років
 - НЕ використовувати слова: "програма", "алгоритм", "код" — тільки "команди", "кроки", "підказки"
-- `pencil_enabled: "__YES__"` ТІЛЬКИ якщо завдання реально використовує `pencil_down`/`pencil_up` у solution
+- `pencil_enabled: true` ТІЛЬКИ якщо завдання реально використовує `pencil_down`/`pencil_up` у solution

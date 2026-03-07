@@ -462,7 +462,7 @@
                 : `Завдання #${currentTask.id.split('_')[1]}`;
             document.getElementById('dayLabel').innerText = dayLabel;
 
-            document.getElementById('hintBox').innerText = currentTask.description || currentTask.audio?.intro || '';
+            document.getElementById('hintBox').innerText = currentTask.description || currentTask.audio_intro || '';
 
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
             document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
@@ -471,7 +471,7 @@
         function initBlockly() {
             const toolbox = {
                 'kind': 'flyoutToolbox',
-                'contents': currentTask.availableBlocks.map(blockId => ({
+                'contents': currentTask.available_blocks.map(blockId => ({
                     'kind': 'block',
                     'type': blockId
                 }))
@@ -484,6 +484,10 @@
                     { "type": "move_left", "message0": "йти вліво ⬅", "previousStatement": null, "nextStatement": null, "colour": 230 },
                     { "type": "move_up", "message0": "йти вгору ⬆", "previousStatement": null, "nextStatement": null, "colour": 230 },
                     { "type": "move_down", "message0": "йти вниз ⬇", "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_right_steps", "message0": "йти вправо %1 кроків", "args0": [{"type": "field_number", "name": "STEPS", "value": 1, "min": 1, "max": 20}], "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_left_steps", "message0": "йти вліво %1 кроків", "args0": [{"type": "field_number", "name": "STEPS", "value": 1, "min": 1, "max": 20}], "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_up_steps", "message0": "йти вгору %1 кроків", "args0": [{"type": "field_number", "name": "STEPS", "value": 1, "min": 1, "max": 20}], "previousStatement": null, "nextStatement": null, "colour": 230 },
+                    { "type": "move_down_steps", "message0": "йти вниз %1 кроків", "args0": [{"type": "field_number", "name": "STEPS", "value": 1, "min": 1, "max": 20}], "previousStatement": null, "nextStatement": null, "colour": 230 },
                     { "type": "jump", "message0": "стрибнути ⤊", "previousStatement": null, "nextStatement": null, "colour": 290 },
                     { "type": "repeat_3", "message0": "повторити 3 рази %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 120 },
                     { "type": "repeat_5", "message0": "повторити 5 разів %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 120 },
@@ -530,7 +534,7 @@
             canvas._logicalW = LOGICAL_W;
             canvas._logicalH = LOGICAL_H;
 
-            charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
+            charPos = { x: currentTask.startX, y: currentTask.startY };
 
             function draw() {
                 ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
@@ -567,15 +571,16 @@
                     'fox_byte': '🦊',
                     'pixie': '🧚',
                     'anvil': '🗜️',
-                    'ender_dragon': '🐉'
+                    'ender_dragon': '🐉',
+                    'fish': '🐟'
                 };
                 ctx.font = '32px serif';
-                const targetEmoji = targetEmojis[currentTask.canvas.target.type] || '⭐';
-                ctx.fillText(targetEmoji, currentTask.canvas.target.x, currentTask.canvas.target.y);
+                const targetEmoji = targetEmojis[currentTask.target_type] || '⭐';
+                ctx.fillText(targetEmoji, currentTask.target_x, currentTask.target_y);
 
                 // Obstacles Mapping
-                if (currentTask.canvas.obstacles) {
-                    currentTask.canvas.obstacles.forEach(obs => {
+                if (currentTask.obstacles) {
+                    currentTask.obstacles.forEach(obs => {
                         let obsEmoji = '🚧';
                         if (obs.type === 'creeper_hole') obsEmoji = '🕳️';
                         if (obs.type === 'unknown_path') obsEmoji = '❓';
@@ -622,8 +627,7 @@
 
         // --- Допоміжна: перевірка чи герой досяг цілі ---
         function reachedTarget() {
-            const tgt = currentTask.canvas.target;
-            return Math.abs(charPos.x - tgt.x) < 5 && Math.abs(charPos.y - tgt.y) < 5;
+            return Math.abs(charPos.x - currentTask.target_x) < 5 && Math.abs(charPos.y - currentTask.target_y) < 5;
         }
 
         // --- Animation Engine ---
@@ -634,7 +638,15 @@
             while (block) {
                 const type = block.type;
 
-                if (type.startsWith('move_') || type === 'jump') {
+                if (type.endsWith('_steps')) {
+                    const baseType = type.replace('_steps', '');
+                    const steps = parseInt(block.getFieldValue('STEPS')) || 1;
+                    for (let i = 0; i < steps; i++) {
+                        const hit = await move(baseType);
+                        if (hit) return false;
+                        if (reachedTarget()) return true;
+                    }
+                } else if (type.startsWith('move_') || type === 'jump') {
                     const hitObstacle = await move(type);
                     if (hitObstacle) return false;
                 } else if (type === 'repeat_3' || type === 'repeat_5' || type === 'always') {
@@ -655,9 +667,8 @@
                         if (!ok) return false;
                     }
                 } else if (type === 'if_touching_sign') {
-                    const tgt = currentTask.canvas.target;
-                    const nearSign = tgt.type === 'ender_sign'
-                        ? (Math.abs(charPos.x - tgt.x) < 30 && Math.abs(charPos.y - tgt.y) < 30)
+                    const nearSign = currentTask.target_type === 'ender_sign'
+                        ? (Math.abs(charPos.x - currentTask.target_x) < 30 && Math.abs(charPos.y - currentTask.target_y) < 30)
                         : checkCollision('ender_sign');
                     if (nearSign) {
                         const ok = await executeChain(block.getInputTargetBlock('DO'));
@@ -703,7 +714,7 @@
 
         async function runCode(trigger = 'flag') {
             const topBlocks = workspace.getTopBlocks(true);
-            charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
+            charPos = { x: currentTask.startX, y: currentTask.startY };
             document.getElementById('successOverlay').classList.remove('active');
 
             for (let block of topBlocks) {
@@ -725,12 +736,12 @@
 
 
         function checkCollision(requiredType = null) {
-            if (!currentTask.canvas.obstacles) return false;
+            if (!currentTask.obstacles) return false;
 
             const roundedX = Math.round(charPos.x / 50) * 50;
             const roundedY = Math.round(charPos.y / 50) * 50;
 
-            for (let obs of currentTask.canvas.obstacles) {
+            for (let obs of currentTask.obstacles) {
                 if (Math.abs(roundedX - obs.x) < 20 && Math.abs(roundedY - obs.y) < 20) {
                     if (requiredType !== null) {
                         if (obs.type === requiredType) return true;
@@ -835,11 +846,11 @@
                     nextBtn.onclick = () => location.href = `progress.html?uid=${uid}`;
                 }
             } else {
-                charPos = { x: currentTask.canvas.startX, y: currentTask.canvas.startY };
+                charPos = { x: currentTask.startX, y: currentTask.startY };
                 playFailSound();
                 triggerFailAnimation();
                 const errorMsg = successRun
-                    ? (currentTask.hints && currentTask.hints[1]) || currentTask.audio?.hint || 'Спробуй ще раз!'
+                    ? currentTask.hint_2 || currentTask.audio_hint || 'Спробуй ще раз!'
                     : 'Ой! Ти врізався в перешкоду. Спробуй ще раз.';
                 document.getElementById('hintBox').innerText = errorMsg;
                 document.getElementById('hintBox').style.color = '#f43f5e';
