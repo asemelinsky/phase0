@@ -461,10 +461,7 @@
                 : `Завдання #${currentTask.id.split('_')[1]}`;
             document.getElementById('dayLabel').innerText = dayLabel;
 
-            const firstHint = (currentTask.hints && currentTask.hints.length > 0)
-                ? currentTask.hints[0]
-                : currentTask.audio?.intro || 'Удачі!';
-            document.getElementById('hintBox').innerText = firstHint;
+            document.getElementById('hintBox').innerText = currentTask.description || currentTask.audio?.intro || '';
 
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
             document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
@@ -834,7 +831,7 @@
                 document.getElementById('hintBox').style.color = '#f43f5e';
                 setTimeout(() => {
                     document.getElementById('hintBox').style.color = '';
-                    document.getElementById('hintBox').innerText = currentTask.hints[0];
+                    document.getElementById('hintBox').innerText = currentTask.description || '';
                 }, 3000);
             }
         };
