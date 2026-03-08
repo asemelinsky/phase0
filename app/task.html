@@ -1044,7 +1044,39 @@
         window.addEventListener('resize', () => {
             if (workspace) Blockly.svgResize(workspace);
             if (currentTask) initCanvas();
+            if (document.getElementById('debugPanel')) updateDebug();
         });
+
+        // --- Debug overlay (activated by ?debug in URL) ---
+        if (new URLSearchParams(window.location.search).has('debug')) {
+            const panel = document.createElement('div');
+            panel.id = 'debugPanel';
+            panel.style.cssText = 'position:fixed;top:0;left:0;z-index:9999;background:rgba(0,0,0,0.85);color:#0f0;font:12px monospace;padding:8px 12px;max-width:100vw;pointer-events:none;';
+            document.body.appendChild(panel);
+
+            function updateDebug() {
+                const el = (sel) => document.querySelector(sel);
+                const h = (el) => el ? Math.round(el.getBoundingClientRect().height) : '?';
+                const w = (el) => el ? Math.round(el.getBoundingClientRect().width) : '?';
+                panel.innerHTML = [
+                    `vw=${window.innerWidth} vh=${window.innerHeight} dpr=${window.devicePixelRatio}`,
+                    `orientation=${screen.orientation?.type || (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait')}`,
+                    `pointer:coarse=${matchMedia('(pointer:coarse)').matches}`,
+                    `portrait=${matchMedia('(orientation:portrait)').matches}`,
+                    `mq-mobile=${matchMedia('(pointer:coarse) and (orientation:portrait),(max-width:768px)').matches}`,
+                    `mq-landscape-touch=${matchMedia('(pointer:coarse) and (orientation:landscape)').matches}`,
+                    `---`,
+                    `main: ${w(el('main'))}×${h(el('main'))}`,
+                    `sidebar: ${w(el('.sidebar'))}×${h(el('.sidebar'))}`,
+                    `preview-panel: ${w(el('.preview-panel'))}×${h(el('.preview-panel'))}`,
+                    `canvas: ${w(el('#gameCanvas'))}×${h(el('#gameCanvas'))}`,
+                    `controls: ${w(el('.controls'))}×${h(el('.controls'))}`,
+                    `controls.bottom=${el('.controls') ? Math.round(el('.controls').getBoundingClientRect().bottom) : '?'} (vh=${window.innerHeight})`,
+                ].join('<br>');
+            }
+            updateDebug();
+            setInterval(updateDebug, 1000);
+        }
     </script>
 </body>
 
