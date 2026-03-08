@@ -876,7 +876,7 @@
                         moveLog.push({type: 'move', dir, penDown: pencilDown});
                         const hit = await move(baseType);
                         if (hit) return false;
-                        if (reachedTarget()) return true;
+                        if (reachedTarget() && !currentTask.drawingPattern) return true;
                     }
                 } else if (type.startsWith('move_') || type === 'jump') {
                     if (type !== 'jump') moveLog.push({type: 'move', dir: type.replace('move_', ''), penDown: pencilDown});
@@ -887,7 +887,7 @@
                     for (let i = 0; i < times; i++) {
                         const ok = await executeChain(block.getInputTargetBlock('DO'));
                         if (!ok) return false;
-                        if (type === 'always' && reachedTarget()) return true;
+                        if (type === 'always' && reachedTarget() && !currentTask.drawingPattern) return true;
                     }
                 } else if (type === 'say_alert') {
                     const text = block.getFieldValue('TEXT') || 'Привіт!';
@@ -1232,7 +1232,10 @@
 
             const successRun = await runCode('flag');
             await new Promise(r => setTimeout(r, 500));
-            let isCorrect = successRun && reachedTarget();
+            // For drawing tasks: execute all blocks, then check final position
+            let isCorrect = currentTask.drawingPattern
+                ? reachedTarget()
+                : (successRun && reachedTarget());
 
             // Drawing validation for pencil tasks
             if (isCorrect && currentTask.drawingPattern) {
