@@ -37,7 +37,7 @@
                 radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.15) 0%, transparent 40%);
             color: var(--text);
-            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -142,7 +142,7 @@
                 "code  scene";
             gap: 1rem;
             padding: 1rem;
-            height: calc(100vh - 80px);
+            height: calc(100dvh - 80px);
             overflow: hidden;
         }
 
@@ -335,7 +335,7 @@
         /* Landscape touch (tablet landscape) — keep grid but cap canvas height */
         @media (pointer: coarse) and (orientation: landscape) {
             #gameCanvas {
-                max-height: calc(100vh - 200px);
+                max-height: calc(100dvh - 200px);
             }
         }
 
@@ -344,7 +344,7 @@
         @media (pointer: coarse) and (orientation: portrait), (max-width: 768px) {
             body {
                 height: auto;
-                min-height: 100vh;
+                min-height: 100dvh;
                 overflow-y: auto;
             }
 
