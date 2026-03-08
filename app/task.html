@@ -184,6 +184,7 @@
 
         .preview-panel {
             flex: 1;
+            min-height: 0;
             background: var(--card-bg);
             border-radius: 1.5rem;
             border: 1px solid var(--glass-border);
@@ -329,6 +330,13 @@
 
         .blocklyTreeLabel {
             font-family: 'Outfit', sans-serif !important;
+        }
+
+        /* Landscape touch (tablet landscape) — keep grid but cap canvas height */
+        @media (pointer: coarse) and (orientation: landscape) {
+            #gameCanvas {
+                max-height: calc(100vh - 200px);
+            }
         }
 
         /* ===== MOBILE RESPONSIVE ===== */
