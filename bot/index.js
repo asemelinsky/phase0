@@ -89,7 +89,7 @@ function runDailyBroadcast() {
 
     for (const chatId in usersDB) {
         const user = usersDB[chatId];
-        const appUrl = `https://phase0-five.vercel.app/app/task.html?uid=${user.uid}`;
+        const appUrl = `https://phase0-five.vercel.app/app/progress.html?uid=${user.uid}`;
 
         bot.telegram.sendMessage(
             chatId,
@@ -120,7 +120,7 @@ bot.command('test_broadcast', (ctx) => {
     }
 
     const user = usersDB[chatId];
-    const appUrl = `https://phase0-five.vercel.app/app/task.html?uid=${user.uid}`;
+    const appUrl = `https://phase0-five.vercel.app/app/progress.html?uid=${user.uid}`;
 
     bot.telegram.sendMessage(
         chatId,
