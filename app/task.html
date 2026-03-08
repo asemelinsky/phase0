@@ -876,7 +876,7 @@
                         moveLog.push({type: 'move', dir, penDown: pencilDown});
                         const hit = await move(baseType);
                         if (hit) return false;
-                        if (reachedTarget() && !currentTask.drawingPattern) return true;
+                        if (reachedTarget() && !(currentTask.drawingPattern && currentTask.drawingPattern.figureType)) return true;
                     }
                 } else if (type.startsWith('move_') || type === 'jump') {
                     if (type !== 'jump') moveLog.push({type: 'move', dir: type.replace('move_', ''), penDown: pencilDown});
@@ -887,7 +887,7 @@
                     for (let i = 0; i < times; i++) {
                         const ok = await executeChain(block.getInputTargetBlock('DO'));
                         if (!ok) return false;
-                        if (type === 'always' && reachedTarget() && !currentTask.drawingPattern) return true;
+                        if (type === 'always' && reachedTarget() && !(currentTask.drawingPattern && currentTask.drawingPattern.figureType)) return true;
                     }
                 } else if (type === 'say_alert') {
                     const text = block.getFieldValue('TEXT') || 'Привіт!';
@@ -1232,24 +1232,32 @@
 
             const successRun = await runCode('flag');
             await new Promise(r => setTimeout(r, 500));
-            // For drawing tasks: execute all blocks, then check final position
-            let isCorrect = currentTask.drawingPattern
-                ? reachedTarget()
-                : (successRun && reachedTarget());
+            let isCorrect = successRun && reachedTarget();
 
-            // Drawing validation for pencil tasks
-            if (isCorrect && currentTask.drawingPattern) {
+            // Drawing validation for pencil tasks — runs always, shows specific error reason
+            if (currentTask.drawingPattern) {
                 const drawCheck = validateDrawing(currentTask.drawingPattern, moveLog);
-                if (!drawCheck.ok) {
+                const showDrawError = (msg) => {
                     isCorrect = false;
                     triggerFailAnimation();
                     playFailSound();
-                    document.getElementById('hintBox').innerText = drawCheck.msg;
+                    document.getElementById('hintBox').innerText = msg;
                     document.getElementById('hintBox').style.color = '#f43f5e';
                     setTimeout(() => {
                         document.getElementById('hintBox').style.color = '';
                         document.getElementById('hintBox').innerText = currentTask.description || '';
                     }, 4000);
+                };
+                if (!drawCheck.ok) {
+                    showDrawError(drawCheck.msg);
+                } else if (currentTask.drawingPattern.figureType) {
+                    // For shape tasks (stairs/closedShape): drawing is the goal, ignore target
+                    isCorrect = true;
+                } else if (!reachedTarget()) {
+                    // Simple pen tasks (requirePen only): still need to reach the star
+                    showDrawError('⭐ Олівець піднятий правильно! Але герой має дійти до зірки.');
+                } else {
+                    isCorrect = true;
                 }
             }
 
