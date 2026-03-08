@@ -1271,8 +1271,8 @@
                 };
                 if (!drawCheck.ok) {
                     showDrawError(drawCheck.msg);
-                } else if (currentTask.drawingPattern.figureType) {
-                    // For shape tasks (stairs/closedShape): drawing is the goal, ignore target
+                } else if (currentTask.drawingPattern.figureType || currentTask.target_type === 'none') {
+                    // For shape tasks (stairs/closedShape/figures): drawing is the goal, ignore target
                     isCorrect = true;
                 } else if (!reachedTarget()) {
                     // Simple pen tasks (requirePen only): still need to reach the star

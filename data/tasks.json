@@ -1741,10 +1741,10 @@
     "order_in_day": 5,
     "type": "challenge",
     "character": "pixel",
-    "description": "Піксель хоче написати магічне слово — 'КОД'! Три літери, кожна окрема, між ними підніми олівець. Без підказок — ти вже справжній піксельний каліграф!",
+    "description": "Піксель хоче написати магічне слово — 'КОД'! Три літери, кожна окрема, між ними підніми олівець. Орієнтуйся на фіолетові підказки-контури!",
     "hint_1": "Три літери — малюй по одній. Між кожною підніми олівець і перейди вправо.",
-    "hint_2": "К — вертикаль + дві ступінки. О — прямокутник. Д — вертикаль + закруглена права сторона.",
-    "hint_3": "Головне: кожна літера окремо, між ними олівець вгору і перехід вправо.",
+    "hint_2": "К — вертикаль вниз. О — прямокутник. Д — теж прямокутник. Фіолетові контури показують форму!",
+    "hint_3": "Почни зі старту, опусти олівець і йди вниз для К. Потім підніми, перейди до О і намалюй квадрат. Те саме для Д!",
     "available_blocks": [
       "pencil_down",
       "pencil_up",
@@ -1754,88 +1754,24 @@
       "move_down_steps"
     ],
     "solution": [
-      {
-        "block": "pencil_down"
-      },
-      {
-        "block": "move_down_steps",
-        "steps": 4
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 2
-      },
-      {
-        "block": "move_up_steps",
-        "steps": 2
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 2
-      },
-      {
-        "block": "move_down_steps",
-        "steps": 2
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 2
-      },
-      {
-        "block": "pencil_up"
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 2
-      },
-      {
-        "block": "pencil_down"
-      },
-      {
-        "block": "move_down_steps",
-        "steps": 4
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 3
-      },
-      {
-        "block": "move_up_steps",
-        "steps": 4
-      },
-      {
-        "block": "pencil_up"
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 2
-      },
-      {
-        "block": "pencil_down"
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 3
-      },
-      {
-        "block": "move_down_steps",
-        "steps": 2
-      },
-      {
-        "block": "move_left_steps",
-        "steps": 3
-      },
-      {
-        "block": "move_down_steps",
-        "steps": 2
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 3
-      },
-      {
-        "block": "pencil_up"
-      }
+      { "block": "pencil_down" },
+      { "block": "move_down_steps", "steps": 6 },
+      { "block": "pencil_up" },
+      { "block": "move_up_steps", "steps": 6 },
+      { "block": "move_right_steps", "steps": 3 },
+      { "block": "pencil_down" },
+      { "block": "move_right_steps", "steps": 3 },
+      { "block": "move_down_steps", "steps": 6 },
+      { "block": "move_left_steps", "steps": 3 },
+      { "block": "move_up_steps", "steps": 6 },
+      { "block": "pencil_up" },
+      { "block": "move_right_steps", "steps": 4 },
+      { "block": "pencil_down" },
+      { "block": "move_right_steps", "steps": 3 },
+      { "block": "move_down_steps", "steps": 6 },
+      { "block": "move_left_steps", "steps": 3 },
+      { "block": "move_up_steps", "steps": 6 },
+      { "block": "pencil_up" }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -1845,127 +1781,26 @@
     "pencil_enabled": true,
     "startX": 50,
     "startY": 50,
-    "target_type": "star",
-    "target_x": 850,
-    "target_y": 450,
+    "target_type": "none",
+    "target_x": 0,
+    "target_y": 0,
     "obstacles": [],
-    "audio_intro": "КОД — магічне слово! Три літери піксельними лініями. Давай напишемо разом!",
+    "audio_intro": "КОД — магічне слово! Три літери піксельними лініями. Фіолетові контури підкажуть форму!",
     "audio_success": "КОД! Ти написав найважливіше слово кодом! Піксель в захваті!",
     "audio_hint": "Розбий кожну літеру окремо. Між літерами — олівець вгору і перехід вправо.",
     "drawingPattern": {
-      "requirePen": true
+      "requirePen": true,
+      "figures": 3,
+      "requireGap": true
     },
     "drawing_guide": [
-      [
-        [
-          50,
-          50
-        ],
-        [
-          50,
-          400
-        ]
-      ],
-      [
-        [
-          50,
-          200
-        ],
-        [
-          100,
-          200
-        ],
-        [
-          100,
-          100
-        ]
-      ],
-      [
-        [
-          50,
-          200
-        ],
-        [
-          100,
-          200
-        ],
-        [
-          100,
-          300
-        ]
-      ],
-      [
-        [
-          300,
-          50
-        ],
-        [
-          500,
-          50
-        ],
-        [
-          500,
-          400
-        ],
-        [
-          300,
-          400
-        ],
-        [
-          300,
-          50
-        ]
-      ],
-      [
-        [
-          600,
-          50
-        ],
-        [
-          800,
-          50
-        ],
-        [
-          800,
-          350
-        ],
-        [
-          850,
-          350
-        ],
-        [
-          850,
-          450
-        ]
-      ],
-      [
-        [
-          600,
-          50
-        ],
-        [
-          600,
-          350
-        ],
-        [
-          550,
-          350
-        ],
-        [
-          550,
-          450
-        ]
-      ],
-      [
-        [
-          600,
-          350
-        ],
-        [
-          800,
-          350
-        ]
-      ]
+      [[50,50],[50,350]],
+      [[50,150],[100,150],[100,50]],
+      [[50,200],[100,200],[100,350]],
+      [[200,50],[350,50],[350,350],[200,350],[200,50]],
+      [[400,50],[550,50],[550,350],[400,350],[400,50]],
+      [[400,350],[400,400]],
+      [[550,350],[550,400]]
     ]
   },
   {
