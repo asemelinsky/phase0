@@ -314,9 +314,12 @@
             const regDate = localStorage.getItem(`reg_${uid}`);
             let currentDayIdx = 0;
             if (regDate) {
-                const diff = Math.abs(Date.now() - new Date(regDate));
+                const diff = Math.max(0, Date.now() - new Date(regDate));
                 currentDayIdx = Math.floor(diff / (1000 * 60 * 60 * 24));
             }
+            // ?debugDay=N — для тестування без очікування реальної доби
+            const debugDay = parseInt(new URLSearchParams(window.location.search).get('debugDay'));
+            if (!isNaN(debugDay)) currentDayIdx = debugDay - 1;
 
             // Group tasks by day
             const days = {};
@@ -340,10 +343,8 @@
             dayNums.forEach((dayNum, idx) => {
                 const { lessons, challenge } = days[dayNum];
 
-                // Day is accessible if enough days have passed OR previous challenge completed
-                const prevChallenge = idx > 0 ? days[dayNums[idx - 1]].challenge : null;
-                const prevChallengeDone = prevChallenge ? completed.has(prevChallenge.id) : true;
-                const dayOpen = isTestUser || currentDayIdx >= idx || prevChallengeDone;
+                // Day exercises open strictly by calendar date (days since registration)
+                const dayOpen = isTestUser || currentDayIdx >= idx;
 
                 // Exercises stats
                 const doneLessons = lessons.filter(t => completed.has(t.id)).length;
