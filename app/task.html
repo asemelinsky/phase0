@@ -65,6 +65,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .task-info {
@@ -368,12 +370,13 @@
 
 <body>
     <header>
-        <div class="logo">🚀 Кодомандри</div>
+        <a class="logo" id="logoLink" href="progress.html">🚀 Кодомандри</a>
         <div class="task-info">
             <div class="day-badge" id="dayLabel">День 1</div>
             <div class="task-title" id="taskTitle">Завантаження...</div>
         </div>
         <div class="user-streak" id="streakLabel">🔥 0 днів</div>
+        <div class="user-streak" id="starsLabel">⭐ 0</div>
     </header>
 
     <main>
@@ -464,8 +467,11 @@
 
             document.getElementById('hintBox').innerText = currentTask.description || currentTask.audio_intro || '';
 
+            document.getElementById('logoLink').href = `progress.html?uid=${uid}`;
+
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
             document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
+            document.getElementById('starsLabel').innerText = `⭐ ${progress.stars || 0}`;
         }
 
         function initBlockly() {
@@ -534,17 +540,24 @@
             canvas._logicalW = LOGICAL_W;
             canvas._logicalH = LOGICAL_H;
 
+            // Full display area in logical coordinates (may be larger than LOGICAL_W/H if aspect differs)
+            const fullW = displayW / gameScale;
+            const fullH = displayH / gameScale;
+
             charPos = { x: currentTask.startX, y: currentTask.startY };
 
             function draw() {
-                ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+                ctx.clearRect(0, 0, fullW, fullH);
                 ctx.fillStyle = '#1e293b';
-                ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+                ctx.fillRect(0, 0, fullW, fullH);
 
-                // Draw Grid
+                // Draw Grid across the full canvas area so no blank strips appear
                 ctx.strokeStyle = 'rgba(51, 65, 85, 0.5)';
-                for (let x = 0; x < LOGICAL_W; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, LOGICAL_H); ctx.stroke(); }
-                for (let y = 0; y < LOGICAL_H; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(LOGICAL_W, y); ctx.stroke(); }
+                for (let x = 0; x < fullW; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, fullH); ctx.stroke(); }
+                for (let y = 0; y < fullH; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(fullW, y); ctx.stroke(); }
+
+                // All emoji drawn with textBaseline='top' so they sit inside their grid cell on Y axis
+                ctx.textBaseline = 'top';
 
                 // Target Mapping
                 const targetEmojis = {
@@ -789,6 +802,27 @@
             });
         }
 
+        // --- Duplicate step-block validator (Day 3+) ---
+        // Returns true only if two CONSECUTIVE blocks have the same _steps type
+        // (e.g. вгору→вправо→вгору is OK; вгору→вгору is NOT OK)
+        function checkDuplicateSteps() {
+            const topBlocks = workspace.getTopBlocks(true);
+            for (const top of topBlocks) {
+                let block = EVENT_BLOCK_TYPES.includes(top.type) ? top.getNextBlock() : top;
+                let prevStepType = null;
+                while (block) {
+                    if (block.type.endsWith('_steps')) {
+                        if (block.type === prevStepType) return true;
+                        prevStepType = block.type;
+                    } else {
+                        prevStepType = null;
+                    }
+                    block = block.getNextBlock();
+                }
+            }
+            return false;
+        }
+
         // --- Interaction ---
         function playFailSound() {
             try {
@@ -819,18 +853,60 @@
         }
 
         document.getElementById('runBtn').onclick = async () => {
+            // Block duplicate _steps blocks (teaches students to use the number field)
+            if (currentTask.available_blocks && currentTask.available_blocks.some(b => b.endsWith('_steps'))) {
+                if (checkDuplicateSteps()) {
+                    triggerFailAnimation();
+                    playFailSound();
+                    document.getElementById('hintBox').innerText = '🚫 Не можна використовувати однаковий блок двічі! Замість двох однакових блоків — використай один і впиши правильне число кроків у поле всередині.';
+                    document.getElementById('hintBox').style.color = '#f43f5e';
+                    setTimeout(() => {
+                        document.getElementById('hintBox').style.color = '';
+                        document.getElementById('hintBox').innerText = currentTask.description || '';
+                    }, 4000);
+                    return;
+                }
+            }
+
             const successRun = await runCode('flag');
             await new Promise(r => setTimeout(r, 500));
             const isCorrect = successRun && reachedTarget();
 
             if (isCorrect) {
                 document.getElementById('successOverlay').classList.add('active');
-                let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
+                let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "completedDays":[], "streak":0, "stars":0}');
+                if (!progress.completedDays) progress.completedDays = [];
+                if (!progress.stars) progress.stars = 0;
+
                 if (!progress.completedTasks.includes(currentTask.id)) {
                     progress.completedTasks.push(currentTask.id);
-                    progress.streak = (progress.streak || 0) + 1;
+
+                    // Add stars for this task
+                    progress.stars += (currentTask.stars || 1);
+
+                    // Auto-complete all lessons of the day when challenge is passed
+                    if (currentTask.type === 'challenge') {
+                        const dayLessons = allTasks.filter(t => t.day === currentTask.day && t.type !== 'challenge');
+                        dayLessons.forEach(t => {
+                            if (!progress.completedTasks.includes(t.id)) {
+                                progress.completedTasks.push(t.id);
+                                progress.stars += (t.stars || 1);
+                            }
+                        });
+                    }
+
+                    document.getElementById('starsLabel').innerText = `⭐ ${progress.stars}`;
+
+                    // Стрік зараховується лише коли закрито весь день (всі вправи + челендж)
+                    const dayTasks = allTasks.filter(t => t.day === currentTask.day);
+                    const dayComplete = dayTasks.every(t => progress.completedTasks.includes(t.id));
+                    if (dayComplete && !progress.completedDays.includes(currentTask.day)) {
+                        progress.completedDays.push(currentTask.day);
+                        progress.streak = (progress.streak || 0) + 1;
+                        document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
+                    }
+
                     localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
-                    document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
                 }
                 // Navigate to next task
                 const nextTask = allTasks.find(t =>

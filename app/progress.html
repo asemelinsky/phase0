@@ -20,6 +20,8 @@
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
@@ -45,13 +47,11 @@
             font-size: 2rem;
             background: linear-gradient(135deg, #818cf8, #f43f5e);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .stats {
-            display: flex;
-            gap: 1.5rem;
-        }
+        .stats { display: flex; gap: 1.5rem; }
 
         .stat-card {
             background: var(--card-bg);
@@ -66,99 +66,6 @@
             font-weight: 800;
             color: var(--primary);
             font-size: 1.2rem;
-        }
-
-        .map-grid {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .level-card {
-            background: var(--card-bg);
-            border-radius: 1.5rem;
-            border: 2px solid var(--glass-border);
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .level-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .level-card.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(1);
-        }
-
-        .level-card.locked:hover {
-            transform: none;
-            border-color: var(--glass-border);
-        }
-
-        .level-num {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-        }
-
-        .level-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-done {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--accent);
-        }
-
-        .status-current {
-            background: rgba(99, 102, 241, 0.2);
-            color: var(--primary);
-            animation: pulse 2s infinite;
-        }
-
-        .status-locked {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #64748b;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
-            }
-        }
-
-        .lock-icon {
-            font-size: 1.5rem;
-            margin-top: 0.5rem;
         }
 
         .progress-container {
@@ -177,46 +84,186 @@
             transition: width 1s ease;
         }
 
-        /* ===== MOBILE RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-
-            header {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .logo {
-                font-size: 1.5rem;
-            }
-
-            .stats {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .stat-card {
-                flex: 1;
-            }
-
-            .map-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 0.75rem;
-            }
-
-            .level-card {
-                padding: 1rem;
-            }
-
-            .level-title {
-                font-size: 0.95rem;
-            }
+        /* ===== DAY ROWS ===== */
+        .days-list {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
-</style>
+
+        .day-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .day-label {
+            grid-column: 1 / -1;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .day-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 2px solid var(--glass-border);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .day-card:hover:not(.locked) {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .day-card.exercises-card:hover:not(.locked) { border-color: var(--primary); }
+        .day-card.challenge-card:hover:not(.locked) { border-color: #f59e0b; }
+
+        .day-card.locked {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.7);
+        }
+
+        .card-icon { font-size: 2rem; }
+
+        .card-type {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #94a3b8;
+        }
+
+        .exercises-card .card-type { color: #818cf8; }
+        .challenge-card .card-type { color: #f59e0b; }
+
+        .card-mini-progress {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .badge-done { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+        .badge-active { background: rgba(99, 102, 241, 0.2); color: var(--primary); animation: pulse 2s infinite; }
+        .badge-challenge-active { background: rgba(245, 158, 11, 0.2); color: #f59e0b; animation: pulse 2s infinite; }
+        .badge-locked { border: 1px solid rgba(255,255,255,0.1); color: #64748b; }
+        .badge-repeat { background: rgba(255,255,255,0.05); color: #94a3b8; }
+
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70%  { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        /* ===== POPUP ===== */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-overlay.open { display: flex; }
+
+        .popup {
+            background: #1e293b;
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .popup-header {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popup-close {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .popup-close:hover { color: var(--text); }
+
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .exercise-item:hover:not(.locked) {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+        }
+
+        .exercise-item.locked { opacity: 0.45; cursor: not-allowed; }
+
+        .exercise-item.done { border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); }
+
+        .exercise-status { font-size: 1.1rem; flex-shrink: 0; }
+
+        .exercise-title { font-size: 0.9rem; font-weight: 500; flex: 1; }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+
+            header { flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+            .logo { font-size: 1.5rem; }
+            .stats { width: 100%; justify-content: center; }
+            .stat-card { flex: 1; }
+
+            .day-card { padding: 1rem; }
+            .card-icon { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 
 <body>
@@ -228,8 +275,8 @@
                 <div style="font-size: 0.7rem; opacity: 0.6;">ДНІВ ПІДРЯД</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="doneVal">0/30</div>
-                <div style="font-size: 0.7rem; opacity: 0.6;">ЗАВЕРШЕНО</div>
+                <div class="stat-value" id="doneVal">0</div>
+                <div style="font-size: 0.7rem; opacity: 0.6;">ВИКОНАНО</div>
             </div>
         </div>
     </header>
@@ -238,66 +285,180 @@
         <div class="progress-fill" id="progressFill"></div>
     </div>
 
-    <div class="map-grid" id="mapGrid">
-        <!-- Generated by JS -->
+    <div class="days-list" id="daysList"></div>
+
+    <!-- Exercises popup -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <div class="popup-header">
+                <span id="popupTitle"></span>
+                <button class="popup-close" onclick="closePopup()">✕</button>
+            </div>
+            <div id="popupList"></div>
+        </div>
     </div>
 
     <script>
         const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
         if (uid) localStorage.setItem('last_uid', uid);
 
+        const isTestUser = uid === 'test_user';
+
         async function init() {
             const response = await fetch('../data/tasks.json');
-            const tasks = await response.json();
+            const allTasks = await response.json();
 
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
-            const regDate = localStorage.getItem(`reg_${uid}`);
+            const completed = new Set(progress.completedTasks);
 
-            // Logic for Task of the Day
+            const regDate = localStorage.getItem(`reg_${uid}`);
             let currentDayIdx = 0;
             if (regDate) {
                 const diff = Math.abs(Date.now() - new Date(regDate));
                 currentDayIdx = Math.floor(diff / (1000 * 60 * 60 * 24));
             }
 
-            // Update Header Stats
+            // Group tasks by day
+            const days = {};
+            allTasks.forEach(task => {
+                const d = task.day || 1;
+                if (!days[d]) days[d] = { lessons: [], challenge: null };
+                if (task.type === 'challenge') days[d].challenge = task;
+                else days[d].lessons.push(task);
+            });
+
+            const dayNums = Object.keys(days).map(Number).sort((a, b) => a - b);
+            const totalTasks = allTasks.length;
+            const doneCount = allTasks.filter(t => completed.has(t.id)).length;
+
             document.getElementById('streakVal').textContent = progress.streak;
-            document.getElementById('doneVal').textContent = `${progress.completedTasks.length}/${tasks.length}`;
-            document.getElementById('progressFill').style.width = `${(progress.completedTasks.length / tasks.length) * 100}%`;
+            document.getElementById('doneVal').textContent = `${doneCount}/${totalTasks}`;
+            document.getElementById('progressFill').style.width = `${(doneCount / totalTasks) * 100}%`;
 
-            const grid = document.getElementById('mapGrid');
+            const list = document.getElementById('daysList');
 
-            tasks.forEach((task, index) => {
-                const isDone = progress.completedTasks.includes(task.id);
-                const isCurrent = (index === currentDayIdx);
+            dayNums.forEach((dayNum, idx) => {
+                const { lessons, challenge } = days[dayNum];
 
-                // Дозволяємо доступ до всіх завдань для тестування (якщо uid === 'test_user')
-                const isLocked = uid === 'test_user' ? false : (index > currentDayIdx) && !isDone;
+                // Day is accessible if enough days have passed OR previous challenge completed
+                const prevChallenge = idx > 0 ? days[dayNums[idx - 1]].challenge : null;
+                const prevChallengeDone = prevChallenge ? completed.has(prevChallenge.id) : true;
+                const dayOpen = isTestUser || currentDayIdx >= idx || prevChallengeDone;
 
-                const card = document.createElement('div');
-                card.className = `level-card ${isLocked ? 'locked' : ''}`;
+                // Exercises stats
+                const doneLessons = lessons.filter(t => completed.has(t.id)).length;
+                const allLessonsDone = doneLessons === lessons.length;
 
-                let badge = '';
-                if (isDone) badge = '<span class="status-badge status-done">ВИКОНАНО ✅</span>';
-                else if (isCurrent) badge = '<span class="status-badge status-current">ЗАВЗДАННЯ ДНЯ 🔥</span>';
-                else if (isLocked) badge = '<div class="lock-icon">🔒</div>';
-                else badge = '<span class="status-badge status-locked">МОЖНА ПОВТОРИТИ</span>';
+                // Challenge unlock: first challenge always open; rest need prev challenge done
+                let challengeOpen = false;
+                if (challenge) {
+                    if (!challenge.unlock_after_challenge_id) {
+                        challengeOpen = isTestUser || dayOpen;
+                    } else {
+                        challengeOpen = isTestUser || completed.has(challenge.unlock_after_challenge_id);
+                    }
+                }
+                const challengeDone = challenge ? completed.has(challenge.id) : false;
 
-                card.innerHTML = `
-                    <div class="level-num">ЗАВДАННЯ ${index + 1}</div>
-                    <div class="level-title">${task.title}</div>
-                    ${badge}
+                // Row
+                const row = document.createElement('div');
+                row.className = 'day-row';
+
+                row.innerHTML = `<div class="day-label">День ${dayNum}</div>`;
+
+                // --- Exercises card ---
+                const exCard = document.createElement('div');
+                exCard.className = `day-card exercises-card${dayOpen ? '' : ' locked'}`;
+
+                let exBadge = '';
+                if (allLessonsDone) exBadge = `<span class="status-badge badge-done">Виконано ✅</span>`;
+                else if (dayOpen) exBadge = `<span class="status-badge badge-active">Активно 🔥</span>`;
+                else exBadge = `<span class="status-badge badge-locked">🔒</span>`;
+
+                exCard.innerHTML = `
+                    <div class="card-icon">📚</div>
+                    <div class="card-type">Вправи</div>
+                    <div class="card-mini-progress">${doneLessons} / ${lessons.length} виконано</div>
+                    ${exBadge}
+                `;
+
+                if (dayOpen) {
+                    exCard.onclick = () => openExercisesPopup(dayNum, lessons, completed);
+                }
+
+                // --- Challenge card ---
+                const chCard = document.createElement('div');
+                chCard.className = `day-card challenge-card${challengeOpen ? '' : ' locked'}`;
+
+                let chBadge = '';
+                if (!challenge) {
+                    chBadge = `<span class="status-badge badge-locked">Незабаром</span>`;
+                } else if (challengeDone) {
+                    chBadge = `<span class="status-badge badge-done">Пройдено ✅</span>`;
+                } else if (challengeOpen) {
+                    chBadge = `<span class="status-badge badge-challenge-active">Відкрито ⚡</span>`;
+                } else {
+                    chBadge = `<span class="status-badge badge-locked">🔒</span>`;
+                }
+
+                chCard.innerHTML = `
+                    <div class="card-icon">⚡</div>
+                    <div class="card-type">Челендж</div>
+                    <div class="card-mini-progress">${challenge ? (challengeDone ? '3 зірки' : 'До 3 зірок') : 'Скоро'}</div>
+                    ${chBadge}
+                `;
+
+                if (challenge && challengeOpen) {
+                    chCard.onclick = () => {
+                        window.location.href = `task.html?uid=${uid}&task=${challenge.id}`;
+                    };
+                }
+
+                row.appendChild(exCard);
+                row.appendChild(chCard);
+                list.appendChild(row);
+            });
+        }
+
+        function openExercisesPopup(dayNum, lessons, completed) {
+            document.getElementById('popupTitle').textContent = `День ${dayNum} · вправи`;
+            const listEl = document.getElementById('popupList');
+            listEl.innerHTML = '';
+
+            lessons.forEach((task, idx) => {
+                const isDone = completed.has(task.id);
+                const prevDone = idx === 0 || completed.has(lessons[idx - 1].id);
+                const isLocked = !isTestUser && !isDone && !prevDone;
+
+                const item = document.createElement('div');
+                item.className = `exercise-item${isLocked ? ' locked' : ''}${isDone ? ' done' : ''}`;
+
+                const statusIcon = isDone ? '✅' : isLocked ? '🔒' : '▶️';
+                const shortTitle = task.title.replace(/^День \d+ — /, '');
+                item.innerHTML = `
+                    <span class="exercise-status">${statusIcon}</span>
+                    <span class="exercise-title">Вправа ${task.order_in_day} · ${shortTitle}</span>
                 `;
 
                 if (!isLocked) {
-                    card.onclick = () => {
+                    item.onclick = () => {
                         window.location.href = `task.html?uid=${uid}&task=${task.id}`;
                     };
                 }
 
-                grid.appendChild(card);
+                listEl.appendChild(item);
             });
+
+            document.getElementById('popupOverlay').classList.add('open');
         }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').classList.remove('open');
+        }
+
+        document.getElementById('popupOverlay').addEventListener('click', e => {
+            if (e.target === e.currentTarget) closePopup();
+        });
 
         init();
     </script>
