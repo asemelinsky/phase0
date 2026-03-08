@@ -192,13 +192,15 @@
 
         #gameCanvas {
             width: 100%;
-            height: 100%;
+            flex: 1;
+            min-height: 0;
             background: #1e293b;
             border-top-left-radius: 1.5rem;
             border-top-right-radius: 1.5rem;
         }
 
         .controls {
+            flex-shrink: 0;
             padding: 1.5rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
