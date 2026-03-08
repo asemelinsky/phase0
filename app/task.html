@@ -1232,6 +1232,17 @@
                 }
             }
 
+            if (pattern.penZones) {
+                for (const zone of pattern.penZones) {
+                    const hasStroke = log.some(e =>
+                        e.type === 'move' && e.penDown &&
+                        e.x >= zone.xMin && e.x <= zone.xMax
+                    );
+                    if (!hasStroke)
+                        return { ok: false, msg: zone.msg || `✏️ Намалюй фігуру в зоні x=${zone.xMin}–${zone.xMax}!` };
+                }
+            }
+
             return { ok: true };
         }
 
