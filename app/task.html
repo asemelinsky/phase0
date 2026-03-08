@@ -178,6 +178,8 @@
         .sidebar {
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
         }
 
         .preview-panel {
@@ -330,7 +332,8 @@
         }
 
         /* ===== MOBILE RESPONSIVE ===== */
-        @media (pointer: coarse), (max-width: 1024px) {
+        /* Portrait touch devices (phone/tablet) + very small screens */
+        @media (pointer: coarse) and (orientation: portrait), (max-width: 768px) {
             body {
                 height: auto;
                 min-height: 100vh;
