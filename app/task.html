@@ -518,7 +518,17 @@
             workspace = Blockly.inject('blocklyDiv', {
                 toolbox: toolbox,
                 theme: Blockly.Themes.Dark,
-                grid: { snap: true }
+                grid: { snap: true },
+                trashcan: true,
+                scrollbars: true,
+                zoom: {
+                    controls: true,
+                    wheel: true,
+                    startScale: 1.0,
+                    maxScale: 2,
+                    minScale: 0.4,
+                    scaleSpeed: 1.2
+                }
             });
         }
 
