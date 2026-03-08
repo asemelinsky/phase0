@@ -79,6 +79,10 @@
             left: 0;
             white-space: nowrap;
             transition: opacity 0.6s ease, transform 0.6s ease;
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .logo-text.hidden {
@@ -830,6 +834,7 @@
         async function runCode(trigger = 'flag') {
             const topBlocks = workspace.getTopBlocks(true);
             charPos = { x: currentTask.startX, y: currentTask.startY };
+            stepCount = 0;
             document.getElementById('successOverlay').classList.remove('active');
 
             for (let block of topBlocks) {
@@ -872,6 +877,7 @@
             if (['repair_bridge', 'hit_hammer', 'use_water', 'strike_sword'].includes(type)) {
                 return new Promise(r => setTimeout(() => r(false), 500));
             }
+            playStepSound();
             return new Promise(resolve => {
                 const step = 50;
                 let frames = 10;
@@ -925,6 +931,47 @@
             return false;
         }
 
+        // --- Sounds ---
+        let stepCount = 0;
+
+        function playSuccessSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [261, 329, 392, 523]; // C4→E4→G4→C5 «магічна гамма»
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    const t = ctx.currentTime + i * 0.18;
+                    gain.gain.setValueAtTime(0.18, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+                    osc.start(t);
+                    osc.stop(t + 0.25);
+                });
+            } catch(e) {}
+        }
+
+        function playStepSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'square';
+                osc.frequency.value = 220 + Math.floor(stepCount / 2) * 20;
+                const t = ctx.currentTime;
+                gain.gain.setValueAtTime(0.08, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+                osc.start(t);
+                osc.stop(t + 0.12);
+                stepCount++;
+            } catch(e) {}
+        }
+
         // --- Interaction ---
         function playFailSound() {
             try {
@@ -975,6 +1022,7 @@
             const isCorrect = successRun && reachedTarget();
 
             if (isCorrect) {
+                playSuccessSound();
                 document.getElementById('successOverlay').classList.add('active');
                 let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "completedDays":[], "streak":0, "stars":0}');
                 if (!progress.completedDays) progress.completedDays = [];
