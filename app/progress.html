@@ -251,6 +251,34 @@
 
         .exercise-title { font-size: 0.9rem; font-weight: 500; flex: 1; }
 
+        /* ===== LIGHT THEME ===== */
+        body.light-theme {
+            --bg: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text: #0f172a;
+            --glass-border: rgba(0, 0, 0, 0.1);
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.07) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.07) 0%, transparent 40%);
+        }
+
+        body.light-theme .day-label { color: #475569; }
+        body.light-theme .popup { background: #ffffff; }
+        body.light-theme .card-mini-progress { color: #475569; }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 0.4rem 0.9rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .theme-toggle:hover { opacity: 0.8; }
+
         /* ===== MOBILE ===== */
         @media (max-width: 600px) {
             body { padding: 1rem; }
@@ -279,6 +307,7 @@
                 <div style="font-size: 0.7rem; opacity: 0.6;">ВИКОНАНО</div>
             </div>
         </div>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
     </header>
 
     <div class="progress-container">
@@ -299,6 +328,20 @@
     </div>
 
     <script>
+        // Theme toggle
+        (function() {
+            if (localStorage.getItem('pageTheme') === 'light') {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeToggle').textContent = '☀️';
+            }
+        })();
+
+        function toggleTheme() {
+            const isLight = document.body.classList.toggle('light-theme');
+            document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
+            localStorage.setItem('pageTheme', isLight ? 'light' : 'dark');
+        }
+
         const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
         if (uid) localStorage.setItem('last_uid', uid);
 
