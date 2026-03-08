@@ -690,7 +690,9 @@
                     { "type": "if_wall", "message0": "якщо стіна %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
                     { "type": "if_dragon_fire", "message0": "якщо вогонь дракона %1 %2", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
                     { "type": "if_else_safe", "message0": "якщо безпечно %1 %2 інакше %3 %4", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }, { "type": "input_dummy" }, { "type": "input_statement", "name": "ELSE" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
-                    { "type": "if_else_bridge_ok", "message0": "якщо міст цілий %1 %2 інакше %3 %4", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }, { "type": "input_dummy" }, { "type": "input_statement", "name": "ELSE" }], "previousStatement": null, "nextStatement": null, "colour": 210 }
+                    { "type": "if_else_bridge_ok", "message0": "якщо міст цілий %1 %2 інакше %3 %4", "args0": [{ "type": "input_dummy" }, { "type": "input_statement", "name": "DO" }, { "type": "input_dummy" }, { "type": "input_statement", "name": "ELSE" }], "previousStatement": null, "nextStatement": null, "colour": 210 },
+                    { "type": "pencil_down", "message0": "✏️ олівець вниз", "previousStatement": null, "nextStatement": null, "colour": 180 },
+                    { "type": "pencil_up", "message0": "✏️ олівець вгору", "previousStatement": null, "nextStatement": null, "colour": 180 }
                 ]);
             }
 
@@ -808,6 +810,20 @@
                     });
                 }
 
+                // Pencil trail
+                if (pencilTrail.length > 0) {
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 4;
+                    ctx.lineCap = 'round';
+                    pencilTrail.forEach(seg => {
+                        ctx.beginPath();
+                        ctx.moveTo(seg.x1 + 25, seg.y1 + 25);
+                        ctx.lineTo(seg.x2 + 25, seg.y2 + 25);
+                        ctx.stroke();
+                    });
+                    ctx.lineWidth = 1;
+                }
+
                 // Character Mapping
                 ctx.font = '40px serif';
                 const charEmojis = {
@@ -873,6 +889,10 @@
                 } else if (type === 'say_alert') {
                     const text = block.getFieldValue('TEXT') || 'Привіт!';
                     alert(text);
+                } else if (type === 'pencil_down') {
+                    pencilDown = true;
+                } else if (type === 'pencil_up') {
+                    pencilDown = false;
                 } else if (type === 'repair_bridge' || type === 'hit_hammer' || type === 'use_water' || type === 'strike_sword') {
                     await move(type);
                 } else if (type === 'if_obstacle') {
@@ -930,6 +950,8 @@
             const topBlocks = workspace.getTopBlocks(true);
             charPos = { x: currentTask.startX, y: currentTask.startY };
             stepCount = 0;
+            pencilDown = false;
+            pencilTrail = [];
             document.getElementById('successOverlay').classList.remove('active');
 
             for (let block of topBlocks) {
@@ -973,6 +995,8 @@
                 return new Promise(r => setTimeout(() => r(false), 500));
             }
             playStepSound();
+            const trailStartX = charPos.x;
+            const trailStartY = charPos.y;
             return new Promise(resolve => {
                 const step = 50;
                 let frames = 10;
@@ -993,6 +1017,11 @@
                         clearInterval(interval);
                         charPos.x = Math.round(charPos.x / 50) * 50;
                         charPos.y = Math.round(charPos.y / 50) * 50;
+
+                        // Record pencil trail segment
+                        if (pencilDown && type !== 'jump') {
+                            pencilTrail.push({ x1: trailStartX, y1: trailStartY, x2: charPos.x, y2: charPos.y });
+                        }
 
                         // Якщо після кроку ми в перешкоді - повертаємо true (hit)
                         if (type !== 'jump' && checkCollision()) {
@@ -1025,6 +1054,10 @@
             }
             return false;
         }
+
+        // --- Pencil state ---
+        let pencilDown = false;
+        let pencilTrail = [];
 
         // --- Sounds ---
         let stepCount = 0;
