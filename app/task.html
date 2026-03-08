@@ -393,6 +393,7 @@
 
         <div class="sidebar">
             <div class="preview-panel">
+                <button id="themeToggle" title="Світло/Темно" onclick="toggleCanvasTheme()" style="position:absolute;top:0.5rem;right:0.5rem;background:rgba(0,0,0,0.3);border:none;border-radius:50%;width:2rem;height:2rem;cursor:pointer;font-size:1rem;z-index:10;">🌙</button>
                 <canvas id="gameCanvas"></canvas>
                 <div class="success-overlay" id="successOverlay">
                     <div class="success-icon">🎉</div>
@@ -452,6 +453,7 @@
                 initBlockly();
                 updateUI();
                 initCanvas();
+                document.getElementById('themeToggle').textContent = canvasTheme === 'dark' ? '🌙' : '☀️';
             } catch (err) {
                 console.error("Failed to load task:", err);
                 document.getElementById('taskTitle').innerText = "Помилка завантаження";
@@ -532,6 +534,14 @@
             });
         }
 
+        let canvasTheme = localStorage.getItem('canvasTheme') || 'dark';
+
+        function toggleCanvasTheme() {
+            canvasTheme = canvasTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('canvasTheme', canvasTheme);
+            document.getElementById('themeToggle').textContent = canvasTheme === 'dark' ? '🌙' : '☀️';
+        }
+
         function initCanvas() {
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
@@ -558,11 +568,11 @@
 
             function draw() {
                 ctx.clearRect(0, 0, fullW, fullH);
-                ctx.fillStyle = '#1e293b';
+                ctx.fillStyle = canvasTheme === 'light' ? '#f0f4f8' : '#1e293b';
                 ctx.fillRect(0, 0, fullW, fullH);
 
                 // Draw Grid across the full canvas area so no blank strips appear
-                ctx.strokeStyle = 'rgba(51, 65, 85, 0.5)';
+                ctx.strokeStyle = canvasTheme === 'light' ? 'rgba(100, 116, 139, 0.6)' : 'rgba(51, 65, 85, 0.5)';
                 for (let x = 0; x < fullW; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, fullH); ctx.stroke(); }
                 for (let y = 0; y < fullH; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(fullW, y); ctx.stroke(); }
 
