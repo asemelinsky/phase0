@@ -10,8 +10,12 @@
     "hint_1": "Бачиш синій блок? Він допомагає рухатись вправо!",
     "hint_2": "Перетягни блок 'вправо' у робочу область.",
     "hint_3": "Постав один блок 'вправо' і натисни прапорець!",
-    "available_blocks": ["move_right"],
-    "solution": ["move_right"],
+    "available_blocks": [
+      "move_right"
+    ],
+    "solution": [
+      "move_right"
+    ],
     "stars": 1,
     "unlock_condition": "immediate",
     "unlock_after_challenge_id": "",
@@ -39,8 +43,12 @@
     "hint_1": "З'явився новий блок! Стрілка вгору — це рух вгору.",
     "hint_2": "Перетягни блок 'вгору' у робочу область.",
     "hint_3": "Один блок 'вгору' — і Кеша на гілочці!",
-    "available_blocks": ["move_up"],
-    "solution": ["move_up"],
+    "available_blocks": [
+      "move_up"
+    ],
+    "solution": [
+      "move_up"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -68,8 +76,12 @@
     "hint_1": "Новий блок! Стрілка вліво — це рух вліво.",
     "hint_2": "Перетягни блок 'вліво' у робочу область.",
     "hint_3": "Один блок 'вліво' — і бджілка біля квіточки!",
-    "available_blocks": ["move_left"],
-    "solution": ["move_left"],
+    "available_blocks": [
+      "move_left"
+    ],
+    "solution": [
+      "move_left"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -97,8 +109,12 @@
     "hint_1": "Ще один новий блок! Стрілка вниз — це рух вниз.",
     "hint_2": "Перетягни блок 'вниз' у робочу область.",
     "hint_3": "Один блок 'вниз' — і робот заряджається!",
-    "available_blocks": ["move_down"],
-    "solution": ["move_down"],
+    "available_blocks": [
+      "move_down"
+    ],
+    "solution": [
+      "move_down"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -126,8 +142,22 @@
     "hint_1": "Шлях не прямий! Спробуй спочатку піти вгору, потім вправо.",
     "hint_2": "Піди вгору щоб обійти паркан зверху, а потім рухайся до зірочки!",
     "hint_3": "Один варіант: вправо → вгору → вправо → вправо → вправо → вгору → вгору → вправо.",
-    "available_blocks": ["move_right", "move_left", "move_up", "move_down"],
-    "solution": ["move_right", "move_up", "move_right", "move_right", "move_right", "move_up", "move_up", "move_right"],
+    "available_blocks": [
+      "move_right",
+      "move_left",
+      "move_up",
+      "move_down"
+    ],
+    "solution": [
+      "move_right",
+      "move_up",
+      "move_right",
+      "move_right",
+      "move_right",
+      "move_up",
+      "move_up",
+      "move_right"
+    ],
     "stars": 3,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -140,7 +170,11 @@
     "target_x": 300,
     "target_y": 150,
     "obstacles": [
-      {"x": 150, "y": 300, "type": "fence"}
+      {
+        "x": 150,
+        "y": 300,
+        "type": "fence"
+      }
     ],
     "audio_intro": "О ні! Паркан на шляху! Але я знаю — ти знайдеш дорогу до зірочки!",
     "audio_success": "Неймовірно! Ти знайшов шлях! Ти справжній програміст!",
@@ -157,8 +191,13 @@
     "hint_1": "Один блок — один крок. Скільки блоків треба для двох кроків?",
     "hint_2": "Поклади два блоки 'вправо' один під одним у робочу область.",
     "hint_3": "Два блоки 'вправо' підряд — і котик добіжить до зірочки!",
-    "available_blocks": ["move_right"],
-    "solution": ["move_right", "move_right"],
+    "available_blocks": [
+      "move_right"
+    ],
+    "solution": [
+      "move_right",
+      "move_right"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -186,8 +225,14 @@
     "hint_1": "Кісточка збоку і вище. Спочатку — вправо, потім — вгору.",
     "hint_2": "Поклади блок 'вправо', а під ним — блок 'вгору'.",
     "hint_3": "Рішення: вправо → вгору. Два блоки — два різних напрямки!",
-    "available_blocks": ["move_right", "move_up"],
-    "solution": ["move_right", "move_up"],
+    "available_blocks": [
+      "move_right",
+      "move_up"
+    ],
+    "solution": [
+      "move_right",
+      "move_up"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -215,8 +260,15 @@
     "hint_1": "Листочок вище і праворуч. Спочатку два кроки вправо, потім один вгору.",
     "hint_2": "Тобі треба три блоки: вправо, вправо, вгору.",
     "hint_3": "Рішення: вправо → вправо → вгору. Три блоки — і жабка на листочку!",
-    "available_blocks": ["move_right", "move_up"],
-    "solution": ["move_right", "move_right", "move_up"],
+    "available_blocks": [
+      "move_right",
+      "move_up"
+    ],
+    "solution": [
+      "move_right",
+      "move_right",
+      "move_up"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -244,8 +296,18 @@
     "hint_1": "Паркан прямо на шляху! Може, обійти зверху?",
     "hint_2": "Спочатку крок вгору, потім три кроки вправо, потім крок вниз.",
     "hint_3": "Рішення: вгору → вправо → вправо → вправо → вниз. П'ять блоків!",
-    "available_blocks": ["move_right", "move_up", "move_down"],
-    "solution": ["move_up", "move_right", "move_right", "move_right", "move_down"],
+    "available_blocks": [
+      "move_right",
+      "move_up",
+      "move_down"
+    ],
+    "solution": [
+      "move_up",
+      "move_right",
+      "move_right",
+      "move_right",
+      "move_down"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -258,7 +320,11 @@
     "target_x": 200,
     "target_y": 300,
     "obstacles": [
-      {"x": 100, "y": 300, "type": "fence"}
+      {
+        "x": 100,
+        "y": 300,
+        "type": "fence"
+      }
     ],
     "audio_intro": "Морква! Але паркан заважає. Треба придумати шлях навколо!",
     "audio_success": "Хрум! Морквяний сік! Ти навчився обходити перешкоди — це дуже важливе вміння!",
@@ -275,8 +341,20 @@
     "hint_1": "Два паркани! Обходь кожен окремо. Шукай шлях зверху або збоку.",
     "hint_2": "Перший паркан — обійди вгору. Другий паркан — теж можна обійти вгору.",
     "hint_3": "Один варіант: вгору → вправо → вправо → вправо → вгору → вправо.",
-    "available_blocks": ["move_right", "move_left", "move_up", "move_down"],
-    "solution": ["move_up", "move_right", "move_right", "move_right", "move_up", "move_right"],
+    "available_blocks": [
+      "move_right",
+      "move_left",
+      "move_up",
+      "move_down"
+    ],
+    "solution": [
+      "move_up",
+      "move_right",
+      "move_right",
+      "move_right",
+      "move_up",
+      "move_right"
+    ],
     "stars": 3,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "challenge_d1",
@@ -286,11 +364,19 @@
     "startX": 50,
     "startY": 300,
     "target_type": "fish",
-    "target_x": 300,
+    "target_x": 250,
     "target_y": 200,
     "obstacles": [
-      {"x": 100, "y": 300, "type": "fence"},
-      {"x": 200, "y": 200, "type": "fence"}
+      {
+        "x": 100,
+        "y": 300,
+        "type": "fence"
+      },
+      {
+        "x": 200,
+        "y": 200,
+        "type": "fence"
+      }
     ],
     "audio_intro": "Рибка! Але тут два паркани... Я вірю в тебе — ти знайдеш шлях!",
     "audio_success": "МЯУ! Свіжа рибка! Ти — справжній програміст-стратег!",
@@ -307,8 +393,15 @@
     "hint_1": "Бачиш число всередині блоку? Клікни на нього і впиши скільки кроків треба зробити.",
     "hint_2": "Перетягни блок 'вправо' у робочу область і зміни число на 3.",
     "hint_3": "Один блок 'вправо' з числом 3 — і равлик дозповзе до листочка!",
-    "available_blocks": ["move_right_steps"],
-    "solution": [{"block": "move_right_steps", "steps": 3}],
+    "available_blocks": [
+      "move_right_steps"
+    ],
+    "solution": [
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      }
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -336,8 +429,15 @@
     "hint_1": "Зірочка вище черепашки. Порахуй клітинки між ними — це число треба вписати в блок.",
     "hint_2": "Клікни на число всередині блоку і зміни його. Скільки клітинок до зірочки?",
     "hint_3": "Один блок 'вгору' з числом 4 — і черепашка дістається до зірочки!",
-    "available_blocks": ["move_up_steps"],
-    "solution": [{"block": "move_up_steps", "steps": 4}],
+    "available_blocks": [
+      "move_up_steps"
+    ],
+    "solution": [
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      }
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -365,8 +465,20 @@
     "hint_1": "Квітка праворуч і вище. Спочатку скільки кроків вправо? Потім скільки вгору?",
     "hint_2": "Поклади два блоки: 'вправо з числом' і 'вгору з числом'. Порахуй клітинки для кожного.",
     "hint_3": "Рішення: вправо(3) → вгору(2). Два блоки — і бджілка біля квітки!",
-    "available_blocks": ["move_right_steps", "move_up_steps"],
-    "solution": [{"block": "move_right_steps", "steps": 3}, {"block": "move_up_steps", "steps": 2}],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps"
+    ],
+    "solution": [
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      }
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -394,11 +506,24 @@
     "hint_1": "Паркан на шляху! Вважай клітинки і вписуй число в блок — один блок замінює кілька однакових.",
     "hint_2": "Три блоки: вгору(1), потім вправо скільки треба, потім вниз(1).",
     "hint_3": "Рішення: вгору(1) → вправо(5) → вниз(1). Три блоки замість семи!",
-    "available_blocks": ["move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 1},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_down_steps", "steps": 1}
+      {
+        "block": "move_up_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 1
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -412,7 +537,11 @@
     "target_x": 300,
     "target_y": 300,
     "obstacles": [
-      {"x": 150, "y": 300, "type": "fence"}
+      {
+        "x": 150,
+        "y": 300,
+        "type": "fence"
+      }
     ],
     "audio_intro": "Кісточка! Але паркан заважає... Стривай, у мене є блоки з числами! Це набагато зручніше!",
     "audio_success": "Хрум-хрум! Смакота! Три блоки замість семи — ось чому програмісти люблять числа!",
@@ -429,12 +558,29 @@
     "hint_1": "Два паркани і довгий шлях. Рахуй клітинки до кожної перешкоди.",
     "hint_2": "Перший паркан — обійди зверху. Потім іди вправо до каміння, і знову вгору.",
     "hint_3": "Один варіант: вгору(2) → вправо(4) → вгору(1) → вправо(3). Чотири блоки!",
-    "available_blocks": ["move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_up_steps", "steps": 1},
-      {"block": "move_right_steps", "steps": 3}
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -445,11 +591,19 @@
     "startX": 50,
     "startY": 300,
     "target_type": "fish",
-    "target_x": 350,
+    "target_x": 400,
     "target_y": 150,
     "obstacles": [
-      {"x": 150, "y": 300, "type": "fence"},
-      {"x": 250, "y": 150, "type": "rock"}
+      {
+        "x": 150,
+        "y": 300,
+        "type": "fence"
+      },
+      {
+        "x": 250,
+        "y": 150,
+        "type": "rock"
+      }
     ],
     "audio_intro": "Рибка! Але який довгий шлях... і перешкоди. Добре, що тепер є блоки з числами!",
     "audio_success": "МЯУ! Свіжа рибка! Ти написав коротку і розумну програму — справжній стиль програміста!",
@@ -466,8 +620,14 @@
     "hint_1": "Зірочка праворуч від Пікселя. Який напрямок треба?",
     "hint_2": "Рухайся вправо. Скільки кроків до зірочки?",
     "hint_3": "Два блоки 'вправо' — і Піксель біля зірочки!",
-    "available_blocks": ["move_right", "move_up"],
-    "solution": ["move_right", "move_right"],
+    "available_blocks": [
+      "move_right",
+      "move_up"
+    ],
+    "solution": [
+      "move_right",
+      "move_right"
+    ],
     "stars": 1,
     "unlock_condition": "after_previous",
     "unlock_after_challenge_id": "",
@@ -495,10 +655,19 @@
     "hint_1": "Кристал далеко і вище. Порахуй клітинки у кожному напрямку.",
     "hint_2": "Два блоки з числами: спочатку вправо, потім вгору.",
     "hint_3": "Рішення: вправо(6) → вгору(3). Всього два блоки!",
-    "available_blocks": ["move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "move_right_steps", "steps": 6},
-      {"block": "move_up_steps", "steps": 3}
+      {
+        "block": "move_right_steps",
+        "steps": 6
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -527,11 +696,24 @@
     "hint_1": "Паркан прямо на шляху! Піксель вже знає що робити — обійти зверху.",
     "hint_2": "Три блоки з числами: вгору, потім вправо через весь паркан, потім вниз.",
     "hint_3": "Рішення: вгору(1) → вправо(5) → вниз(1). Три блоки!",
-    "available_blocks": ["move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 1},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_down_steps", "steps": 1}
+      {
+        "block": "move_up_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 1
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -545,7 +727,11 @@
     "target_x": 300,
     "target_y": 300,
     "obstacles": [
-      {"x": 150, "y": 300, "type": "fence"}
+      {
+        "x": 150,
+        "y": 300,
+        "type": "fence"
+      }
     ],
     "audio_intro": "Котику, тримайся! Я іду! Але тут паркан... Нічого, я знаю як обійти!",
     "audio_success": "Ура! Котик врятований! Справжній герой завжди знаходить шлях!",
@@ -562,12 +748,28 @@
     "hint_1": "Два паркани — два обходи. Плануй крок за кроком.",
     "hint_2": "Спочатку піднімись щоб обійти перший паркан, потім іди вправо до другого.",
     "hint_3": "Рішення: вгору(2)→вправо(3)→вгору(1)→вправо(4). Чотири блоки!",
-    "available_blocks": ["move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 1},
-      {"block": "move_right_steps", "steps": 4}
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -578,11 +780,19 @@
     "startX": 50,
     "startY": 350,
     "target_type": "star",
-    "target_x": 350,
+    "target_x": 400,
     "target_y": 200,
     "obstacles": [
-      {"x": 150, "y": 350, "type": "fence"},
-      {"x": 250, "y": 200, "type": "fence"}
+      {
+        "x": 150,
+        "y": 350,
+        "type": "fence"
+      },
+      {
+        "x": 250,
+        "y": 200,
+        "type": "fence"
+      }
     ],
     "audio_intro": "Два паркани! Але я вже досвідчений герой. Разом ми впораємось — головне планувати!",
     "audio_success": "Нарешті вдома! Чотири блоки — і ніякі пастки не страшні!",
@@ -599,14 +809,37 @@
     "hint_1": "Три перешкоди! Розбий шлях на частини — від однієї перешкоди до наступної.",
     "hint_2": "Обходь кожну перешкоду зверху. Рахуй клітинки до кожної.",
     "hint_3": "Один варіант: вгору(2)→вправо(3)→вгору(2)→вправо(3)→вгору(1)→вправо(3). Шість блоків!",
-    "available_blocks": ["move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 1},
-      {"block": "move_right_steps", "steps": 3}
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -617,12 +850,24 @@
     "startX": 50,
     "startY": 350,
     "target_type": "star",
-    "target_x": 400,
+    "target_x": 500,
     "target_y": 100,
     "obstacles": [
-      {"x": 150, "y": 350, "type": "fence"},
-      {"x": 250, "y": 200, "type": "rock"},
-      {"x": 350, "y": 100, "type": "fence"}
+      {
+        "x": 150,
+        "y": 350,
+        "type": "fence"
+      },
+      {
+        "x": 250,
+        "y": 200,
+        "type": "rock"
+      },
+      {
+        "x": 350,
+        "y": 100,
+        "type": "fence"
+      }
     ],
     "audio_intro": "О ні, три перешкоди! Але я вірю в тебе — ти вже справжній програміст. Знайди шлях!",
     "audio_success": "НЕЙМОВІРНО! Ти пройшов увесь лабіринт! Піксель пишається тобою — ти справжній майстер руху!",
@@ -639,11 +884,22 @@
     "hint_1": "Спочатку опусти олівець, потім рухайся — інакше сліду не буде!",
     "hint_2": "Три блоки: олівець вниз → вправо(3) → олівець вгору.",
     "hint_3": "Рішення: pencil_down → move_right(3) → pencil_up.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -672,11 +928,22 @@
     "hint_1": "Тепер лінія вертикальна — рухайся вгору з олівцем.",
     "hint_2": "Три блоки: олівець вниз → вгору(5) → олівець вгору.",
     "hint_3": "Рішення: pencil_down → move_up(5) → pencil_up.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_up_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_up_steps", "steps": 5},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 5
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -705,12 +972,27 @@
     "hint_1": "Опусти олівець один раз і малюй без зупинки: спочатку вправо, потім вгору.",
     "hint_2": "Чотири блоки: олівець вниз → вправо(5) → вгору(4) → олівець вгору.",
     "hint_3": "Рішення: pencil_down → move_right(5) → move_up(4) → pencil_up.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -739,14 +1021,35 @@
     "hint_1": "Сходинка — це два кути поспіль без зупинки олівця.",
     "hint_2": "Шість блоків: олівець вниз → вправо → вгору → вправо → вгору → олівець вгору.",
     "hint_3": "Рішення: pencil_down → right(3) → up(2) → right(3) → up(2) → pencil_up.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -775,16 +1078,43 @@
     "hint_1": "Три ступені — це три повторення руху вправо-вгору.",
     "hint_2": "Кожен ступінь: вправо(3) → вгору(3). Повтори тричі між pencil_down і pencil_up.",
     "hint_3": "Рішення: pencil_down → right(3)→up(3)→right(3)→up(3)→right(3)→up(3) → pencil_up.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -813,12 +1143,27 @@
     "hint_1": "Спочатку опусти олівець, потім рухайся — і лінія з'явиться сама.",
     "hint_2": "Два рухи з олівцем: спочатку вправо, потім вгору. Не забудь підняти олівець наприкінці.",
     "hint_3": "Рішення: олівець вниз → вправо(4) → вгору(3) → олівець вгору. Чотири блоки!",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -847,13 +1192,31 @@
     "hint_1": "Блискавка — це Z-форма. Три рухи: вправо, вниз, вправо.",
     "hint_2": "Опусти олівець і рухайся: вправо → вниз → вправо. Потім підніми олівець.",
     "hint_3": "Рішення: олівець вниз → вправо(4) → вниз(3) → вправо(3) → олівець вгору. П'ять блоків!",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 3},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -882,13 +1245,32 @@
     "hint_1": "Місток — це U-форма. Три рухи: вниз, вправо, вгору.",
     "hint_2": "Починай зверху, іди вниз, перетни дно, потім піднімайся вгору.",
     "hint_3": "Рішення: олівець вниз → вниз(4) → вправо(5) → вгору(4) → олівець вгору. П'ять блоків!",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -917,14 +1299,37 @@
     "hint_1": "Будинок-квадрат: чотири сторони, чотири повороти. Починай вправо.",
     "hint_2": "Вправо → вниз → вліво → вгору. Повернешся туди звідки почав!",
     "hint_3": "Рішення: олівець вниз → вправо(5) → вниз(4) → вліво(5) → вгору(4) → олівець вгору. Шість блоків!",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "move_left_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -953,21 +1358,63 @@
     "hint_1": "Два будинки = два квадрати. Між ними потрібно підняти олівець і перейти.",
     "hint_2": "Намалюй перший квадрат, потім: олівець вгору → перейди вправо → олівець вниз → другий квадрат.",
     "hint_3": "Перший квадрат: вправо(4)→вниз(3)→вліво(4)→вгору(3). Потім перейди вправо(6). Другий — такий самий.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 3},
-      {"block": "move_left_steps", "steps": 4},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 6},
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 3},
-      {"block": "move_left_steps", "steps": 4},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 6
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -996,12 +1443,27 @@
     "hint_1": "Буква L: вниз на всю висоту, потім хвостик вправо.",
     "hint_2": "Два рухи з олівцем: вниз на всю висоту літери, потім вправо на основу.",
     "hint_3": "Рішення: олівець вниз → вниз(5) → вправо(3) → олівець вгору. Три блоки!",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 5},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1030,16 +1492,43 @@
     "hint_1": "Буква П: перекладина вправо, правий стовпчик вниз, повернись і лівий стовпчик вниз.",
     "hint_2": "Після правого стовпчика підніми олівець, перейди вліво і намалюй лівий стовпчик.",
     "hint_3": "Перекладина вправо(4) → вниз(4) → олівець вгору → вліво(4) → олівець вниз → вниз(4).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_left_steps", "steps": 4},
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1068,14 +1557,36 @@
     "hint_1": "Цифра 7: горизонтальна лінія зверху, потім ступінчасто вниз.",
     "hint_2": "Після горизонтальної: вниз, вліво, знову вниз.",
     "hint_3": "Рішення: олівець вниз → вправо(5) → вниз(2) → вліво(2) → вниз(3) → олівець вгору.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_down_steps", "move_left_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_down_steps",
+      "move_left_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_left_steps", "steps": 2},
-      {"block": "move_down_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1104,20 +1615,57 @@
     "hint_1": "Дві літери — два малюнки. Між ними підніми олівець.",
     "hint_2": "Намалюй П (перекладина + 2 стовпчики), потім олівець вгору, перейди і намалюй І (одна лінія).",
     "hint_3": "П: вправо(4)→вниз(4), олівець вгору, вліво(4), олівець вниз, вниз(4). Перехід: олівець вгору, вправо(3), олівець вниз, вниз(4).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_left_steps", "steps": 4},
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1146,30 +1694,97 @@
     "hint_1": "Три літери — малюй по одній. Між кожною підніми олівець і перейди вправо.",
     "hint_2": "К — вертикаль + дві ступінки. О — прямокутник. Д — вертикаль + закруглена права сторона.",
     "hint_3": "Головне: кожна літера окремо, між ними олівець вгору і перехід вправо.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_left_steps", "steps": 3},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -1198,16 +1813,43 @@
     "hint_1": "Хрест — дві лінії окремо. Між ними підніми олівець.",
     "hint_2": "Спочатку горизонтальна, потім олівець вгору, перейди до центру, опусти вертикальну.",
     "hint_3": "Горизонталь: вправо(5). Олівець вгору, вліво(2), вгору(2), олівець вниз, вниз(4).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "pencil_up"},
-      {"block": "move_left_steps", "steps": 2},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1236,18 +1878,50 @@
     "hint_1": "Стрілка: довга горизонтальна лінія, потім дві ступінки на наконечнику.",
     "hint_2": "Намалюй горизонталь, підніми олівець, повернись до наконечника і намалюй дві ступінки.",
     "hint_3": "Горизонталь: вправо(6). Олівець вгору, повернись вліво на 3, олівець вниз, вправо(3) і вниз(2).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 6},
-      {"block": "pencil_up"},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": -3},
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": -3},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 6
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": -3
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": -3
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1276,24 +1950,75 @@
     "hint_1": "Дві фігури окремо: спочатку квадрат стін, потім олівець вгору і трикутник даху.",
     "hint_2": "Стіни — прямокутник з Дня 6. Дах — трикутник із двох ступінок: вправо, вгору, вправо.",
     "hint_3": "Стіни: квадрат вправо(5)→вниз(4)→вліво(5)→вгору(4). Олівець вгору. Дах: вправо(3)→вниз(2)→вліво(1)→вгору(2)→вліво(1)→вниз(2).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_down_steps", "steps": 4},
-      {"block": "move_left_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_left_steps", "steps": 1},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_left_steps", "steps": 1},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1322,17 +2047,48 @@
     "hint_1": "Два етапи: спочатку намалюй стрілку, потім підніми олівець і рухайся до зірочки.",
     "hint_2": "Стрілка: вправо і дві ступінки. Потім олівець вгору і перейди до зірочки без олівця.",
     "hint_3": "Стрілка: вправо(3)→вгору(2)→вліво(3)→вниз(2)→вліво(3). Олівець вгору. Рух: вправо(5)→вгору(4).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": -3},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": -3},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 4}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": -3
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": -3
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1361,18 +2117,51 @@
     "hint_1": "",
     "hint_2": "",
     "hint_3": "",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_left_steps", "steps": 2},
-      {"block": "move_down_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 5}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 5
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -1386,8 +2175,16 @@
     "target_x": 350,
     "target_y": 350,
     "obstacles": [
-      {"x": 200, "y": 150, "type": "fence"},
-      {"x": 200, "y": 250, "type": "rock"}
+      {
+        "x": 200,
+        "y": 150,
+        "type": "fence"
+      },
+      {
+        "x": 200,
+        "y": 250,
+        "type": "rock"
+      }
     ],
     "audio_intro": "Секретна кімната! Бачу знак хреста на стіні. Намалюю його і знайду вихід до зірки!",
     "audio_success": "Вихід знайдено! Піксель справжній дослідник-програміст. День 8 пройдено!",
@@ -1404,10 +2201,19 @@
     "hint_1": "Знак Ендеру праворуч і вище. Порахуй клітинки в кожному напрямку.",
     "hint_2": "Два блоки: спочатку вправо, потім вгору.",
     "hint_3": "Рішення: вправо(5) → вгору(4). Всього два блоки!",
-    "available_blocks": ["move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 4}
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1436,11 +2242,24 @@
     "hint_1": "Камінь прямо на шляху. Як обійти?",
     "hint_2": "Піднімись над каменем, пройди вправо, спустись до скрині.",
     "hint_3": "Рішення: вгору(2) → вправо(6) → вниз(2). Три блоки!",
-    "available_blocks": ["move_right_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 6},
-      {"block": "move_down_steps", "steps": 2}
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 6
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1454,7 +2273,11 @@
     "target_x": 350,
     "target_y": 300,
     "obstacles": [
-      {"x": 150, "y": 300, "type": "rock"}
+      {
+        "x": 150,
+        "y": 300,
+        "type": "rock"
+      }
     ],
     "audio_intro": "Скриня зі скарбами! Але кам'яний блок заважає. Час шукати обхідний шлях!",
     "audio_success": "Скриня відкрита! Всередині — магічний кристал Ендеру! Ти незупинний!",
@@ -1471,18 +2294,51 @@
     "hint_1": "Дві частини: прямокутник і вертикальна лінія всередині. Між ними підніми олівець.",
     "hint_2": "Намалюй прямокутник вправо(4)→вниз(5)→вліво(4)→вгору(5), потім підніми олівець і намалюй лінію посередині.",
     "hint_3": "Прямокутник: right(4)→down(5)→left(4)→up(5). Олівець вгору, вправо(2), олівець вниз, вниз(5).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 5},
-      {"block": "move_left_steps", "steps": 4},
-      {"block": "move_up_steps", "steps": 5},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_down_steps", "steps": 5},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 5
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 5
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1511,16 +2367,43 @@
     "hint_1": "Меч складається з двох частин: вертикальне лезо і горизонтальна гарда.",
     "hint_2": "Намалюй лезо вгору(6), підніми олівець, перейди до середини леза і намалюй гарду вправо(4).",
     "hint_3": "Лезо: вгору(6). Олівець вгору, вниз(3), вліво(2), олівець вниз, вправо(4), олівець вгору.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_up_steps", "steps": 6},
-      {"block": "pencil_up"},
-      {"block": "move_down_steps", "steps": 3},
-      {"block": "move_left_steps", "steps": 2},
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 6
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 2
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1549,13 +2432,33 @@
     "hint_1": "Дві перешкоди. Обходь кожну окремо, рахуй клітинки.",
     "hint_2": "Першу перешкоду (паркан) обійди вгору. Другу (камінь) — теж вгору, але інакше.",
     "hint_3": "Один варіант: вгору(4)→вправо(5)→вгору(1)→вправо(3)→вниз(1). П'ять блоків!",
-    "available_blocks": ["move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 1},
-      {"block": "move_right_steps", "steps": 3},
-      {"block": "move_down_steps", "steps": 1}
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 1
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 1
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -1569,8 +2472,16 @@
     "target_x": 450,
     "target_y": 150,
     "obstacles": [
-      {"x": 150, "y": 350, "type": "fence"},
-      {"x": 350, "y": 150, "type": "rock"}
+      {
+        "x": 150,
+        "y": 350,
+        "type": "fence"
+      },
+      {
+        "x": 350,
+        "y": 150,
+        "type": "rock"
+      }
     ],
     "audio_intro": "Лабіринт Ендеру! Паркан і камінь блокують дорогу. Ворота замку чекають на тебе — знайди шлях!",
     "audio_success": "ВОРОТА ВІДЧИНИЛИСЬ! Піксель пройшов лабіринт Ендеру! Завтра — фінальна битва!",
@@ -1587,10 +2498,19 @@
     "hint_1": "Дракон праворуч і далеко вгорі. Порахуй клітинки в обох напрямках.",
     "hint_2": "Два блоки: спочатку вправо, потім вгору.",
     "hint_3": "Рішення: вправо(5) → вгору(6). Два блоки — і Піксель біля Дракона!",
-    "available_blocks": ["move_right_steps", "move_up_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_up_steps"
+    ],
     "solution": [
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 6}
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 6
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1619,13 +2539,33 @@
     "hint_1": "Дві перешкоди. Шукай шлях між ними зверху.",
     "hint_2": "Піднімись вище першої перешкоди, іди вправо до другої, потім знову вгору і вправо.",
     "hint_3": "Рішення: вгору(3)→вправо(5)→вгору(2)→вправо(2)→вниз(2). П'ять блоків!",
-    "available_blocks": ["move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "move_down_steps", "steps": 2}
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 2
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1639,8 +2579,16 @@
     "target_x": 400,
     "target_y": 150,
     "obstacles": [
-      {"x": 200, "y": 300, "type": "fence"},
-      {"x": 350, "y": 150, "type": "rock"}
+      {
+        "x": 200,
+        "y": 300,
+        "type": "fence"
+      },
+      {
+        "x": 350,
+        "y": 150,
+        "type": "rock"
+      }
     ],
     "audio_intro": "Охорона Дракона! Паркан і камінь блокують підхід. Думай — і знайди дорогу!",
     "audio_success": "Охорону подолано! Знак Ендеру вказує — Дракон зовсім близько!",
@@ -1657,14 +2605,37 @@
     "hint_1": "Портал — це великий прямокутник. Чотири сторони, і повернутись на початок.",
     "hint_2": "Вправо(8) → вниз(7) → вліво(8) → вгору(7). Повернешся туди звідки почав!",
     "hint_3": "Рішення: олівець вниз → вправо(8) → вниз(7) → вліво(8) → вгору(7) → олівець вгору.",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 8},
-      {"block": "move_down_steps", "steps": 7},
-      {"block": "move_left_steps", "steps": 8},
-      {"block": "move_up_steps", "steps": 7},
-      {"block": "pencil_up"}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 8
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 7
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 8
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 7
+      },
+      {
+        "block": "pencil_up"
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1693,19 +2664,55 @@
     "hint_1": "Прапор: вертикальна щогла і прямокутник праворуч. Між ними підніми олівець!",
     "hint_2": "Щогла: вгору(6). Прапор: вправо(4)→вниз(3)→вліво(4)→вгору(3). Потім навігація до зірки.",
     "hint_3": "Щогла: вгору(6). Прапор: right(4)→down(3)→left(4)→up(3). Олівець вгору, вправо(7)→вниз(3).",
-    "available_blocks": ["pencil_down", "pencil_up", "move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "pencil_down",
+      "pencil_up",
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "pencil_down"},
-      {"block": "move_up_steps", "steps": 6},
-      {"block": "pencil_up"},
-      {"block": "pencil_down"},
-      {"block": "move_right_steps", "steps": 4},
-      {"block": "move_down_steps", "steps": 3},
-      {"block": "move_left_steps", "steps": 4},
-      {"block": "move_up_steps", "steps": 3},
-      {"block": "pencil_up"},
-      {"block": "move_right_steps", "steps": 7},
-      {"block": "move_down_steps", "steps": 3}
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 6
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "pencil_down"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      },
+      {
+        "block": "move_left_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 3
+      },
+      {
+        "block": "pencil_up"
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 7
+      },
+      {
+        "block": "move_down_steps",
+        "steps": 3
+      }
     ],
     "stars": 1,
     "unlock_condition": "after_previous",
@@ -1734,14 +2741,37 @@
     "hint_1": "Три перешкоди по дорозі до Дракона. Обходь кожну, рахуй клітинки.",
     "hint_2": "Піднімись вище першої перешкоди, іди вправо обережно між другою і третьою.",
     "hint_3": "Один варіант: вгору(4)→вправо(5)→вгору(2)→вправо(2)→вгору(2)→вправо(3). Шість блоків!",
-    "available_blocks": ["move_right_steps", "move_left_steps", "move_up_steps", "move_down_steps"],
+    "available_blocks": [
+      "move_right_steps",
+      "move_left_steps",
+      "move_up_steps",
+      "move_down_steps"
+    ],
     "solution": [
-      {"block": "move_up_steps", "steps": 4},
-      {"block": "move_right_steps", "steps": 5},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 2},
-      {"block": "move_up_steps", "steps": 2},
-      {"block": "move_right_steps", "steps": 3}
+      {
+        "block": "move_up_steps",
+        "steps": 4
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 5
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_up_steps",
+        "steps": 2
+      },
+      {
+        "block": "move_right_steps",
+        "steps": 3
+      }
     ],
     "stars": 3,
     "unlock_condition": "after_previous",
@@ -1755,9 +2785,21 @@
     "target_x": 550,
     "target_y": 50,
     "obstacles": [
-      {"x": 150, "y": 450, "type": "fence"},
-      {"x": 300, "y": 250, "type": "rock"},
-      {"x": 450, "y": 150, "type": "fire"}
+      {
+        "x": 150,
+        "y": 450,
+        "type": "fence"
+      },
+      {
+        "x": 300,
+        "y": 250,
+        "type": "rock"
+      },
+      {
+        "x": 450,
+        "y": 150,
+        "type": "fire"
+      }
     ],
     "audio_intro": "ФІНАЛЬНА БИТВА! Три перешкоди, один шлях, один переможець. Ти готовий? ВПЕРЕД!",
     "audio_success": "ПЕРЕМОГА! ПІКСЕЛЬ ПЕРЕМІГ ЕНДЕР-ДРАКОНА! Ти пройшов увесь курс Кодомандри — ти справжній програміст! ВІТАЄМО!",
