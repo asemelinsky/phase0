@@ -291,6 +291,36 @@
         }
         .bp-btns { display: flex; gap: 0.5rem; justify-content: flex-end; }
 
+        /* Intro overlay (new element presentation) */
+        #introOverlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            border-radius: 1.5rem;
+        }
+        #introOverlay.active { display: flex; }
+        .intro-text {
+            color: var(--primary-light);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            text-align: center;
+            padding: 0 2rem;
+            max-width: 340px;
+            line-height: 1.5;
+            animation: introPulse 2.2s ease-in-out infinite;
+        }
+        @keyframes introPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.65; transform: scale(1.05); }
+        }
+
         @keyframes shake {
             0%,100% { transform: translateX(0); }
             15%      { transform: translateX(-8px) rotate(-2deg); }
@@ -504,6 +534,10 @@
 
         <div id="blocklyArea">
             <div id="blocklyDiv"></div>
+            <div id="introOverlay">
+                <div class="intro-text" id="introText"></div>
+                <button class="btn-run" id="introOk" style="font-size:0.95rem;padding:0.6rem 1.8rem">Зрозумів! 👍</button>
+            </div>
         </div>
 
         <div class="sidebar">
@@ -604,6 +638,19 @@
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "streak":0}');
             document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
             document.getElementById('starsLabel').innerText = `⭐ ${progress.stars || 0}`;
+
+            // Show intro overlay for new element presentation (once per task per user)
+            if (currentTask.intro_overlay) {
+                const introKey = `intro_${currentTask.id}_${uid}`;
+                if (!localStorage.getItem(introKey)) {
+                    document.getElementById('introText').textContent = currentTask.intro_overlay;
+                    document.getElementById('introOverlay').classList.add('active');
+                    document.getElementById('introOk').onclick = () => {
+                        localStorage.setItem(introKey, '1');
+                        document.getElementById('introOverlay').classList.remove('active');
+                    };
+                }
+            }
         }
 
         function initBlockly() {
