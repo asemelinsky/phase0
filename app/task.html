@@ -870,13 +870,16 @@
 
                 if (type.endsWith('_steps')) {
                     const baseType = type.replace('_steps', '');
+                    const dir = baseType.replace('move_', '');
                     const steps = parseInt(block.getFieldValue('STEPS')) || 1;
                     for (let i = 0; i < steps; i++) {
+                        moveLog.push({type: 'move', dir, penDown: pencilDown});
                         const hit = await move(baseType);
                         if (hit) return false;
                         if (reachedTarget()) return true;
                     }
                 } else if (type.startsWith('move_') || type === 'jump') {
+                    if (type !== 'jump') moveLog.push({type: 'move', dir: type.replace('move_', ''), penDown: pencilDown});
                     const hitObstacle = await move(type);
                     if (hitObstacle) return false;
                 } else if (type === 'repeat_3' || type === 'repeat_5' || type === 'always') {
@@ -891,8 +894,10 @@
                     alert(text);
                 } else if (type === 'pencil_down') {
                     pencilDown = true;
+                    moveLog.push({type: 'pen', down: true});
                 } else if (type === 'pencil_up') {
                     pencilDown = false;
+                    moveLog.push({type: 'pen', down: false});
                 } else if (type === 'repair_bridge' || type === 'hit_hammer' || type === 'use_water' || type === 'strike_sword') {
                     await move(type);
                 } else if (type === 'if_obstacle') {
@@ -952,6 +957,7 @@
             stepCount = 0;
             pencilDown = false;
             pencilTrail = [];
+            moveLog = [];
             document.getElementById('successOverlay').classList.remove('active');
 
             for (let block of topBlocks) {
@@ -1058,6 +1064,7 @@
         // --- Pencil state ---
         let pencilDown = false;
         let pencilTrail = [];
+        let moveLog = []; // [{type:'move', dir:'right', penDown:bool} | {type:'pen', down:bool}]
 
         // --- Sounds ---
         let stepCount = 0;
@@ -1129,6 +1136,79 @@
             panel.addEventListener('animationend', () => panel.classList.remove('shake'), { once: true });
         }
 
+        // --- Drawing validation ---
+        function getPenSegments(log) {
+            const segs = []; let cur = [], inPen = false;
+            for (const e of log) {
+                if (e.type === 'pen') {
+                    if (e.down) { inPen = true; }
+                    else { if (cur.length) { segs.push(cur); cur = []; } inPen = false; }
+                } else if (e.type === 'move' && inPen) { cur.push(e.dir); }
+            }
+            if (cur.length) segs.push(cur);
+            return segs;
+        }
+
+        function mergeDirs(dirs) {
+            if (!dirs.length) return [];
+            const r = [{dir: dirs[0], count: 1}];
+            for (let i = 1; i < dirs.length; i++) {
+                if (dirs[i] === r[r.length-1].dir) r[r.length-1].count++;
+                else r.push({dir: dirs[i], count: 1});
+            }
+            return r;
+        }
+
+        function isClosedShape(dirs) {
+            let x = 0, y = 0;
+            for (const d of dirs) {
+                if (d === 'right') x++; else if (d === 'left') x--;
+                else if (d === 'up') y--; else if (d === 'down') y++;
+            }
+            return x === 0 && y === 0;
+        }
+
+        function isStairs(dirs, count) {
+            const m = mergeDirs(dirs);
+            if (m.length !== count * 2) return false;
+            const size = m[0].count;
+            if (!m.every(s => s.count === size)) return false;
+            const d1 = m[0].dir, d2 = m[1].dir;
+            if (d1 === d2) return false;
+            for (let i = 0; i < count; i++) {
+                if (m[i*2].dir !== d1 || m[i*2+1].dir !== d2) return false;
+            }
+            return true;
+        }
+
+        function validateDrawing(pattern, log) {
+            if (pattern.requirePen && !log.some(e => e.type === 'move' && e.penDown))
+                return { ok: false, msg: '✏️ Щоб намалювати — спочатку опусти олівець!' };
+
+            const segs = getPenSegments(log);
+
+            if (pattern.requireGap && segs.length < 2)
+                return { ok: false, msg: '✏️ Між фігурами підніми олівець!' };
+
+            if (pattern.figures && segs.length < pattern.figures)
+                return { ok: false, msg: `Намалюй ${pattern.figures} фігури окремо!` };
+
+            if (pattern.figureType === 'stairs') {
+                if (!isStairs(segs.flat(), pattern.stairCount || 3))
+                    return { ok: false, msg: '🪜 Намалюй сходинки: чергуй два напрямки рівними відрізками!' };
+            }
+
+            if (pattern.figureType === 'closedShape') {
+                const toCheck = pattern.figures ? segs.slice(0, pattern.figures) : segs;
+                for (const seg of toCheck) {
+                    if (!isClosedShape(seg))
+                        return { ok: false, msg: '🔲 Фігура не замкнена — герой має повернутись до початкової точки!' };
+                }
+            }
+
+            return { ok: true };
+        }
+
         document.getElementById('runBtn').onclick = async () => {
             // Block duplicate _steps blocks (teaches students to use the number field)
             if (currentTask.available_blocks && currentTask.available_blocks.some(b => b.endsWith('_steps'))) {
@@ -1147,7 +1227,23 @@
 
             const successRun = await runCode('flag');
             await new Promise(r => setTimeout(r, 500));
-            const isCorrect = successRun && reachedTarget();
+            let isCorrect = successRun && reachedTarget();
+
+            // Drawing validation for pencil tasks
+            if (isCorrect && currentTask.drawingPattern) {
+                const drawCheck = validateDrawing(currentTask.drawingPattern, moveLog);
+                if (!drawCheck.ok) {
+                    isCorrect = false;
+                    triggerFailAnimation();
+                    playFailSound();
+                    document.getElementById('hintBox').innerText = drawCheck.msg;
+                    document.getElementById('hintBox').style.color = '#f43f5e';
+                    setTimeout(() => {
+                        document.getElementById('hintBox').style.color = '';
+                        document.getElementById('hintBox').innerText = currentTask.description || '';
+                    }, 4000);
+                }
+            }
 
             if (isCorrect) {
                 playSuccessSound();
