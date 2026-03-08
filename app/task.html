@@ -790,9 +790,11 @@
                     'ender_dragon': '🐉',
                     'fish': '🐟'
                 };
-                ctx.font = '32px serif';
-                const targetEmoji = targetEmojis[currentTask.target_type] || '⭐';
-                ctx.fillText(targetEmoji, currentTask.target_x, currentTask.target_y);
+                if (currentTask.target_type !== 'none') {
+                    ctx.font = '32px serif';
+                    const targetEmoji = targetEmojis[currentTask.target_type] || '⭐';
+                    ctx.fillText(targetEmoji, currentTask.target_x, currentTask.target_y);
+                }
 
                 // Obstacles Mapping
                 if (currentTask.obstacles) {
