@@ -960,6 +960,10 @@
             moveLog = [];
             document.getElementById('successOverlay').classList.remove('active');
 
+            // If task has event blocks — only run chains connected to event blocks
+            const taskUsesEventBlocks = currentTask.available_blocks &&
+                currentTask.available_blocks.some(b => EVENT_BLOCK_TYPES.includes(b));
+
             for (let block of topBlocks) {
                 const type = block.type;
                 if (type === 'event_flag' && trigger === 'flag') {
@@ -968,7 +972,8 @@
                 } else if (type === 'event_click' && trigger === 'click') {
                     const ok = await executeChain(block.getNextBlock());
                     if (!ok) return false;
-                } else if (!EVENT_BLOCK_TYPES.includes(type) && trigger === 'flag') {
+                } else if (!EVENT_BLOCK_TYPES.includes(type) && trigger === 'flag' && !taskUsesEventBlocks) {
+                    // Legacy: tasks without event blocks run all top-level chains
                     const ok = await executeChain(block);
                     if (!ok) return false;
                 }
@@ -1283,11 +1288,12 @@
                     localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
                 }
                 // Navigate to next task
-                const nextTask = allTasks.find(t =>
-                    t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1
-                ) || allTasks.find(t =>
-                    t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1
-                );
+                // From challenge → next day's challenge; from lesson → next lesson or challenge
+                const nextTask = currentTask.type === 'challenge'
+                    ? allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.type === 'challenge')
+                      || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1)
+                    : allTasks.find(t => t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1)
+                      || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1);
                 const nextBtn = document.getElementById('nextBtn');
                 if (nextTask) {
                     nextBtn.onclick = () => location.href = `task.html?task=${nextTask.id}&uid=${uid}`;
