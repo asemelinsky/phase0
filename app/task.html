@@ -507,6 +507,104 @@
                 flex-shrink: 0;
             }
         }
+
+        /* Save bar for Day 5+ */
+        #saveBar {
+            display: none;
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            z-index: 50;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        #saveBar.visible { display: flex; }
+        .btn-save-action {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #e2e8f0;
+            font-size: 0.82rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            min-height: 2.4rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-save-action:hover {
+            background: rgba(99, 102, 241, 0.35);
+            border-color: var(--primary-light);
+        }
+        #saveToast {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #saveToast.show { opacity: 1; }
+
+        /* Resume modal */
+        #resumeOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        #resumeOverlay.active { display: flex; }
+        .resume-box {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem 1.8rem;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .resume-box h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+        }
+        .resume-box p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .resume-buttons {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+        .btn-resume-yes {
+            background: var(--accent);
+            color: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 0.8rem;
+            font-size: 0.95rem;
+        }
+        .btn-resume-no {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            padding: 0.6rem 1.4rem;
+            border-radius: 0.8rem;
+            font-size: 0.95rem;
+        }
 </style>
 </head>
 
@@ -535,6 +633,11 @@
 
         <div id="blocklyArea">
             <div id="blocklyDiv"></div>
+            <div id="saveBar">
+                <button class="btn-save-action" onclick="manualSave()">💾 Зберегти</button>
+                <button class="btn-save-action" onclick="manualLoad()">📂 Завантажити</button>
+            </div>
+            <div id="saveToast">Збережено ✓</div>
             <div id="introOverlay">
                 <div class="intro-text" id="introText"></div>
                 <button class="btn-run" id="introOk" style="font-size:0.95rem;padding:0.6rem 1.8rem">Зрозумів! 👍</button>
@@ -562,6 +665,17 @@
             </div>
         </div>
     </main>
+
+    <div id="resumeOverlay">
+        <div class="resume-box">
+            <h3>💾 Є збережений код</h3>
+            <p>Продовжити з того місця, де зупинився?</p>
+            <div class="resume-buttons">
+                <button class="btn-resume-yes" onclick="resumeYes()">Так</button>
+                <button class="btn-resume-no" onclick="resumeNo()">Почати заново</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // --- Configuration & State ---
@@ -661,6 +775,11 @@
             document.getElementById('streakLabel').innerText = `🔥 ${progress.streak} днів`;
             document.getElementById('starsLabel').innerText = `⭐ ${progress.stars || 0}`;
 
+            // Show save/load buttons for Day 5+
+            if ((currentTask.day || 0) >= 5) {
+                document.getElementById('saveBar').classList.add('visible');
+            }
+
             // Show intro overlay for new element presentation (once per task per user)
             if (currentTask.intro_overlay) {
                 const introKey = `intro_${currentTask.id}_${uid}`;
@@ -755,6 +874,34 @@
 
         function loadWorkspace() {
             if (!workspace || !currentTask) return;
+            const saved = localStorage.getItem(`ws_${currentTask.id}`);
+            if (!saved) return;
+            document.getElementById('resumeOverlay').classList.add('active');
+        }
+
+        function resumeYes() {
+            document.getElementById('resumeOverlay').classList.remove('active');
+            const saved = localStorage.getItem(`ws_${currentTask.id}`);
+            if (!saved) return;
+            try {
+                workspace.clear();
+                Blockly.Xml.domToWorkspace(xmlTextToDom(saved), workspace);
+            } catch(e) {}
+        }
+
+        function resumeNo() {
+            document.getElementById('resumeOverlay').classList.remove('active');
+            localStorage.removeItem(`ws_${currentTask.id}`);
+        }
+
+        function manualSave() {
+            saveWorkspace();
+            const toast = document.getElementById('saveToast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function manualLoad() {
             const saved = localStorage.getItem(`ws_${currentTask.id}`);
             if (!saved) return;
             try {
