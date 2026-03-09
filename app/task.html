@@ -1902,37 +1902,58 @@
     }
 
     // ---- Per-day usage tracking ----
+    const _fabDebug = new URLSearchParams(location.search).has('fabDebug');
+
     function wasUsedToday(action) {
+        if (_fabDebug) return false;
         return localStorage.getItem(`scratchy_${action}_day`) === new Date().toDateString();
     }
 
     function markUsedToday(action) {
+        if (_fabDebug) return; // no limits in debug mode
         localStorage.setItem(`scratchy_${action}_day`, new Date().toDateString());
         const btn = document.querySelector(`.fab-btn[data-action="${action}"]`);
         if (btn) btn.disabled = true;
     }
 
-    // ---- TTS ----
-    // Preload voices (async in some browsers)
-    speechSynthesis.onvoiceschanged = () => {};
+    // ---- TTS (ElevenLabs або Google Translate — вирішує сервер) ----
+    let _currentAudio = null;
 
-    function speak(text, onEnd) {
-        speechSynthesis.cancel();
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.lang = 'uk-UA';
-        utt.rate = 0.95;
-        utt.pitch = 1.1;
-
-        // Prefer Ukrainian voice if available
-        const voices = speechSynthesis.getVoices();
-        const ukVoice = voices.find(v => v.lang.startsWith('uk'));
-        if (ukVoice) utt.voice = ukVoice;
+    async function speak(text, onEnd) {
+        // Stop any playing audio first
+        if (_currentAudio) {
+            _currentAudio.pause();
+            _currentAudio.src = '';
+            _currentAudio = null;
+        }
 
         const avatar = document.getElementById('fabAvatar');
         avatar.classList.add('speaking');
-        utt.onend = () => { avatar.classList.remove('speaking'); if (onEnd) onEnd(); };
-        utt.onerror = () => avatar.classList.remove('speaking');
-        speechSynthesis.speak(utt);
+
+        const done = (audio) => () => {
+            if (_currentAudio === audio) _currentAudio = null;
+            avatar.classList.remove('speaking');
+            if (onEnd) onEnd();
+        };
+
+        try {
+            const resp = await fetch('/api/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            });
+            if (!resp.ok) throw new Error(resp.status);
+            const blob = await resp.blob();
+            const audio = new Audio(URL.createObjectURL(blob));
+            _currentAudio = audio;
+            const cb = done(audio);
+            audio.onended = () => { URL.revokeObjectURL(audio.src); cb(); };
+            audio.onerror = cb;
+            audio.play().catch(cb);
+        } catch (_) {
+            avatar.classList.remove('speaking');
+            if (onEnd) onEnd();
+        }
     }
 
     // ---- API call ----
@@ -1966,7 +1987,8 @@
             speak('Спочатку виконай хоча б одне завдання — тоді розповім! 😄');
             return;
         }
-        speak('Анекдоти скоро будуть! А поки — до роботи! 🚀');
+        const hint = await getHint('joke');
+        if (hint) speak(hint);
         markUsedToday('joke');
     }
 
@@ -2024,6 +2046,12 @@
     function markTaskDoneToday() {
         localStorage.setItem('scratchy_task_done_day', new Date().toDateString());
     }
+
+    // ---- Wire up button clicks ----
+    document.getElementById('btnFact').addEventListener('click', doFact);
+    document.getElementById('btnJoke').addEventListener('click', doJoke);
+    document.getElementById('btnHelp').addEventListener('click', doHelp);
+    document.getElementById('btnQuestion').addEventListener('click', doQuestion);
 
     // Init on page load
     window.addEventListener('load', initFab);
