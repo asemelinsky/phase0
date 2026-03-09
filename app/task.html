@@ -553,6 +553,11 @@
                 <div class="controls">
                     <button class="btn-run" id="runBtn">🚩 Запустити</button>
                 </div>
+                <div id="adminPanel" style="display:none;padding:0.5rem;gap:0.4rem;flex-wrap:wrap;background:rgba(0,0,0,0.4);border-radius:0.5rem;margin-top:0.4rem;">
+                    <button onclick="exportWorkspace()" style="font-size:0.75rem;padding:0.3rem 0.6rem;border:1px solid #888;border-radius:0.4rem;background:#333;color:#fff;cursor:pointer;">📋 Копіювати XML</button>
+                    <button onclick="importWorkspace()" style="font-size:0.75rem;padding:0.3rem 0.6rem;border:1px solid #888;border-radius:0.4rem;background:#333;color:#fff;cursor:pointer;">📥 Вставити XML</button>
+                    <button onclick="clearSavedWorkspace()" style="font-size:0.75rem;padding:0.3rem 0.6rem;border:1px solid #f43f5e;border-radius:0.4rem;background:#333;color:#f43f5e;cursor:pointer;">🗑️ Скинути</button>
+                </div>
             </div>
         </div>
     </main>
@@ -600,8 +605,13 @@
                 }
 
                 initBlockly();
+                loadWorkspace();
+                workspace.addChangeListener(saveWorkspace);
                 updateUI();
                 initCanvas();
+                if (new URLSearchParams(window.location.search).has('admin')) {
+                    document.getElementById('adminPanel').style.display = 'flex';
+                }
                 document.getElementById('themeToggle').textContent = canvasTheme === 'dark' ? '🌙' : '☀️';
             } catch (err) {
                 console.error("Failed to load task:", err);
@@ -718,6 +728,46 @@
         }
 
         let canvasTheme = localStorage.getItem('canvasTheme') || 'dark';
+
+        function saveWorkspace() {
+            if (!workspace || !currentTask) return;
+            try {
+                const xml = Blockly.Xml.workspaceToDom(workspace);
+                localStorage.setItem(`ws_${currentTask.id}`, Blockly.Xml.domToPrettyText(xml));
+            } catch(e) {}
+        }
+
+        function loadWorkspace() {
+            if (!workspace || !currentTask) return;
+            const saved = localStorage.getItem(`ws_${currentTask.id}`);
+            if (!saved) return;
+            try {
+                workspace.clear();
+                Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(saved), workspace);
+            } catch(e) {}
+        }
+
+        function exportWorkspace() {
+            if (!workspace) return;
+            const xml = Blockly.Xml.workspaceToDom(workspace);
+            const text = Blockly.Xml.domToPrettyText(xml);
+            navigator.clipboard.writeText(text).then(() => alert('XML скопійовано в буфер обміну!'));
+        }
+
+        async function importWorkspace() {
+            const text = await navigator.clipboard.readText().catch(() => null);
+            if (!text) { alert('Буфер порожній або доступ заблоковано'); return; }
+            try {
+                workspace.clear();
+                Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(text), workspace);
+            } catch(e) { alert('Помилка парсингу XML: ' + e.message); }
+        }
+
+        function clearSavedWorkspace() {
+            if (!currentTask) return;
+            localStorage.removeItem(`ws_${currentTask.id}`);
+            workspace.clear();
+        }
 
         function toggleCanvasTheme() {
             canvasTheme = canvasTheme === 'dark' ? 'light' : 'dark';
