@@ -139,7 +139,7 @@ function ttsElevenLabs(text, { key, voice }, res, next) {
 }
 
 function ttsGoogleCloud(text, { key, voice }, res, next) {
-    voice = voice || 'uk-UA-Wavenet-B';
+    voice = voice || 'uk-UA-Wavenet-D';
     const body = JSON.stringify({
         input: { text },
         voice: { languageCode: 'uk-UA', name: voice },
