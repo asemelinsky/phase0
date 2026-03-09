@@ -208,6 +208,14 @@ function ttsGoogleTranslate(text, res, next) {
 
 function getTTSChain() {
     const chain = [];
+    // Legacy: ELEVENLABS_API_KEY has top priority if set
+    if (process.env.ELEVENLABS_API_KEY) {
+        chain.push({
+            name: 'elevenlabs',
+            key:   process.env.ELEVENLABS_API_KEY,
+            voice: process.env.ELEVENLABS_VOICE_ID || 'Ntd0iVwICtUtA6Fvx27M',
+        });
+    }
     for (let i = 1; i <= 9; i++) {
         const name = process.env[`TTS_${i}_PROVIDER`];
         if (!name) break;
