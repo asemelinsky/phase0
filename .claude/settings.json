@@ -43,7 +43,10 @@
       "Bash(curl -s -X POST http://localhost:3000/api/hint -H \"Content-Type: application/json\" -d \"{\"\"action\"\":\"\"question\"\",\"\"task\"\":{\"\"title\"\":\"\"Намалюй квадрат\"\",\"\"description\"\":\"\"Постав блок Рух і введи число 100\"\",\"\"question\"\":\"\"що треба робити\"\"}}\")",
       "Bash(powershell -Command \"Stop-Process -Id 86660 -Force\")",
       "Bash(powershell -Command \"Start-Process node -ArgumentList ''d:\\\\aiscratch\\\\claude\\\\phase0\\\\server.js'' -WorkingDirectory ''d:\\\\aiscratch\\\\claude\\\\phase0'' -WindowStyle Hidden\")",
-      "Bash(powershell -Command \"Get-Process node | Stop-Process -Force\")"
+      "Bash(powershell -Command \"Get-Process node | Stop-Process -Force\")",
+      "mcp__claude_ai_Vercel__get_project",
+      "Bash(npx vercel deploy --prod)",
+      "mcp__claude_ai_Vercel__get_runtime_logs"
     ]
   }
 }
