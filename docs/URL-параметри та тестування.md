@@ -16,7 +16,8 @@
 |----------|---------|-----------|
 | `uid` | `?uid=test_user` | Встановлює поточного користувача |
 | `debugDay` | `?debugDay=3` | Емулює, ніби пройшло N днів з реєстрації (для перевірки розблокування) |
-| `onboarding` | `?onboarding=1` | **Скидає флаг онбордингу** і показує модал вибору аватара/імені, навіть якщо вже проходив |
+| `onboarding` | `?onboarding=1` | **Скидає онбординг + вітання** — показує модал аватара/імені з нуля |
+| `warmup` | `?warmup=1` | **Скидає тільки вітання** — онбординг залишається, одразу відкривається діалог учитель+учень |
 
 ### `task.html`
 
@@ -24,6 +25,7 @@
 |----------|---------|-----------|
 | `uid` | `?uid=test_user` | Встановлює поточного користувача |
 | `task` | `?task=task_d1_e1` | Відкриває конкретне завдання за його ID |
+| `fabDebug` | `?fabDebug` | Знімає ліміт "1 раз на день" з усіх кнопок Скретчика — факт, жарт, питання доступні необмежено |
 
 ---
 
@@ -33,14 +35,20 @@
 # Карта пригод — тест-юзер, всі дні відкриті
 /app/progress.html?uid=test_user
 
-# Онбординг — показати модал завжди (навіть повторно)
+# Онбординг — показати модал аватара/імені + вітання з нуля
 /app/progress.html?uid=test_user&onboarding=1
+
+# Вітання — тільки діалог учитель+учень (онбординг вже пройдено)
+/app/progress.html?uid=test_user&warmup=1
 
 # Карта пригод — емуляція 3-го дня
 /app/progress.html?uid=test_user&debugDay=3
 
 # Конкретне завдання
 /app/task.html?uid=test_user&task=task_d1_e1
+
+# Тест Скретчика — всі 4 кнопки без обмежень
+/app/task.html?uid=test_user&task=task_d1_e1&fabDebug
 
 # Профіль учня
 /app/profile.html?uid=test_user
@@ -54,13 +62,22 @@
 |------|----------|------|
 | `profile_${uid}` | `{"name":"Олексій","avatarId":0,"avatarEmoji":"🧑"}` | Ім'я та аватар учня |
 | `onboarding_done_${uid}` | `"1"` | Флаг: онбординг пройдено. Видали — покажеться знову |
+| `dialog_done_${uid}` | `"1"` | Флаг: вітальний діалог (учитель+учень) показано. Видали — покажеться знову |
 | `progress_${uid}` | `{"completedTasks":[],"streak":0,"stars":0}` | Прогрес учня |
 | `reg_${uid}` | ISO-дата | Дата реєстрації (визначає які дні відкриті) |
 | `last_uid` | рядок | Останній використаний UID |
 
-### Скинути онбординг вручну (DevTools → Console):
+### Скинути вручну (DevTools → Console):
 ```js
+// Тільки онбординг (аватар/ім'я)
 localStorage.removeItem('onboarding_done_test_user')
+
+// Тільки вітальний діалог
+localStorage.removeItem('dialog_done_test_user')
+
+// Все з нуля
+localStorage.removeItem('onboarding_done_test_user')
+localStorage.removeItem('dialog_done_test_user')
 ```
 
 ---

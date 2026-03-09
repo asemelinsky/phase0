@@ -893,9 +893,12 @@
 
         function checkOnboarding() {
             if (uid === 'guest') return;
-            const forceOnboarding = new URLSearchParams(window.location.search).has('onboarding');
-            if (forceOnboarding) {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('onboarding')) {
                 localStorage.removeItem(`onboarding_done_${uid}`);
+                localStorage.removeItem(`dialog_done_${uid}`);
+            }
+            if (params.has('warmup')) {
                 localStorage.removeItem(`dialog_done_${uid}`);
             }
 
@@ -908,7 +911,6 @@
             if (!onboardingDone) {
                 document.getElementById('onboardingOverlay').classList.add('open');
             } else if (!dialogDone) {
-                // Onboarding done but dialog not yet shown (e.g. page refresh mid-dialog)
                 startWarmupDialog();
             }
         }
