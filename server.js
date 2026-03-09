@@ -138,6 +138,58 @@ function ttsElevenLabs(text, { key, voice }, res, next) {
     req2.end();
 }
 
+function ttsGoogleCloud(text, { key, voice }, res, next) {
+    voice = voice || 'uk-UA-Wavenet-B';
+    const body = JSON.stringify({
+        input: { text },
+        voice: { languageCode: 'uk-UA', name: voice },
+        audioConfig: { audioEncoding: 'MP3', speakingRate: 0.9 }
+    });
+    const req2 = https.request({
+        hostname: 'texttospeech.googleapis.com',
+        path: `/v1/text:synthesize?key=${key}`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, r => {
+        const chunks = [];
+        r.on('data', c => chunks.push(c));
+        r.on('end', () => {
+            if (r.statusCode !== 200) { console.warn(`⚠️ Google Cloud TTS: ${r.statusCode}`); return next(); }
+            try {
+                const buf = Buffer.from(JSON.parse(Buffer.concat(chunks).toString()).audioContent, 'base64');
+                res.setHeader('Content-Type', 'audio/mpeg');
+                res.end(buf);
+            } catch(e) { console.warn('⚠️ Google Cloud TTS parse:', e.message); next(); }
+        });
+    });
+    req2.on('error', err => { console.warn('⚠️ Google Cloud TTS:', err.message); next(); });
+    req2.write(body);
+    req2.end();
+}
+
+function ttsVoiceRSS(text, { key }, res, next) {
+    const encoded = encodeURIComponent(text.slice(0, 300));
+    const req2 = https.request({
+        hostname: 'api.voicerss.org',
+        path: `/?key=${key}&hl=uk-ua&src=${encoded}&c=MP3&f=16khz_16bit_stereo`,
+        method: 'GET',
+    }, r => {
+        const chunks = [];
+        r.on('data', c => chunks.push(c));
+        r.on('end', () => {
+            const buf = Buffer.concat(chunks);
+            if (r.statusCode !== 200 || buf.toString('utf8', 0, 6) === 'ERROR:') {
+                console.warn('⚠️ VoiceRSS:', r.statusCode, buf.toString().slice(0, 60));
+                return next();
+            }
+            res.setHeader('Content-Type', 'audio/mpeg');
+            res.end(buf);
+        });
+    });
+    req2.on('error', err => { console.warn('⚠️ VoiceRSS:', err.message); next(); });
+    req2.end();
+}
+
 function ttsGoogleTranslate(text, res, next) {
     const encoded = encodeURIComponent(text.slice(0, 200));
     const req2 = https.request({
@@ -178,6 +230,8 @@ function runTTSChain(text, chain, i, res) {
     const next = () => runTTSChain(text, chain, i + 1, res);
     console.log(`🔊 TTS [${i + 1}/${chain.length}]: ${p.name}`);
     if (p.name === 'azure'            && p.key) return ttsAzure(text, p, res, next);
+    if (p.name === 'google_cloud'     && p.key) return ttsGoogleCloud(text, p, res, next);
+    if (p.name === 'voicerss'         && p.key) return ttsVoiceRSS(text, p, res, next);
     if (p.name === 'elevenlabs'       && p.key) return ttsElevenLabs(text, p, res, next);
     if (p.name === 'google_translate')          return ttsGoogleTranslate(text, res, next);
     next(); // unknown provider or missing key → skip
