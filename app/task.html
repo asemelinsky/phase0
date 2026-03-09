@@ -1921,7 +1921,18 @@
     const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
     let _currentAudio = null;
 
+    function stripMarkdown(t) {
+        return t
+            .replace(/\*\*(.*?)\*\*/g, '$1')  // **bold**
+            .replace(/\*(.*?)\*/g, '$1')        // *italic*
+            .replace(/`([^`]+)`/g, '$1')        // `code`
+            .replace(/_{1,2}(.*?)_{1,2}/g, '$1')// _italic_ or __bold__
+            .replace(/#+\s/g, '')               // # headings
+            .trim();
+    }
+
     function speak(text, onEnd) {
+        text = stripMarkdown(text);
         // Stop any playing audio first
         if (_currentAudio) {
             _currentAudio.pause();
