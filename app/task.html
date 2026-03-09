@@ -1917,9 +1917,11 @@
     }
 
     // ---- TTS (ElevenLabs або Google Translate — вирішує сервер) ----
+    // Silent WAV to unlock autoplay on iOS/Android (must be called synchronously in user gesture)
+    const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
     let _currentAudio = null;
 
-    async function speak(text, onEnd) {
+    function speak(text, onEnd) {
         // Stop any playing audio first
         if (_currentAudio) {
             _currentAudio.pause();
@@ -1930,30 +1932,35 @@
         const avatar = document.getElementById('fabAvatar');
         avatar.classList.add('speaking');
 
-        const done = (audio) => () => {
+        // Unlock autoplay synchronously (iOS/Android requirement)
+        const audio = new Audio(SILENT_WAV);
+        _currentAudio = audio;
+        audio.play().catch(() => {});
+
+        const finish = () => {
             if (_currentAudio === audio) _currentAudio = null;
             avatar.classList.remove('speaking');
             if (onEnd) onEnd();
         };
 
-        try {
-            const resp = await fetch('/api/tts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
-            });
-            if (!resp.ok) throw new Error(resp.status);
-            const blob = await resp.blob();
-            const audio = new Audio(URL.createObjectURL(blob));
-            _currentAudio = audio;
-            const cb = done(audio);
-            audio.onended = () => { URL.revokeObjectURL(audio.src); cb(); };
-            audio.onerror = cb;
-            audio.play().catch(cb);
-        } catch (_) {
+        fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        }).then(r => {
+            if (!r.ok) throw new Error(r.status);
+            return r.blob();
+        }).then(blob => {
+            if (_currentAudio !== audio) return; // cancelled
+            const url = URL.createObjectURL(blob);
+            audio.src = url;
+            audio.onended = () => { URL.revokeObjectURL(url); finish(); };
+            audio.onerror = finish;
+            audio.play().catch(finish);
+        }).catch(() => {
             avatar.classList.remove('speaking');
             if (onEnd) onEnd();
-        }
+        });
     }
 
     // ---- API call ----
