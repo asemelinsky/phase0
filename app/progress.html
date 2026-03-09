@@ -1004,7 +1004,7 @@
             nextBtn.onclick = () => wuNext();
             wuState.phase = 'intro';
 
-            wuTts(text);
+            wuSpeak(text);
         }
 
         function wuNext() {
@@ -1057,21 +1057,11 @@
             document.getElementById('wuCenterLabel').textContent = 'Викладач думає...';
             document.getElementById('wuQuestions').innerHTML = '';
 
-            let answer = 'Гарне питання! 😄 Дізнаєшся дуже скоро!';
-            try {
-                const res = await fetch('/api/hint', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'question', task: { question } })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.hint) answer = data.hint;
-                }
-            } catch (e) { /* offline fallback */ }
+            const answer = await wuGetHint(question)
+                || 'Гарне питання! 😄 Дізнаєшся дуже скоро!';
 
             wuTeacherSay(answer);
-            wuTts(answer);
+            wuSpeak(answer);
 
             const nextBtn = document.getElementById('wuNextBtn');
             nextBtn.style.display = 'block';
@@ -1107,17 +1097,38 @@
             setTimeout(() => avatar.classList.remove('speaking'), 2000);
         }
 
-        async function wuTts(text) {
+        async function wuGetHint(question) {
             try {
-                const res = await fetch('/api/tts', {
+                const res = await fetch('/api/hint', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
+                    body: JSON.stringify({ action: 'warmup', task: { question } })
                 });
-                if (!res.ok) return;
-                const blob = await res.blob();
-                new Audio(URL.createObjectURL(blob)).play().catch(() => {});
-            } catch (e) { /* TTS not available — silent */ }
+                if (!res.ok) return null;
+                const data = await res.json();
+                return data.hint || null;
+            } catch (e) { return null; }
+        }
+
+        function wuSpeak(text) {
+            fetch('/api/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            }).then(r => {
+                if (!r.ok) throw new Error(r.status);
+                return r.blob();
+            }).then(blob => {
+                const audio = new Audio(URL.createObjectURL(blob));
+                audio.play().catch(() => wuSpeechFallback(text));
+            }).catch(() => wuSpeechFallback(text));
+        }
+
+        function wuSpeechFallback(text) {
+            const utt = new SpeechSynthesisUtterance(text);
+            utt.lang = 'uk-UA';
+            utt.rate = 0.9;
+            speechSynthesis.speak(utt);
         }
 
         function wuFinish() {
