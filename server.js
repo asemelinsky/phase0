@@ -81,54 +81,112 @@ app.post('/api/hint', async (req, res) => {
     }
 });
 
+// ─── TTS Chain ───────────────────────────────────────────────────────────────
+
+function escapeXml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function ttsAzure(text, { key, region, voice }, res, next) {
+    voice = voice || 'uk-UA-PolinaNeural';
+    const ssml = `<speak version='1.0' xml:lang='uk-UA'><voice name='${voice}'>${escapeXml(text)}</voice></speak>`;
+    const body = Buffer.from(ssml);
+    const req2 = https.request({
+        hostname: `${region || 'eastus'}.tts.speech.microsoft.com`,
+        path: '/cognitiveservices/v1',
+        method: 'POST',
+        headers: {
+            'Ocp-Apim-Subscription-Key': key,
+            'Content-Type': 'application/ssml+xml',
+            'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
+            'Content-Length': body.length,
+        }
+    }, r => {
+        if (r.statusCode !== 200) { console.warn(`⚠️ Azure TTS: ${r.statusCode}`); r.resume(); return next(); }
+        res.setHeader('Content-Type', 'audio/mpeg');
+        r.pipe(res);
+    });
+    req2.on('error', err => { console.warn('⚠️ Azure TTS:', err.message); next(); });
+    req2.write(body);
+    req2.end();
+}
+
+function ttsElevenLabs(text, { key, voice }, res, next) {
+    voice = voice || '0ZQZuw8Sn4cU0rN1Tm2K';
+    const body = JSON.stringify({
+        text,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+    });
+    const req2 = https.request({
+        hostname: 'api.elevenlabs.io',
+        path: `/v1/text-to-speech/${voice}`,
+        method: 'POST',
+        headers: {
+            'xi-api-key': key,
+            'Content-Type': 'application/json',
+            'Accept': 'audio/mpeg',
+            'Content-Length': Buffer.byteLength(body),
+        }
+    }, r => {
+        if (r.statusCode !== 200) { console.warn(`⚠️ ElevenLabs TTS: ${r.statusCode}`); r.resume(); return next(); }
+        res.setHeader('Content-Type', 'audio/mpeg');
+        r.pipe(res);
+    });
+    req2.on('error', err => { console.warn('⚠️ ElevenLabs TTS:', err.message); next(); });
+    req2.write(body);
+    req2.end();
+}
+
+function ttsGoogleTranslate(text, res, next) {
+    const encoded = encodeURIComponent(text.slice(0, 200));
+    const req2 = https.request({
+        hostname: 'translate.google.com',
+        path: `/translate_tts?ie=UTF-8&q=${encoded}&tl=uk&client=tw-ob&ttsspeed=0.9`,
+        method: 'GET',
+        headers: { 'User-Agent': 'Mozilla/5.0' }
+    }, r => {
+        if (r.statusCode !== 200) { console.warn(`⚠️ Google TTS: ${r.statusCode}`); r.resume(); return next(); }
+        res.setHeader('Content-Type', 'audio/mpeg');
+        r.pipe(res);
+    });
+    req2.on('error', err => { console.warn('⚠️ Google TTS:', err.message); next(); });
+    req2.end();
+}
+
+function getTTSChain() {
+    const chain = [];
+    for (let i = 1; i <= 9; i++) {
+        const name = process.env[`TTS_${i}_PROVIDER`];
+        if (!name) break;
+        chain.push({
+            name,
+            key:    process.env[`TTS_${i}_KEY`]    || '',
+            region: process.env[`TTS_${i}_REGION`] || 'eastus',
+            voice:  process.env[`TTS_${i}_VOICE`]  || '',
+        });
+    }
+    if (!chain.find(p => p.name === 'google_translate')) {
+        chain.push({ name: 'google_translate' });
+    }
+    return chain;
+}
+
+function runTTSChain(text, chain, i, res) {
+    if (i >= chain.length) return res.status(502).json({ error: 'All TTS providers failed' });
+    const p = chain[i];
+    const next = () => runTTSChain(text, chain, i + 1, res);
+    console.log(`🔊 TTS [${i + 1}/${chain.length}]: ${p.name}`);
+    if (p.name === 'azure'            && p.key) return ttsAzure(text, p, res, next);
+    if (p.name === 'elevenlabs'       && p.key) return ttsElevenLabs(text, p, res, next);
+    if (p.name === 'google_translate')          return ttsGoogleTranslate(text, res, next);
+    next(); // unknown provider or missing key → skip
+}
+
 app.post('/api/tts', (req, res) => {
     const text = (req.body.text || '').slice(0, 500);
     if (!text) return res.status(400).json({ error: 'text required' });
-
-    const elKey = process.env.ELEVENLABS_API_KEY;
-
-    if (elKey) {
-        // ElevenLabs
-        const voiceId = process.env.ELEVENLABS_VOICE_ID || '0ZQZuw8Sn4cU0rN1Tm2K';
-        const body = JSON.stringify({
-            text,
-            model_id: 'eleven_multilingual_v2',
-            voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-        });
-        const req2 = https.request({
-            hostname: 'api.elevenlabs.io',
-            path: `/v1/text-to-speech/${voiceId}`,
-            method: 'POST',
-            headers: {
-                'xi-api-key': elKey,
-                'Content-Type': 'application/json',
-                'Accept': 'audio/mpeg',
-                'Content-Length': Buffer.byteLength(body)
-            }
-        }, r => {
-            if (r.statusCode !== 200) { res.status(502).json({ error: `EL: ${r.statusCode}` }); r.resume(); return; }
-            res.setHeader('Content-Type', 'audio/mpeg');
-            r.pipe(res);
-        });
-        req2.on('error', err => { console.error('❌ EL TTS:', err.message); res.status(500).json({ error: err.message }); });
-        req2.write(body);
-        req2.end();
-    } else {
-        // Google Translate fallback
-        const encoded = encodeURIComponent(text.slice(0, 200));
-        const req2 = https.request({
-            hostname: 'translate.google.com',
-            path: `/translate_tts?ie=UTF-8&q=${encoded}&tl=uk&client=tw-ob&ttsspeed=0.9`,
-            method: 'GET',
-            headers: { 'User-Agent': 'Mozilla/5.0' }
-        }, r => {
-            if (r.statusCode !== 200) { res.status(502).json({ error: `GT: ${r.statusCode}` }); r.resume(); return; }
-            res.setHeader('Content-Type', 'audio/mpeg');
-            r.pipe(res);
-        });
-        req2.on('error', err => { console.error('❌ GT TTS:', err.message); res.status(500).json({ error: err.message }); });
-        req2.end();
-    }
+    runTTSChain(text, getTTSChain(), 0, res);
 });
 
 app.listen(PORT, () => {
