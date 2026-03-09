@@ -711,6 +711,9 @@
 
         function checkOnboarding() {
             if (uid === 'guest') return;
+            const forceOnboarding = new URLSearchParams(window.location.search).has('onboarding');
+            if (forceOnboarding) localStorage.removeItem(`onboarding_done_${uid}`);
+
             const done = localStorage.getItem(`onboarding_done_${uid}`);
             const profileRaw = localStorage.getItem(`profile_${uid}`);
             if (profileRaw) applyProfile(JSON.parse(profileRaw));

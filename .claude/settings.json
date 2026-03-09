@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \":*)",
+      "Bash(grep -o \"font-family:\\\\|Outfit\\\\|Inter\\\\|Nunito\\\\|Tailwind\" /d/aiscratch/claude/phase0/app/*.html /d/aiscratch/claude/phase0/index.html)"
+    ]
+  }
+}
