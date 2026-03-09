@@ -729,11 +729,15 @@
 
         let canvasTheme = localStorage.getItem('canvasTheme') || 'dark';
 
+        function xmlTextToDom(text) {
+            return new DOMParser().parseFromString(text, 'text/xml').documentElement;
+        }
+
         function saveWorkspace() {
             if (!workspace || !currentTask) return;
             try {
                 const xml = Blockly.Xml.workspaceToDom(workspace);
-                localStorage.setItem(`ws_${currentTask.id}`, Blockly.Xml.domToPrettyText(xml));
+                localStorage.setItem(`ws_${currentTask.id}`, new XMLSerializer().serializeToString(xml));
             } catch(e) {}
         }
 
@@ -743,14 +747,14 @@
             if (!saved) return;
             try {
                 workspace.clear();
-                Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(saved), workspace);
+                Blockly.Xml.domToWorkspace(xmlTextToDom(saved), workspace);
             } catch(e) {}
         }
 
         function exportWorkspace() {
             if (!workspace) return;
             const xml = Blockly.Xml.workspaceToDom(workspace);
-            const text = Blockly.Xml.domToPrettyText(xml);
+            const text = new XMLSerializer().serializeToString(xml);
             navigator.clipboard.writeText(text).then(() => alert('XML скопійовано в буфер обміну!'));
         }
 
@@ -759,7 +763,7 @@
             if (!text) { alert('Буфер порожній або доступ заблоковано'); return; }
             try {
                 workspace.clear();
-                Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(text), workspace);
+                Blockly.Xml.domToWorkspace(xmlTextToDom(text), workspace);
             } catch(e) { alert('Помилка парсингу XML: ' + e.message); }
         }
 
