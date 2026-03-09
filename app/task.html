@@ -1958,8 +1958,15 @@
             audio.onerror = finish;
             audio.play().catch(finish);
         }).catch(() => {
-            avatar.classList.remove('speaking');
-            if (onEnd) onEnd();
+            // Server TTS failed — fallback to browser speechSynthesis
+            if (_currentAudio !== audio) return;
+            _currentAudio = null;
+            const utt = new SpeechSynthesisUtterance(text);
+            utt.lang = 'uk-UA';
+            utt.rate = 0.9;
+            utt.onend  = finish;
+            utt.onerror = finish;
+            speechSynthesis.speak(utt);
         });
     }
 
