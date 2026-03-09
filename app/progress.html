@@ -554,8 +554,11 @@
             dayNums.forEach((dayNum, idx) => {
                 const { lessons, challenge } = days[dayNum];
 
-                // Day exercises open strictly by calendar date (days since registration)
-                const dayOpen = isTestUser || currentDayIdx >= idx;
+                // Challenge done check (needed for dayOpen below)
+                const challengeDone = challenge ? completed.has(challenge.id) : false;
+
+                // Day exercises open by calendar date OR if challenge is already done (auto-credit)
+                const dayOpen = isTestUser || currentDayIdx >= idx || challengeDone;
 
                 // Exercises stats
                 const doneLessons = lessons.filter(t => completed.has(t.id)).length;
@@ -570,7 +573,6 @@
                         challengeOpen = isTestUser || completed.has(challenge.unlock_after_challenge_id);
                     }
                 }
-                const challengeDone = challenge ? completed.has(challenge.id) : false;
 
                 // Row
                 const row = document.createElement('div');
