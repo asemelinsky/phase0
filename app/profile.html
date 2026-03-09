@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль — Кодомандри</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #f43f5e;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --accent: #10b981;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.12) 0%, transparent 40%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .back-link {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--text); }
+
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+        }
+
+        .avatar-big {
+            font-size: 5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .profile-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-uid {
+            font-size: 0.75rem;
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.25rem;
+            padding: 1.1rem 0.5rem;
+        }
+
+        .stat-icon { font-size: 1.4rem; margin-bottom: 0.3rem; }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.2rem;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .edit-section { text-align: left; }
+
+        .edit-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .avatars-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .avatar-opt {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .avatar-opt:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.15); }
+        .avatar-opt.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.25); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+
+        .name-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 1rem;
+        }
+        .name-input:focus { border-color: var(--primary); }
+
+        .save-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #f43f5e);
+            border: none;
+            border-radius: 0.9rem;
+            padding: 0.85rem;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .save-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .save-msg {
+            display: none;
+            text-align: center;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+        }
+        .save-msg.visible { display: block; }
+    </style>
+</head>
+
+<body>
+    <a class="back-link" id="backLink" href="progress.html">← Карта пригод</a>
+
+    <div class="profile-card">
+        <div class="avatar-big" id="avatarBig">👤</div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-uid" id="profileUid"></div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="starsVal">0</div>
+                <div class="stat-label">Зірок</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="streakVal">0</div>
+                <div class="stat-label">Стрік</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="doneVal">0</div>
+                <div class="stat-label">Виконано</div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="edit-section">
+            <div class="edit-label">Аватар</div>
+            <div class="avatars-row" id="avatarsRow">
+                <div class="avatar-opt" data-id="0" onclick="selectAvatar(0)">🧑</div>
+                <div class="avatar-opt" data-id="1" onclick="selectAvatar(1)">🧒</div>
+                <div class="avatar-opt" data-id="2" onclick="selectAvatar(2)">👧</div>
+                <div class="avatar-opt" data-id="3" onclick="selectAvatar(3)">👩</div>
+            </div>
+            <div class="edit-label">Ім'я</div>
+            <input class="name-input" type="text" id="nameInput" maxlength="20" placeholder="Твоє ім'я">
+            <button class="save-btn" onclick="saveProfile()">Зберегти зміни</button>
+            <div class="save-msg" id="saveMsg">✅ Збережено!</div>
+        </div>
+    </div>
+
+    <script>
+        const AVATARS = ['🧑', '🧒', '👧', '👩'];
+        const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
+
+        document.getElementById('backLink').href = `progress.html?uid=${uid}`;
+        document.getElementById('profileUid').textContent = `ID: ${uid}`;
+
+        let selectedAvatarId = 0;
+
+        function selectAvatar(id) {
+            selectedAvatarId = id;
+            document.querySelectorAll('.avatar-opt').forEach(el => {
+                el.classList.toggle('selected', parseInt(el.dataset.id) === id);
+            });
+            document.getElementById('avatarBig').textContent = AVATARS[id];
+        }
+
+        function loadProfile() {
+            const profileRaw = localStorage.getItem(`profile_${uid}`);
+            if (profileRaw) {
+                const p = JSON.parse(profileRaw);
+                document.getElementById('avatarBig').textContent = p.avatarEmoji || '👤';
+                document.getElementById('profileName').textContent = p.name || '—';
+                document.getElementById('nameInput').value = p.name || '';
+                selectedAvatarId = p.avatarId ?? 0;
+                document.querySelectorAll('.avatar-opt').forEach(el => {
+                    el.classList.toggle('selected', parseInt(el.dataset.id) === selectedAvatarId);
+                });
+            }
+
+            const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[],"streak":0,"stars":0}');
+            document.getElementById('starsVal').textContent = progress.stars || 0;
+            document.getElementById('streakVal').textContent = progress.streak || 0;
+            document.getElementById('doneVal').textContent = (progress.completedTasks || []).length;
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name || name.length < 2) { alert('Введи ім\'я (мінімум 2 символи)'); return; }
+
+            const profile = { name, avatarId: selectedAvatarId, avatarEmoji: AVATARS[selectedAvatarId] };
+            localStorage.setItem(`profile_${uid}`, JSON.stringify(profile));
+            localStorage.setItem(`onboarding_done_${uid}`, '1');
+
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('avatarBig').textContent = AVATARS[selectedAvatarId];
+
+            const msg = document.getElementById('saveMsg');
+            msg.classList.add('visible');
+            setTimeout(() => msg.classList.remove('visible'), 2500);
+        }
+
+        loadProfile();
+    </script>
+</body>
+
+</html>

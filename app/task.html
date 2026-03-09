@@ -522,6 +522,7 @@
         </div>
         <div class="user-streak" id="streakLabel">🔥 0 днів</div>
         <div class="user-streak" id="starsLabel">⭐ 0</div>
+        <a href="progress.html" id="avatarBubble" title="Профіль" style="width:36px;height:36px;border-radius:50%;background:rgba(99,102,241,0.15);border:2px solid rgba(99,102,241,0.35);display:flex;align-items:center;justify-content:center;font-size:1.2rem;text-decoration:none;transition:all 0.2s;flex-shrink:0;">👤</a>
     </header>
 
     <main>
@@ -629,6 +630,17 @@
             document.getElementById('hintBox').innerText = currentTask.description || currentTask.audio_intro || '';
 
             document.getElementById('logoLink').href = `progress.html?uid=${uid}`;
+
+            // Avatar bubble
+            const profileRaw = localStorage.getItem(`profile_${uid}`);
+            const avatarBubble = document.getElementById('avatarBubble');
+            if (profileRaw && avatarBubble) {
+                const profile = JSON.parse(profileRaw);
+                avatarBubble.textContent = profile.avatarEmoji || '👤';
+                avatarBubble.href = `profile.html?uid=${uid}`;
+            } else if (avatarBubble) {
+                avatarBubble.href = `profile.html?uid=${uid}`;
+            }
 
             // Animated logo: alternates between "Кодомандри" and "👆 Твій прогрес тут"
             const logoMain = document.getElementById('logoMain');

@@ -279,6 +279,137 @@
 
         .theme-toggle:hover { opacity: 0.8; }
 
+        /* ===== ONBOARDING ===== */
+        .onboarding-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .onboarding-overlay.open { display: flex; }
+
+        .onboarding-box {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            width: 90%;
+            max-width: 440px;
+            text-align: center;
+        }
+
+        .onboarding-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .onboarding-sub {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .avatars-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .avatar-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.25rem;
+            padding: 1.1rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .avatar-option:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+        .avatar-option.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.2); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
+
+        .avatar-emoji { font-size: 2.4rem; }
+        .avatar-label { font-size: 0.75rem; color: #94a3b8; }
+
+        .name-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0.75rem;
+            padding: 0.8rem 1rem;
+            color: #f8fafc;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 1.25rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .name-input:focus { border-color: var(--primary); }
+        .name-input::placeholder { color: #475569; }
+
+        .start-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #f43f5e);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.95rem;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .start-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        .start-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        /* Avatar bubble */
+        .avatar-bubble {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.15);
+            border: 2px solid rgba(99, 102, 241, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .avatar-bubble:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.3); }
+
+        /* Tour tooltip */
+        .tour-tip {
+            display: none;
+            position: fixed;
+            z-index: 300;
+            background: #1e293b;
+            border: 1px solid var(--primary);
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            max-width: 260px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+        .tour-tip.visible { display: block; }
+        .tour-tip-text { font-size: 0.88rem; color: #f8fafc; margin-bottom: 0.75rem; line-height: 1.5; }
+        .tour-tip-nav { display: flex; justify-content: space-between; align-items: center; }
+        .tour-btn { background: var(--primary); border: none; border-radius: 0.5rem; padding: 0.35rem 0.8rem; color: white; font-size: 0.8rem; cursor: pointer; }
+        .tour-btn.skip { background: transparent; color: #64748b; font-size: 0.8rem; }
+        .tour-dots { display: flex; gap: 4px; }
+        .tour-dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; }
+        .tour-dot.active { background: var(--primary); }
+
         /* ===== MOBILE ===== */
         @media (max-width: 600px) {
             body { padding: 1rem; }
@@ -307,7 +438,10 @@
                 <div style="font-size: 0.7rem; opacity: 0.6;">ВИКОНАНО</div>
             </div>
         </div>
-        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+            <a href="#" id="avatarBubble" class="avatar-bubble" title="Мій профіль">👤</a>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+        </div>
     </header>
 
     <div class="progress-container">
@@ -315,6 +449,40 @@
     </div>
 
     <div class="days-list" id="daysList"></div>
+
+    <!-- Onboarding modal -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-box">
+            <div style="font-size:3rem;margin-bottom:0.6rem;">🚀</div>
+            <div class="onboarding-title">Ласкаво просимо!</div>
+            <div class="onboarding-sub">Обери аватар та введи своє ім'я</div>
+
+            <div class="avatars-grid">
+                <div class="avatar-option" data-id="0" onclick="selectAvatar(0)">
+                    <span class="avatar-emoji">🧑</span>
+                    <span class="avatar-label">Хлопчик 1</span>
+                </div>
+                <div class="avatar-option" data-id="1" onclick="selectAvatar(1)">
+                    <span class="avatar-emoji">🧒</span>
+                    <span class="avatar-label">Хлопчик 2</span>
+                </div>
+                <div class="avatar-option" data-id="2" onclick="selectAvatar(2)">
+                    <span class="avatar-emoji">👧</span>
+                    <span class="avatar-label">Дівчинка 1</span>
+                </div>
+                <div class="avatar-option" data-id="3" onclick="selectAvatar(3)">
+                    <span class="avatar-emoji">👩</span>
+                    <span class="avatar-label">Дівчинка 2</span>
+                </div>
+            </div>
+
+            <input class="name-input" type="text" id="nameInput" placeholder="Твоє ім'я (наприклад, Олексій)" maxlength="20" autocomplete="off">
+            <button class="start-btn" id="startBtn" onclick="finishOnboarding()" disabled>Поїхали! 🚀</button>
+        </div>
+    </div>
+
+    <!-- Tour tooltip -->
+    <div class="tour-tip" id="tourTip"></div>
 
     <!-- Exercises popup -->
     <div class="popup-overlay" id="popupOverlay">
@@ -504,6 +672,94 @@
             if (e.target === e.currentTarget) closePopup();
         });
 
+        // ===== ONBOARDING =====
+        const AVATARS = ['🧑', '🧒', '👧', '👩'];
+        let selectedAvatarId = null;
+
+        function selectAvatar(id) {
+            selectedAvatarId = id;
+            document.querySelectorAll('.avatar-option').forEach(el => {
+                el.classList.toggle('selected', parseInt(el.dataset.id) === id);
+            });
+            updateStartBtn();
+        }
+
+        function updateStartBtn() {
+            const name = document.getElementById('nameInput').value.trim();
+            document.getElementById('startBtn').disabled = selectedAvatarId === null || name.length < 2;
+        }
+
+        function finishOnboarding() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (selectedAvatarId === null || name.length < 2) return;
+
+            const profile = { name, avatarId: selectedAvatarId, avatarEmoji: AVATARS[selectedAvatarId] };
+            localStorage.setItem(`profile_${uid}`, JSON.stringify(profile));
+            localStorage.setItem(`onboarding_done_${uid}`, '1');
+
+            document.getElementById('onboardingOverlay').classList.remove('open');
+            applyProfile(profile);
+            startTour();
+        }
+
+        function applyProfile(profile) {
+            const bubble = document.getElementById('avatarBubble');
+            if (!bubble) return;
+            bubble.textContent = profile.avatarEmoji;
+            bubble.href = `profile.html?uid=${uid}`;
+        }
+
+        function checkOnboarding() {
+            if (uid === 'guest') return;
+            const done = localStorage.getItem(`onboarding_done_${uid}`);
+            const profileRaw = localStorage.getItem(`profile_${uid}`);
+            if (profileRaw) applyProfile(JSON.parse(profileRaw));
+            else document.getElementById('avatarBubble').href = `profile.html?uid=${uid}`;
+
+            if (!done) {
+                document.getElementById('onboardingOverlay').classList.add('open');
+            }
+        }
+
+        document.getElementById('nameInput').addEventListener('input', updateStartBtn);
+
+        // ===== TOUR =====
+        const TOUR_STEPS = [
+            { text: '🗺️ Це твоя Карта пригод! Тут відображаються всі дні навчання.', top: '80px', left: '50%', transform: 'translateX(-50%)' },
+            { text: '📚 Натисни на картку «Вправи», щоб відкрити список завдань дня.', top: '220px', left: '1rem' },
+            { text: '⚡ Пройди вправи — і відкриється Челендж! Збирай зірки ⭐', top: '220px', right: '1rem' },
+            { text: '🔥 Тут твій стрік і загальний прогрес. Молодець!', top: '80px', right: '1rem' },
+        ];
+        let tourIdx = 0;
+
+        function startTour() {
+            tourIdx = 0;
+            showTourStep();
+        }
+
+        function showTourStep() {
+            const el = document.getElementById('tourTip');
+            if (tourIdx >= TOUR_STEPS.length) { el.style.display = 'none'; return; }
+            const s = TOUR_STEPS[tourIdx];
+            const dots = TOUR_STEPS.map((_, i) =>
+                `<div class="tour-dot${i === tourIdx ? ' active' : ''}"></div>`).join('');
+            el.innerHTML = `
+                <div class="tour-tip-text">${s.text}</div>
+                <div class="tour-tip-nav">
+                    <button class="tour-btn skip" onclick="endTour()">Пропустити</button>
+                    <div class="tour-dots">${dots}</div>
+                    <button class="tour-btn" onclick="nextTour()">${tourIdx < TOUR_STEPS.length - 1 ? 'Далі →' : 'Готово!'}</button>
+                </div>`;
+            el.style.cssText = `display:block;position:fixed;z-index:300;top:${s.top || 'auto'};` +
+                (s.left ? `left:${s.left};` : '') +
+                (s.right ? `right:${s.right};` : '') +
+                (s.transform ? `transform:${s.transform};` : '');
+        }
+
+        function nextTour() { tourIdx++; showTourStep(); }
+        function endTour() { document.getElementById('tourTip').style.display = 'none'; }
+
+        checkOnboarding();
         init();
     </script>
 </body>
