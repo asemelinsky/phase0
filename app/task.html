@@ -508,6 +508,175 @@
             }
         }
 
+        /* ===== СКРЕТЧИК FAB ===== */
+        .scratchy-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .scratchy-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            z-index: 2;
+            padding: 0;
+        }
+
+        .scratchy-avatar:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 28px rgba(99, 102, 241, 0.7);
+        }
+
+        .scratchy-avatar.speaking {
+            animation: fabPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes fabPulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 0 14px rgba(99, 102, 241, 0.12), 0 4px 20px rgba(99, 102, 241, 0.5); transform: scale(1.05); }
+        }
+
+        .scratchy-tooltip {
+            position: absolute;
+            bottom: 68px;
+            right: 0;
+            background: #6366f1;
+            color: white;
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            white-space: nowrap;
+            pointer-events: none;
+            animation: tooltipBounce 1.3s ease-in-out infinite;
+            box-shadow: 0 2px 12px rgba(99, 102, 241, 0.45);
+            transition: opacity 0.2s;
+        }
+
+        .scratchy-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 18px;
+            border: 6px solid transparent;
+            border-top-color: #6366f1;
+        }
+
+        @keyframes tooltipBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .scratchy-tooltip.hidden { opacity: 0; pointer-events: none; }
+
+        /* Arc buttons */
+        .fab-btn {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(22, 32, 52, 0.97);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+            transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.22s;
+            transform: translate(0, 0) scale(0);
+            opacity: 0;
+            pointer-events: none;
+            bottom: 6px;
+            right: 6px;
+            padding: 0;
+        }
+
+        .fab-btn.open {
+            transform: var(--fab-t) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .fab-btn:hover:not(:disabled) {
+            filter: brightness(1.35);
+        }
+
+        .fab-btn.open:hover:not(:disabled) {
+            transform: var(--fab-t) scale(1.15);
+        }
+
+        .fab-btn:disabled {
+            opacity: 0.28;
+            cursor: not-allowed;
+        }
+
+        /* Quarter-circle arc: up → left */
+        .fab-btn[data-action="fact"]     { --fab-t: translate(-6px, -94px);  transition-delay: 0.00s; }
+        .fab-btn[data-action="joke"]     { --fab-t: translate(-58px, -74px); transition-delay: 0.04s; }
+        .fab-btn[data-action="help"]     { --fab-t: translate(-84px, -38px); transition-delay: 0.08s; }
+        .fab-btn[data-action="question"] { --fab-t: translate(-96px, 4px);   transition-delay: 0.12s; }
+
+        .fab-label {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.92);
+            color: #e2e8f0;
+            font-size: 0.7rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            white-space: nowrap;
+            pointer-events: none;
+            top: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .fab-btn:hover .fab-label { opacity: 1; }
+
+        /* Mic indicator */
+        .mic-indicator {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            background: rgba(239, 68, 68, 0.92);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 999;
+            animation: micPulse 0.9s ease-in-out infinite;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .mic-indicator.active { display: flex; }
+
+        @keyframes micPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.55; }
+        }
+
         /* Save bar for Day 5+ */
         #saveBar {
             display: none;
@@ -536,21 +705,22 @@
             border-color: var(--primary-light);
         }
         #saveToast {
-            position: absolute;
-            bottom: 1rem;
+            position: fixed;
+            bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
             background: var(--accent);
             color: white;
-            padding: 0.35rem 1rem;
+            padding: 0.5rem 1.4rem;
             border-radius: 1rem;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            z-index: 60;
+            z-index: 20000;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
             white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.4);
         }
         #saveToast.show { opacity: 1; }
 
@@ -637,7 +807,6 @@
                 <button class="btn-save-action" onclick="manualSave()">💾 Зберегти</button>
                 <button class="btn-save-action" onclick="manualLoad()">📂 Завантажити</button>
             </div>
-            <div id="saveToast">Збережено ✓</div>
             <div id="introOverlay">
                 <div class="intro-text" id="introText"></div>
                 <button class="btn-run" id="introOk" style="font-size:0.95rem;padding:0.6rem 1.8rem">Зрозумів! 👍</button>
@@ -665,6 +834,8 @@
             </div>
         </div>
     </main>
+
+    <div id="saveToast">Збережено ✓</div>
 
     <div id="resumeOverlay">
         <div class="resume-box">
@@ -896,18 +1067,27 @@
 
         function manualSave() {
             saveWorkspace();
-            const toast = document.getElementById('saveToast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
+            showToast('Збережено ✓');
         }
 
         function manualLoad() {
             const saved = localStorage.getItem(`ws_${currentTask.id}`);
-            if (!saved) return;
+            if (!saved) {
+                showToast('Немає збереженого коду 🤷');
+                return;
+            }
             try {
                 workspace.clear();
                 Blockly.Xml.domToWorkspace(xmlTextToDom(saved), workspace);
+                showToast('Код завантажено 📂');
             } catch(e) {}
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('saveToast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
         function exportWorkspace() {
@@ -1508,6 +1688,7 @@
 
             if (isCorrect) {
                 playSuccessSound();
+                markTaskDoneToday();
                 document.getElementById('successOverlay').classList.add('active');
                 let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "completedDays":[], "streak":0, "stars":0}');
                 if (!progress.completedDays) progress.completedDays = [];
@@ -1613,6 +1794,17 @@
         }
     </script>
 
+    <!-- СКРЕТЧИК FAB -->
+    <div class="scratchy-fab" id="scratchyFab">
+        <div class="scratchy-tooltip" id="fabTooltip">Натисни мене! 👆</div>
+        <button class="fab-btn" id="btnFact"     data-action="fact"     title="Цікавий факт">💡<span class="fab-label">Цікавий факт</span></button>
+        <button class="fab-btn" id="btnJoke"     data-action="joke"     title="Анекдот">😄<span class="fab-label">Анекдот</span></button>
+        <button class="fab-btn" id="btnHelp"     data-action="help"     title="Допомога">❓<span class="fab-label">Допомога</span></button>
+        <button class="fab-btn" id="btnQuestion" data-action="question" title="Задай питання">🎤<span class="fab-label">Задай питання</span></button>
+        <button class="scratchy-avatar" id="fabAvatar" onclick="toggleFab()">🤖</button>
+    </div>
+    <div class="mic-indicator" id="micIndicator">🎤 Слухаю...</div>
+
     <!-- Custom Blockly number prompt modal -->
     <div id="blocklyPromptOverlay">
         <div class="bp-box">
@@ -1660,6 +1852,181 @@
             }
             installBlocklyPrompt();
         })();
+    </script>
+
+    <script>
+    // ===== СКРЕТЧИК — FAB, TTS, STT =====
+
+    let fabOpen = false;
+
+    function toggleFab() {
+        fabOpen = !fabOpen;
+        document.querySelectorAll('.fab-btn').forEach(b => b.classList.toggle('open', fabOpen));
+        // Hide tooltip permanently after first click
+        const tooltip = document.getElementById('fabTooltip');
+        tooltip.classList.add('hidden');
+        localStorage.setItem('fab_tooltip_seen', '1');
+    }
+
+    // Close when clicking outside FAB
+    document.addEventListener('click', e => {
+        if (fabOpen && !document.getElementById('scratchyFab').contains(e.target)) {
+            fabOpen = false;
+            document.querySelectorAll('.fab-btn').forEach(b => b.classList.remove('open'));
+        }
+    });
+
+    function closeFab() {
+        fabOpen = false;
+        document.querySelectorAll('.fab-btn').forEach(b => b.classList.remove('open'));
+    }
+
+    function initFab() {
+        // Tooltip: show once per day
+        const today = new Date().toDateString();
+        const seenToday = localStorage.getItem('fab_tooltip_day') === today;
+        const seenEver  = localStorage.getItem('fab_tooltip_seen');
+        if (seenToday || seenEver) {
+            document.getElementById('fabTooltip').classList.add('hidden');
+        } else {
+            localStorage.setItem('fab_tooltip_day', today);
+        }
+
+        // Restore disabled states
+        ['fact', 'joke', 'question'].forEach(action => {
+            if (wasUsedToday(action)) {
+                const btn = document.querySelector(`.fab-btn[data-action="${action}"]`);
+                if (btn) btn.disabled = true;
+            }
+        });
+    }
+
+    // ---- Per-day usage tracking ----
+    function wasUsedToday(action) {
+        return localStorage.getItem(`scratchy_${action}_day`) === new Date().toDateString();
+    }
+
+    function markUsedToday(action) {
+        localStorage.setItem(`scratchy_${action}_day`, new Date().toDateString());
+        const btn = document.querySelector(`.fab-btn[data-action="${action}"]`);
+        if (btn) btn.disabled = true;
+    }
+
+    // ---- TTS ----
+    // Preload voices (async in some browsers)
+    speechSynthesis.onvoiceschanged = () => {};
+
+    function speak(text, onEnd) {
+        speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.lang = 'uk-UA';
+        utt.rate = 0.95;
+        utt.pitch = 1.1;
+
+        // Prefer Ukrainian voice if available
+        const voices = speechSynthesis.getVoices();
+        const ukVoice = voices.find(v => v.lang.startsWith('uk'));
+        if (ukVoice) utt.voice = ukVoice;
+
+        const avatar = document.getElementById('fabAvatar');
+        avatar.classList.add('speaking');
+        utt.onend = () => { avatar.classList.remove('speaking'); if (onEnd) onEnd(); };
+        utt.onerror = () => avatar.classList.remove('speaking');
+        speechSynthesis.speak(utt);
+    }
+
+    // ---- API call ----
+    async function getHint(action, extra = {}) {
+        try {
+            const resp = await fetch('/api/hint', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, task: { ...(currentTask || {}), ...extra } })
+            });
+            const data = await resp.json();
+            if (data.success) return data.hint;
+        } catch (_) {}
+        return null;
+    }
+
+    // ---- Button handlers ----
+    async function doFact() {
+        closeFab();
+        const hint = await getHint('fact');
+        if (hint) speak(hint);
+        markUsedToday('fact');
+    }
+
+    async function doJoke() {
+        closeFab();
+        // Available only after completing at least 1 task today
+        const today = new Date().toDateString();
+        const taskDoneToday = localStorage.getItem('scratchy_task_done_day') === today;
+        if (!taskDoneToday) {
+            speak('Спочатку виконай хоча б одне завдання — тоді розповім! 😄');
+            return;
+        }
+        speak('Анекдоти скоро будуть! А поки — до роботи! 🚀');
+        markUsedToday('joke');
+    }
+
+    async function doHelp() {
+        closeFab();
+        const hint = await getHint('start');
+        if (hint) speak(hint);
+        // Help is always available — no markUsedToday
+    }
+
+    async function doQuestion() {
+        closeFab();
+        if (wasUsedToday('question')) {
+            speak('Ти вже задавав мені питання сьогодні! Завтра ще одне! 😊');
+            return;
+        }
+        speak('Задавай! Слухаю тебе уважно!', () => startListening());
+    }
+
+    // ---- STT ----
+    function startListening() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) {
+            speak('Схоже, твій браузер не підтримує мікрофон. Спробуй Chrome! 🎤');
+            return;
+        }
+
+        const mic = document.getElementById('micIndicator');
+        mic.classList.add('active');
+
+        const recognition = new SR();
+        recognition.lang = 'uk-UA';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = async e => {
+            mic.classList.remove('active');
+            const question = e.results[0][0].transcript;
+            const hint = await getHint('question', { question });
+            if (hint) speak(hint);
+            markUsedToday('question');
+        };
+
+        recognition.onerror = () => {
+            mic.classList.remove('active');
+            speak('Не почув тебе. Спробуй ще раз! 🎤');
+        };
+
+        recognition.onend = () => mic.classList.remove('active');
+        recognition.start();
+    }
+
+    // ---- Mark task done (for joke unlock) ----
+    // Called from success handler in main script
+    function markTaskDoneToday() {
+        localStorage.setItem('scratchy_task_done_day', new Date().toDateString());
+    }
+
+    // Init on page load
+    window.addEventListener('load', initFab);
     </script>
 </body>
 
