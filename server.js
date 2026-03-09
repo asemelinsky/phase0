@@ -88,7 +88,7 @@ function escapeXml(s) {
 }
 
 function ttsAzure(text, { key, region, voice }, res, next) {
-    voice = voice || 'uk-UA-PolinaNeural';
+    voice = voice || 'uk-UA-OstapNeural';
     const ssml = `<speak version='1.0' xml:lang='uk-UA'><voice name='${voice}'>${escapeXml(text)}</voice></speak>`;
     const body = Buffer.from(ssml);
     const req2 = https.request({
