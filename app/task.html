@@ -894,13 +894,13 @@
                     const dir = baseType.replace('move_', '');
                     const steps = parseInt(block.getFieldValue('STEPS')) || 1;
                     for (let i = 0; i < steps; i++) {
-                        moveLog.push({type: 'move', dir, penDown: pencilDown});
+                        moveLog.push({type: 'move', dir, penDown: pencilDown, x: charPos.x, y: charPos.y});
                         const hit = await move(baseType);
                         if (hit) return false;
                         if (reachedTarget() && !(currentTask.drawingPattern && currentTask.drawingPattern.figureType)) return true;
                     }
                 } else if (type.startsWith('move_') || type === 'jump') {
-                    if (type !== 'jump') moveLog.push({type: 'move', dir: type.replace('move_', ''), penDown: pencilDown});
+                    if (type !== 'jump') moveLog.push({type: 'move', dir: type.replace('move_', ''), penDown: pencilDown, x: charPos.x, y: charPos.y});
                     const hitObstacle = await move(type);
                     if (hitObstacle) return false;
                 } else if (type === 'repeat_3' || type === 'repeat_5' || type === 'always') {
