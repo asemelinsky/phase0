@@ -173,14 +173,18 @@
             {
                 id: 'anim_intro_overlay',
                 name: 'Інтро нового блоку',
-                desc: 'Оверлей з описом нового Blockly-блоку',
+                desc: 'Оверлей з SVG-блоком + підпис. Приклад: «рухатись вправо на (10) кроків»',
                 tags: ['Будь-який день', 'Перший запуск', 'Один раз'],
                 run() {
                     localStorage.removeItem(`intro_preview_task_${PREVIEW_UID}`);
                     AnimEngine.trigger('intro_overlay', {
                         taskId: 'preview_task',
                         uid: PREVIEW_UID,
-                        text: 'Це новий блок — «Рухатись»! Перетягни його на поле і постав скільки кроків зробити.'
+                        introBlock: {
+                            color: '#4C97FF',
+                            label: 'рухатись вправо на (10) кроків'
+                        },
+                        text: 'Це новий блок! Перетягни його на поле і постав скільки кроків зробити.'
                     });
                 },
                 reset() {
