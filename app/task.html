@@ -518,10 +518,31 @@
                 position: relative;
             }
 
+            /* Кругла жовта кнопка — тільки прапорець */
             #runBtn {
-                flex: 0 0 auto;
-                min-width: 160px;
+                flex: 0 0 60px;
+                width: 60px;
+                height: 60px;
+                min-width: unset;
+                border-radius: 50%;
+                background: #FACC15;
+                padding: 0;
+                font-size: 0;
+                color: transparent;
+                border: 2.5px solid #D97706;
+                box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.22);
             }
+
+            #runBtn::before {
+                content: '⚑';
+                font-size: 2rem;
+                color: #15803d;
+                display: block;
+                line-height: 1;
+            }
+
+            #runBtn:hover { opacity: 1; transform: none; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.28); }
+            #runBtn:active { box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.22); transform: translate(2px, 2px); }
 
             /* Підказка не потрібна в рядку кнопок */
             .scratchy-tooltip {
