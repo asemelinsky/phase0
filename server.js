@@ -207,6 +207,12 @@ function ttsGoogleTranslate(text, res, next) {
 }
 
 function getTTSChain() {
+    // test mode — тільки безкоштовний Google Translate
+    if (process.env.TTS_MODE === 'test') {
+        console.log('🧪 TTS_MODE=test → google_translate only');
+        return [{ name: 'google_translate' }];
+    }
+
     const chain = [];
     // Legacy: ELEVENLABS_API_KEY has top priority if set
     if (process.env.ELEVENLABS_API_KEY) {
@@ -244,6 +250,14 @@ function runTTSChain(text, chain, i, res) {
     if (p.name === 'google_translate')          return ttsGoogleTranslate(text, res, next);
     next(); // unknown provider or missing key → skip
 }
+
+app.get('/api/tts-status', (req, res) => {
+    const chain = getTTSChain();
+    res.json({
+        mode: process.env.TTS_MODE || 'real',
+        providers: chain.map(p => p.name),
+    });
+});
 
 app.post('/api/tts', (req, res) => {
     const text = (req.body.text || '').slice(0, 500);
