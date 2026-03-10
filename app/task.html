@@ -486,12 +486,16 @@
 
             .sidebar {
                 order: 2;
+                flex: 1;
                 flex-direction: column;
+                overflow: visible; /* дозволяє дузі FAB виходити за межі */
+                min-height: 0;
             }
 
             .preview-panel {
-                flex: none;
-                height: 35vh;
+                flex: 1;
+                min-height: 0;
+                border-radius: 1rem 1rem 0 0; /* кути тільки зверху — знизу приліпає controls */
             }
 
             #gameCanvas {
@@ -499,16 +503,44 @@
                 height: 100%;
             }
 
+            /* Controls-рядок виходить з preview-panel і стає рядком кнопок */
+            .controls {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 1rem;
+                padding: 0.5rem 1rem;
+                border-radius: 0 0 1rem 1rem;
+                background: rgba(15, 23, 42, 0.4);
+                flex-shrink: 0;
+                overflow: visible;
+                position: relative;
+            }
+
+            #runBtn {
+                flex: 0 0 auto;
+                min-width: 160px;
+            }
+
+            /* FAB у потоці всередині controls */
+            .scratchy-fab {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                z-index: 1000;
+                flex-shrink: 0;
+            }
+
+            /* Підказка не потрібна в рядку кнопок */
+            .scratchy-tooltip {
+                display: none;
+            }
+
             #blocklyArea {
                 order: 3;
                 height: 40vh;
                 flex-shrink: 0;
-            }
-
-            /* FAB посередині між сценою і робочим столом */
-            .scratchy-fab {
-                bottom: calc(40vh + 0.4rem + 8px);
-                right: 12px;
             }
         }
 
@@ -917,6 +949,17 @@
 
         // --- Core Logic ---
         async function init() {
+            // Mobile layout: move .controls out of preview-panel and FAB into controls row
+            if (isMobile) {
+                const sidebar = document.querySelector('.sidebar');
+                const controls = document.querySelector('.controls');
+                const fab = document.getElementById('scratchyFab');
+                if (sidebar && controls && fab) {
+                    sidebar.appendChild(controls);
+                    controls.appendChild(fab);
+                }
+            }
+
             try {
                 const response = await fetch('../data/tasks.json');
                 const tasks = await response.json();
