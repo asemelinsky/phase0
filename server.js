@@ -208,7 +208,7 @@ function ttsGoogleTranslate(text, res, next) {
 
 function getTTSChain() {
     // test mode — тільки безкоштовний Google Translate
-    if (process.env.TTS_MODE === 'test') {
+    if ((process.env.TTS_MODE || '').trim().replace(/^"|"$/g, '') === 'test') {
         console.log('🧪 TTS_MODE=test → google_translate only');
         return [{ name: 'google_translate' }];
     }
