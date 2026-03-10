@@ -1,3 +1,28 @@
+// Словник блоків — збігається з Blockly.defineBlocksWithJsonArray в task.js
+const BLOCK_DEFS = {
+    move_right:       { label: 'йти вправо ➔',          hex: '#4C97FF', desc: 'Цей блок рухає героя вправо на один крок!' },
+    move_left:        { label: 'йти вліво ⬅',            hex: '#4C97FF', desc: 'Цей блок рухає героя вліво на один крок!' },
+    move_up:          { label: 'йти вгору ⬆',            hex: '#4C97FF', desc: 'Цей блок рухає героя вгору на один крок!' },
+    move_down:        { label: 'йти вниз ⬇',             hex: '#4C97FF', desc: 'Цей блок рухає героя вниз на один крок!' },
+    jump:             { label: 'стрибнути ↑',             hex: '#4C97FF', desc: 'Герой підстрибує! Можна перестрибнути через перешкоду.' },
+    move_right_steps: { label: 'йти вправо (1) кроків',  hex: '#4C97FF', desc: 'Тепер герой може йти вправо одразу на кілька кроків!' },
+    move_left_steps:  { label: 'йти вліво (1) кроків',   hex: '#4C97FF', desc: 'Тепер герой може йти вліво одразу на кілька кроків!' },
+    move_up_steps:    { label: 'йти вгору (1) кроків',   hex: '#4C97FF', desc: 'Тепер герой може йти вгору одразу на кілька кроків!' },
+    move_down_steps:  { label: 'йти вниз (1) кроків',    hex: '#4C97FF', desc: 'Тепер герой може йти вниз одразу на кілька кроків!' },
+    pencil_down:      { label: 'олівець вниз ✏️',         hex: '#59C059', desc: 'Олівець вниз — герой залишає слід на своєму шляху!' },
+    pencil_up:        { label: 'олівець вгору ✏️',        hex: '#59C059', desc: 'Олівець вгору — герой рухається без сліду.' },
+    repeat_2:         { label: 'повторити (2) рази',     hex: '#FFAB19', desc: 'Блоки всередині виконаються 2 рази — не треба ставити їх двічі!' },
+    repeat_3:         { label: 'повторити (3) рази',     hex: '#FFAB19', desc: 'Блоки всередині виконаються 3 рази — не треба ставити їх тричі!' },
+    repeat_5:         { label: 'повторити (5) разів',    hex: '#FFAB19', desc: 'Блоки всередині виконаються 5 разів!' },
+    always:           { label: 'завжди повторювати',     hex: '#FFAB19', desc: 'Блоки всередині повторюються нескінченно!' },
+    event_flag:       { label: 'коли натиснуть 🚩',      hex: '#FFBF00', desc: 'Програма стартує коли натиснуть на зелений прапорець!' },
+    event_click:      { label: 'коли клацнуть 🖱️',       hex: '#FFBF00', desc: 'Програма стартує коли клацнуть на героя!' },
+    if_obstacle:      { label: 'якщо перешкода',         hex: '#E6007A', desc: 'Якщо попереду перешкода — герой зробить інше!' },
+    if_wall:          { label: 'якщо стіна',             hex: '#E6007A', desc: 'Якщо попереду стіна — герой зробить інше!' },
+    say_alert:        { label: 'сказати ⚠️',              hex: '#FF6680', desc: 'Герой скаже попередження вголос!' },
+    repair_bridge:    { label: 'полагодити міст 🔨',     hex: '#FF6680', desc: 'Герой полагодить зламаний міст — і зможе пройти далі!' },
+};
+
 // anim_intro_overlay — оверлей з описом нового Blockly-блоку
 AnimEngine.register('intro_overlay', {
     meta: {
@@ -9,18 +34,21 @@ AnimEngine.register('intro_overlay', {
         showRule: 'Тільки один раз',
     },
 
-    shouldShow({ taskId, uid } = {}) {
-        if (!taskId || !uid) return false;
-        return !localStorage.getItem(`intro_${taskId}_${uid}`);
+    shouldShow({ blockId, uid } = {}) {
+        if (!blockId || !uid) return false;
+        return !localStorage.getItem(`intro_block_${blockId}_${uid}`);
     },
 
-    // ctx: { taskId, uid, text, introBlock: { color, label }, onClose }
-    show({ taskId, uid, text, introBlock, onClose } = {}) {
+    // ctx: { blockId, uid, text, onClose }
+    show({ blockId, uid, text, onClose } = {}) {
         const overlay = document.getElementById('introOverlay');
         const textEl  = document.getElementById('introText');
         if (!overlay || !textEl) return;
 
-        // Якщо є introBlock — показати SVG-блок перед текстом
+        // Знайти визначення блоку
+        const def = BLOCK_DEFS[blockId];
+
+        // Показати SVG-блок перед текстом
         let blockEl = overlay.querySelector('.intro-block-preview');
         if (!blockEl) {
             blockEl = document.createElement('div');
@@ -28,20 +56,20 @@ AnimEngine.register('intro_overlay', {
             overlay.insertBefore(blockEl, textEl);
         }
 
-        if (introBlock) {
-            blockEl.innerHTML = renderBlockSVG(introBlock.color, introBlock.label);
+        if (def) {
+            blockEl.innerHTML = renderBlockSVG(def.hex, def.label);
             blockEl.style.display = 'block';
         } else {
             blockEl.style.display = 'none';
         }
 
-        textEl.textContent = text || '';
+        textEl.textContent = (def && def.desc) ? def.desc : (text || '');
         overlay.classList.add('active');
 
         const btn = document.getElementById('introOk');
         if (btn) {
             btn.onclick = () => {
-                if (taskId && uid) localStorage.setItem(`intro_${taskId}_${uid}`, '1');
+                if (blockId && uid) localStorage.setItem(`intro_block_${blockId}_${uid}`, '1');
                 overlay.classList.remove('active');
                 if (onClose) onClose();
             };

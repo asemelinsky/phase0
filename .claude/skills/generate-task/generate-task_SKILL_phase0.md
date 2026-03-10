@@ -45,7 +45,8 @@ allowed-tools: read, write
   "obstacles": [],
   "audio_intro": "Привіт! Я котик! Допоможи мені дістатися до зірочки!",
   "audio_success": "Ура! Ти зробив це!",
-  "audio_hint": "Спробуй перетягнути синій блок зі стрілкою вправо."
+  "audio_hint": "Спробуй перетягнути синій блок зі стрілкою вправо.",
+  "intro_block": { "id": "move_right" }
 }
 ```
 
@@ -109,6 +110,39 @@ allowed-tools: read, write
 | `audio_intro/success/hint` | string | ✅ | TTS фрази |
 | `drawingPattern` | object | тільки для олівцевих | Об'єкт перевірки малюнку (див. нижче) |
 | `drawing_guide` | array | необов'язкове | Контури-підказки на сцені для трасування (масив штрихів) |
+| `intro_block` | object | необов'язкове | Анімація представлення нового блоку (div. нижче) |
+| `intro_block_group` | object | необов'язкове | Анімація представлення групи нових блоків (div. нижче) |
+
+### intro_block / intro_block_group — анімація нових блоків
+
+Заповнюються **тільки для першого завдання де зустрічається новий блок**.
+
+**intro_block** — для одного нового блоку:
+```json
+"intro_block": { "id": "move_right" }
+```
+Тільки `id` — достатньо. Текст і колір беруться з `BLOCK_DEFS` в `intro_overlay.js`, що збігається з Blockly-визначеннями в `task.js`.
+
+**intro_block_group** — для сімейства блоків (вводяться разом в одному уроці):
+```json
+"intro_block_group": {
+  "id": "movement_steps",
+  "title": "Блоки руху з кроками",
+  "text": "Тепер котик може рухатись одразу на кілька кроків!",
+  "blocks": [
+    { "id": "move_right_steps" },
+    { "id": "move_left_steps" }
+  ]
+}
+```
+
+**Правила:**
+- `intro_block` і `intro_block_group` — взаємовиключні (тільки одне з двох)
+- Якщо поле порожнє в Notion — не включати в JSON
+- localStorage-ключ: `intro_block_{id}_{uid}` або `intro_block_group_{id}_{uid}`
+- Колір і текст блоку визначаються автоматично — дивись `BLOCK_DEFS` в `app/animations/intro_overlay.js`
+
+---
 
 ### drawingPattern — структура
 
@@ -262,11 +296,15 @@ allowed-tools: read, write
    - `drawing_navigation` → звичайна ціль + `drawingPattern: {requirePen: true}`
    - `navigation` → звичайна ціль, без `drawingPattern`
 5. Для мікроуроків: нова концепція = +1 блок, `stars: 1`
+   - Якщо є новий блок якого не було у попередніх завданнях → заповни `intro_block` (або `intro_block_group` якщо 2+ блоки одночасно)
+   - Якщо в Notion task DB вже заповнено поле `intro_block`/`intro_block_group` → взяти з Notion
+   - Якщо в Notion пусто, але блок новий → вказати тільки `{ "id": "block_id" }` — label/колір/текст беруться автоматично з `BLOCK_DEFS` в `app/animations/intro_overlay.js`
 6. Для челенджу: `stars: 3`, `attempt_limit: 2`, `rollback_to_day: N`
 7. Не повторювати персонажа підряд
 8. Перевір: `solution` містить тільки блоки з `available_blocks`
 9. Перевір координати в межах 600×450, крок сітки = 50px
 10. Append нові завдання до `data/tasks.json` (не перезаписуй)
+11. Запусти скрипт тегування: `node scripts/tag-intro-blocks.js` — він автоматично проставить `intro_block`/`intro_block_group` для нових завдань де вперше з'являється нове сімейство блоків
 
 ---
 

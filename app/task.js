@@ -111,17 +111,12 @@
                 document.getElementById('saveBar').classList.add('visible');
             }
 
-            // Show intro overlay for new element presentation (once per task per user)
-            if (currentTask.intro_overlay) {
-                const introKey = `intro_${currentTask.id}_${uid}`;
-                if (!localStorage.getItem(introKey)) {
-                    document.getElementById('introText').textContent = currentTask.intro_overlay;
-                    document.getElementById('introOverlay').classList.add('active');
-                    document.getElementById('introOk').onclick = () => {
-                        localStorage.setItem(introKey, '1');
-                        document.getElementById('introOverlay').classList.remove('active');
-                    };
-                }
+            // Show intro overlay for new block presentation (once per block per user)
+            if (currentTask.intro_block && typeof AnimEngine !== 'undefined') {
+                AnimEngine.trigger('intro_overlay', {
+                    blockId: currentTask.intro_block.id,
+                    uid,
+                });
             }
 
             // Mobile: show task announcement modal with TTS
