@@ -1,0 +1,31 @@
+.tour-tip {
+    display: none;
+    position: fixed;
+    z-index: 300;
+    background: #1e293b;
+    border: 1px solid #6366f1;
+    border-radius: 1rem;
+    padding: 1rem 1.2rem;
+    max-width: 260px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.tour-tip.visible { display: block; }
+
+.tour-tip-text { font-size: 0.88rem; color: #f8fafc; margin-bottom: 0.75rem; line-height: 1.5; }
+
+.tour-tip-nav { display: flex; justify-content: space-between; align-items: center; }
+
+.tour-btn {
+    background: #6366f1;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.8rem;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.tour-btn.skip { background: transparent; color: #64748b; font-size: 0.8rem; }
+
+.tour-dots { display: flex; gap: 4px; }
+.tour-dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; }
+.tour-dot.active { background: #6366f1; }

@@ -1,0 +1,33 @@
+.scratchy-tooltip {
+    position: absolute;
+    bottom: 68px;
+    right: 0;
+    background: #6366f1;
+    color: white;
+    padding: 6px 13px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: tooltipBounce 1.3s ease-in-out infinite;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.45);
+    transition: opacity 0.2s;
+}
+
+.scratchy-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 18px;
+    border: 6px solid transparent;
+    border-top-color: #6366f1;
+}
+
+@keyframes tooltipBounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+}
+
+.scratchy-tooltip.hidden { opacity: 0; pointer-events: none; }

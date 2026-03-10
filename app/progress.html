@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="animations/onboarding.css">
+    <link rel="stylesheet" href="animations/tour.css">
+    <link rel="stylesheet" href="animations/warmup_dialog.css">
     <style>
         :root {
             --primary: #6366f1;
@@ -167,11 +170,11 @@
             margin-top: 0.25rem;
         }
 
-        .badge-done { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
-        .badge-active { background: rgba(99, 102, 241, 0.2); color: var(--primary); animation: pulse 2s infinite; }
+        .badge-done             { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+        .badge-active           { background: rgba(99, 102, 241, 0.2); color: var(--primary); animation: pulse 2s infinite; }
         .badge-challenge-active { background: rgba(245, 158, 11, 0.2); color: #f59e0b; animation: pulse 2s infinite; }
-        .badge-locked { border: 1px solid rgba(255,255,255,0.1); color: #64748b; }
-        .badge-repeat { background: rgba(255,255,255,0.05); color: #94a3b8; }
+        .badge-locked           { border: 1px solid rgba(255,255,255,0.1); color: #64748b; }
+        .badge-repeat           { background: rgba(255,255,255,0.05); color: #94a3b8; }
 
         @keyframes pulse {
             0%   { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
@@ -244,12 +247,10 @@
         }
 
         .exercise-item.locked { opacity: 0.45; cursor: not-allowed; }
-
-        .exercise-item.done { border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); }
+        .exercise-item.done   { border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); }
 
         .exercise-status { font-size: 1.1rem; flex-shrink: 0; }
-
-        .exercise-title { font-size: 0.9rem; font-weight: 500; flex: 1; }
+        .exercise-title  { font-size: 0.9rem; font-weight: 500; flex: 1; }
 
         /* ===== LIGHT THEME ===== */
         body.light-theme {
@@ -262,8 +263,8 @@
                 radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.07) 0%, transparent 40%);
         }
 
-        body.light-theme .day-label { color: #475569; }
-        body.light-theme .popup { background: #ffffff; }
+        body.light-theme .day-label         { color: #475569; }
+        body.light-theme .popup             { background: #ffffff; }
         body.light-theme .card-mini-progress { color: #475569; }
 
         .theme-toggle {
@@ -276,100 +277,7 @@
             transition: all 0.2s;
             color: var(--text);
         }
-
         .theme-toggle:hover { opacity: 0.8; }
-
-        /* ===== ONBOARDING ===== */
-        .onboarding-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.88);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-        }
-        .onboarding-overlay.open { display: flex; }
-
-        .onboarding-box {
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 2rem;
-            padding: 2.5rem 2rem;
-            width: 90%;
-            max-width: 440px;
-            text-align: center;
-        }
-
-        .onboarding-title {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 1.6rem;
-            margin-bottom: 0.4rem;
-        }
-
-        .onboarding-sub {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            margin-bottom: 1.75rem;
-        }
-
-        .avatars-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .avatar-option {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.25rem;
-            padding: 1.1rem 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .avatar-option:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
-        .avatar-option.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.2); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
-
-        .avatar-emoji { font-size: 2.4rem; }
-        .avatar-label { font-size: 0.75rem; color: #94a3b8; }
-
-        .name-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 0.75rem;
-            padding: 0.8rem 1rem;
-            color: #f8fafc;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            margin-bottom: 1.25rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .name-input:focus { border-color: var(--primary); }
-        .name-input::placeholder { color: #475569; }
-
-        .start-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #6366f1, #f43f5e);
-            border: none;
-            border-radius: 1rem;
-            padding: 0.95rem;
-            color: white;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
-        }
-        .start-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-        .start-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
         /* Avatar bubble */
         .avatar-bubble {
@@ -389,196 +297,15 @@
         }
         .avatar-bubble:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.3); }
 
-        /* Tour tooltip */
-        .tour-tip {
-            display: none;
-            position: fixed;
-            z-index: 300;
-            background: #1e293b;
-            border: 1px solid var(--primary);
-            border-radius: 1rem;
-            padding: 1rem 1.2rem;
-            max-width: 260px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-        .tour-tip.visible { display: block; }
-        .tour-tip-text { font-size: 0.88rem; color: #f8fafc; margin-bottom: 0.75rem; line-height: 1.5; }
-        .tour-tip-nav { display: flex; justify-content: space-between; align-items: center; }
-        .tour-btn { background: var(--primary); border: none; border-radius: 0.5rem; padding: 0.35rem 0.8rem; color: white; font-size: 0.8rem; cursor: pointer; }
-        .tour-btn.skip { background: transparent; color: #64748b; font-size: 0.8rem; }
-        .tour-dots { display: flex; gap: 4px; }
-        .tour-dot { width: 6px; height: 6px; border-radius: 50%; background: #334155; }
-        .tour-dot.active { background: var(--primary); }
-
         /* ===== MOBILE ===== */
         @media (max-width: 600px) {
-            body { padding: 1rem; }
-
+            body   { padding: 1rem; }
             header { flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-            .logo { font-size: 1.5rem; }
+            .logo  { font-size: 1.5rem; }
             .stats { width: 100%; justify-content: center; }
             .stat-card { flex: 1; }
-
-            .day-card { padding: 1rem; }
-            .card-icon { font-size: 1.5rem; }
-        }
-
-        /* ===== WARMUP DIALOG ===== */
-        .warmup-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-            z-index: 500;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 2rem;
-        }
-        .warmup-overlay.open { display: flex; }
-
-        .wu-stage {
-            width: 100%;
-            max-width: 700px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-            gap: 1rem;
-            position: relative;
-        }
-
-        .wu-character {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.4rem;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .wu-avatar {
-            font-size: 4rem;
-            line-height: 1;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
-        }
-        .wu-avatar.speaking {
-            animation: bounce 0.6s ease infinite alternate;
-        }
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to   { transform: translateY(-8px); }
-        }
-
-        .wu-name {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
-
-        .wu-bubble {
-            position: absolute;
-            bottom: 100%;
-            background: rgba(30, 41, 59, 0.95);
-            border: 1px solid var(--glass-border);
-            border-radius: 1.2rem;
-            padding: 0.9rem 1.1rem;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            max-width: 260px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            opacity: 0;
-            transform: translateY(10px) scale(0.95);
-            transition: opacity 0.3s, transform 0.3s;
-            pointer-events: none;
-            margin-bottom: 0.8rem;
-        }
-        .wu-teacher .wu-bubble { left: 0; border-bottom-left-radius: 4px; }
-        .wu-student .wu-bubble { right: 0; border-bottom-right-radius: 4px; text-align: right; }
-        .wu-bubble.show {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .wu-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-            padding-bottom: 5rem;
-        }
-
-        .wu-center-label {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem;
-            color: #64748b;
-            text-align: center;
-        }
-
-        .wu-questions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-            width: 100%;
-        }
-
-        .wu-q-btn {
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: var(--text);
-            padding: 0.75rem 1rem;
-            border-radius: 0.9rem;
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-            width: 100%;
-        }
-        .wu-q-btn:hover { background: rgba(99,102,241,0.25); border-color: var(--primary); }
-        .wu-q-btn:disabled { opacity: 0.4; cursor: default; }
-
-        .wu-next-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 1rem;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 16px rgba(16,185,129,0.35);
-        }
-        .wu-next-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-
-        .wu-loading {
-            color: #64748b;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        .wu-progress {
-            display: flex;
-            gap: 0.4rem;
-            margin-bottom: 0.4rem;
-        }
-        .wu-progress-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.15);
-            transition: background 0.3s;
-        }
-        .wu-progress-dot.done { background: var(--accent); }
-
-        @media (max-width: 600px) {
-            .wu-avatar { font-size: 3rem; }
-            .wu-bubble { font-size: 0.85rem; max-width: 180px; }
-            .wu-q-btn { font-size: 0.82rem; padding: 0.65rem 0.8rem; }
+            .day-card   { padding: 1rem; }
+            .card-icon  { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -608,62 +335,6 @@
 
     <div class="days-list" id="daysList"></div>
 
-    <!-- Onboarding modal -->
-    <div class="onboarding-overlay" id="onboardingOverlay">
-        <div class="onboarding-box">
-            <div style="font-size:3rem;margin-bottom:0.6rem;">🚀</div>
-            <div class="onboarding-title">Ласкаво просимо!</div>
-            <div class="onboarding-sub">Обери аватар та введи своє ім'я</div>
-
-            <div class="avatars-grid">
-                <div class="avatar-option" data-id="0" onclick="selectAvatar(0)">
-                    <span class="avatar-emoji">🧑</span>
-                    <span class="avatar-label">Хлопчик 1</span>
-                </div>
-                <div class="avatar-option" data-id="1" onclick="selectAvatar(1)">
-                    <span class="avatar-emoji">🧒</span>
-                    <span class="avatar-label">Хлопчик 2</span>
-                </div>
-                <div class="avatar-option" data-id="2" onclick="selectAvatar(2)">
-                    <span class="avatar-emoji">👧</span>
-                    <span class="avatar-label">Дівчинка 1</span>
-                </div>
-                <div class="avatar-option" data-id="3" onclick="selectAvatar(3)">
-                    <span class="avatar-emoji">👩</span>
-                    <span class="avatar-label">Дівчинка 2</span>
-                </div>
-            </div>
-
-            <input class="name-input" type="text" id="nameInput" placeholder="Твоє ім'я (наприклад, Олексій)" maxlength="20" autocomplete="off">
-            <button class="start-btn" id="startBtn" onclick="finishOnboarding()" disabled>Поїхали! 🚀</button>
-        </div>
-    </div>
-
-    <!-- Tour tooltip -->
-    <div class="tour-tip" id="tourTip"></div>
-
-    <!-- Warmup dialog (must be in DOM before scripts run) -->
-    <div class="warmup-overlay" id="warmupOverlay">
-        <div class="wu-stage">
-            <div class="wu-character wu-teacher">
-                <div class="wu-bubble" id="wuTeacherBubble"></div>
-                <div class="wu-avatar" id="wuTeacherAvatar">👨‍🏫</div>
-                <div class="wu-name">Олексій</div>
-            </div>
-            <div class="wu-center" id="wuCenter">
-                <div class="wu-progress" id="wuProgressDots"></div>
-                <div class="wu-center-label" id="wuCenterLabel"></div>
-                <div class="wu-questions" id="wuQuestions"></div>
-                <button class="wu-next-btn" id="wuNextBtn" style="display:none" onclick="wuNext()"></button>
-            </div>
-            <div class="wu-character wu-student">
-                <div class="wu-bubble" id="wuStudentBubble"></div>
-                <div class="wu-avatar" id="wuStudentAvatar">🧑</div>
-                <div class="wu-name" id="wuStudentName">Ти</div>
-            </div>
-        </div>
-    </div>
-
     <!-- Exercises popup -->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup">
@@ -674,6 +345,11 @@
             <div id="popupList"></div>
         </div>
     </div>
+
+    <script src="animations/engine.js"></script>
+    <script src="animations/onboarding.js"></script>
+    <script src="animations/warmup_dialog.js"></script>
+    <script src="animations/tour.js"></script>
 
     <script>
         // Theme toggle
@@ -708,7 +384,6 @@
                 const diff = Math.max(0, Date.now() - new Date(regDate));
                 currentDayIdx = Math.floor(diff / (1000 * 60 * 60 * 24));
             }
-            // ?debugDay=N — для тестування без очікування реальної доби
             const debugDay = parseInt(new URLSearchParams(window.location.search).get('debugDay'));
             if (!isNaN(debugDay)) currentDayIdx = debugDay - 1;
 
@@ -721,91 +396,66 @@
                 else days[d].lessons.push(task);
             });
 
-            const dayNums = Object.keys(days).map(Number).sort((a, b) => a - b);
+            const dayNums  = Object.keys(days).map(Number).sort((a, b) => a - b);
             const totalTasks = allTasks.length;
-            const doneCount = allTasks.filter(t => completed.has(t.id)).length;
+            const doneCount  = allTasks.filter(t => completed.has(t.id)).length;
 
-            document.getElementById('streakVal').textContent = progress.streak;
-            document.getElementById('doneVal').textContent = `${doneCount}/${totalTasks}`;
+            document.getElementById('streakVal').textContent   = progress.streak;
+            document.getElementById('doneVal').textContent     = `${doneCount}/${totalTasks}`;
             document.getElementById('progressFill').style.width = `${(doneCount / totalTasks) * 100}%`;
 
             const list = document.getElementById('daysList');
 
             dayNums.forEach((dayNum, idx) => {
                 const { lessons, challenge } = days[dayNum];
-
-                // Challenge done check (needed for dayOpen below)
-                const challengeDone = challenge ? completed.has(challenge.id) : false;
-
-                // Day exercises open by calendar date OR if challenge is already done (auto-credit)
-                const dayOpen = isTestUser || currentDayIdx >= idx || challengeDone;
-
-                // Exercises stats
-                const doneLessons = lessons.filter(t => completed.has(t.id)).length;
+                const challengeDone  = challenge ? completed.has(challenge.id) : false;
+                const dayOpen        = isTestUser || currentDayIdx >= idx || challengeDone;
+                const doneLessons    = lessons.filter(t => completed.has(t.id)).length;
                 const allLessonsDone = doneLessons === lessons.length;
 
-                // Challenge unlock: first challenge always open; rest need prev challenge done
                 let challengeOpen = false;
                 if (challenge) {
-                    if (!challenge.unlock_after_challenge_id) {
-                        challengeOpen = isTestUser || dayOpen;
-                    } else {
-                        challengeOpen = isTestUser || completed.has(challenge.unlock_after_challenge_id);
-                    }
+                    challengeOpen = !challenge.unlock_after_challenge_id
+                        ? isTestUser || dayOpen
+                        : isTestUser || completed.has(challenge.unlock_after_challenge_id);
                 }
 
-                // Row
                 const row = document.createElement('div');
                 row.className = 'day-row';
-
                 row.innerHTML = `<div class="day-label">День ${dayNum}</div>`;
 
-                // --- Exercises card ---
+                // Exercises card
                 const exCard = document.createElement('div');
                 exCard.className = `day-card exercises-card${dayOpen ? '' : ' locked'}`;
-
-                let exBadge = '';
-                if (allLessonsDone) exBadge = `<span class="status-badge badge-done">Виконано ✅</span>`;
-                else if (dayOpen) exBadge = `<span class="status-badge badge-active">Активно 🔥</span>`;
-                else exBadge = `<span class="status-badge badge-locked">🔒</span>`;
-
+                let exBadge = allLessonsDone
+                    ? `<span class="status-badge badge-done">Виконано ✅</span>`
+                    : dayOpen
+                        ? `<span class="status-badge badge-active">Активно 🔥</span>`
+                        : `<span class="status-badge badge-locked">🔒</span>`;
                 exCard.innerHTML = `
                     <div class="card-icon">📚</div>
                     <div class="card-type">Вправи</div>
                     <div class="card-mini-progress">${doneLessons} / ${lessons.length} виконано</div>
-                    ${exBadge}
-                `;
+                    ${exBadge}`;
+                if (dayOpen) exCard.onclick = () => openExercisesPopup(dayNum, lessons, completed);
 
-                if (dayOpen) {
-                    exCard.onclick = () => openExercisesPopup(dayNum, lessons, completed);
-                }
-
-                // --- Challenge card ---
+                // Challenge card
                 const chCard = document.createElement('div');
                 chCard.className = `day-card challenge-card${challengeOpen ? '' : ' locked'}`;
-
-                let chBadge = '';
-                if (!challenge) {
-                    chBadge = `<span class="status-badge badge-locked">Незабаром</span>`;
-                } else if (challengeDone) {
-                    chBadge = `<span class="status-badge badge-done">Пройдено ✅</span>`;
-                } else if (challengeOpen) {
-                    chBadge = `<span class="status-badge badge-challenge-active">Відкрито ⚡</span>`;
-                } else {
-                    chBadge = `<span class="status-badge badge-locked">🔒</span>`;
-                }
-
+                let chBadge = !challenge
+                    ? `<span class="status-badge badge-locked">Незабаром</span>`
+                    : challengeDone
+                        ? `<span class="status-badge badge-done">Пройдено ✅</span>`
+                        : challengeOpen
+                            ? `<span class="status-badge badge-challenge-active">Відкрито ⚡</span>`
+                            : `<span class="status-badge badge-locked">🔒</span>`;
                 chCard.innerHTML = `
                     <div class="card-icon">⚡</div>
                     <div class="card-type">Челендж</div>
                     <div class="card-mini-progress">${challenge ? (challengeDone ? '3 зірки' : 'До 3 зірок') : 'Скоро'}</div>
-                    ${chBadge}
-                `;
-
+                    ${chBadge}`;
                 if (challenge && challengeOpen) {
-                    chCard.onclick = () => {
-                        window.location.href = `task.html?uid=${uid}&task=${challenge.id}`;
-                    };
+                    chCard.onclick = () => { window.location.href = `task.html?uid=${uid}&task=${challenge.id}`; };
                 }
 
                 row.appendChild(exCard);
@@ -820,339 +470,32 @@
             listEl.innerHTML = '';
 
             lessons.forEach((task, idx) => {
-                const isDone = completed.has(task.id);
+                const isDone   = completed.has(task.id);
                 const prevDone = idx === 0 || completed.has(lessons[idx - 1].id);
                 const isLocked = !isTestUser && !isDone && !prevDone;
 
                 const item = document.createElement('div');
                 item.className = `exercise-item${isLocked ? ' locked' : ''}${isDone ? ' done' : ''}`;
-
                 const statusIcon = isDone ? '✅' : isLocked ? '🔒' : '▶️';
                 const shortTitle = task.title.replace(/^День \d+ — /, '');
                 item.innerHTML = `
                     <span class="exercise-status">${statusIcon}</span>
-                    <span class="exercise-title">Вправа ${task.order_in_day} · ${shortTitle}</span>
-                `;
-
+                    <span class="exercise-title">Вправа ${task.order_in_day} · ${shortTitle}</span>`;
                 if (!isLocked) {
-                    item.onclick = () => {
-                        window.location.href = `task.html?uid=${uid}&task=${task.id}`;
-                    };
+                    item.onclick = () => { window.location.href = `task.html?uid=${uid}&task=${task.id}`; };
                 }
-
                 listEl.appendChild(item);
             });
 
             document.getElementById('popupOverlay').classList.add('open');
         }
 
-        function closePopup() {
-            document.getElementById('popupOverlay').classList.remove('open');
-        }
-
+        function closePopup() { document.getElementById('popupOverlay').classList.remove('open'); }
         document.getElementById('popupOverlay').addEventListener('click', e => {
             if (e.target === e.currentTarget) closePopup();
         });
 
-        // ===== ONBOARDING =====
-        const AVATARS = ['🧑', '🧒', '👧', '👩'];
-        let selectedAvatarId = null;
-
-        function selectAvatar(id) {
-            selectedAvatarId = id;
-            document.querySelectorAll('.avatar-option').forEach(el => {
-                el.classList.toggle('selected', parseInt(el.dataset.id) === id);
-            });
-            updateStartBtn();
-        }
-
-        function updateStartBtn() {
-            const name = document.getElementById('nameInput').value.trim();
-            document.getElementById('startBtn').disabled = selectedAvatarId === null || name.length < 2;
-        }
-
-        function finishOnboarding() {
-            const name = document.getElementById('nameInput').value.trim();
-            if (selectedAvatarId === null || name.length < 2) return;
-
-            const profile = { name, avatarId: selectedAvatarId, avatarEmoji: AVATARS[selectedAvatarId] };
-            localStorage.setItem(`profile_${uid}`, JSON.stringify(profile));
-            localStorage.setItem(`onboarding_done_${uid}`, '1');
-
-            document.getElementById('onboardingOverlay').classList.remove('open');
-            applyProfile(profile);
-            startWarmupDialog();
-        }
-
-        function applyProfile(profile) {
-            const bubble = document.getElementById('avatarBubble');
-            if (!bubble) return;
-            bubble.textContent = profile.avatarEmoji;
-            bubble.href = `profile.html?uid=${uid}`;
-        }
-
-        function checkOnboarding() {
-            if (uid === 'guest') return;
-            const params = new URLSearchParams(window.location.search);
-            if (params.has('onboarding')) {
-                localStorage.removeItem(`onboarding_done_${uid}`);
-                localStorage.removeItem(`dialog_done_${uid}`);
-            }
-            if (params.has('warmup')) {
-                localStorage.removeItem(`dialog_done_${uid}`);
-            }
-
-            const onboardingDone = localStorage.getItem(`onboarding_done_${uid}`);
-            const dialogDone = localStorage.getItem(`dialog_done_${uid}`);
-            const profileRaw = localStorage.getItem(`profile_${uid}`);
-            if (profileRaw) applyProfile(JSON.parse(profileRaw));
-            else document.getElementById('avatarBubble').href = `profile.html?uid=${uid}`;
-
-            if (!onboardingDone) {
-                document.getElementById('onboardingOverlay').classList.add('open');
-            } else if (!dialogDone) {
-                startWarmupDialog();
-            }
-        }
-
-        document.getElementById('nameInput').addEventListener('input', updateStartBtn);
-
-        // ===== TOUR =====
-        const TOUR_STEPS = [
-            { text: '🗺️ Це твоя Карта пригод! Тут відображаються всі дні навчання.', top: '80px', left: '50%', transform: 'translateX(-50%)' },
-            { text: '📚 Натисни на картку «Вправи», щоб відкрити список завдань дня.', top: '220px', left: '1rem' },
-            { text: '⚡ Челендж відкритий завжди! Виконай його і отримай аж 3 зірки ⭐⭐⭐', top: '220px', right: '1rem' },
-            { text: '🔥 Тут твій стрік і загальний прогрес. Молодець!', top: '80px', right: '1rem' },
-        ];
-        let tourIdx = 0;
-
-        function startTour() {
-            tourIdx = 0;
-            showTourStep();
-        }
-
-        function showTourStep() {
-            const el = document.getElementById('tourTip');
-            if (tourIdx >= TOUR_STEPS.length) { el.style.display = 'none'; return; }
-            const s = TOUR_STEPS[tourIdx];
-            const dots = TOUR_STEPS.map((_, i) =>
-                `<div class="tour-dot${i === tourIdx ? ' active' : ''}"></div>`).join('');
-            el.innerHTML = `
-                <div class="tour-tip-text">${s.text}</div>
-                <div class="tour-tip-nav">
-                    <button class="tour-btn skip" onclick="endTour()">Пропустити</button>
-                    <div class="tour-dots">${dots}</div>
-                    <button class="tour-btn" onclick="nextTour()">${tourIdx < TOUR_STEPS.length - 1 ? 'Далі →' : 'Готово!'}</button>
-                </div>`;
-            el.style.cssText = `display:block;position:fixed;z-index:300;top:${s.top || 'auto'};` +
-                (s.left ? `left:${s.left};` : '') +
-                (s.right ? `right:${s.right};` : '') +
-                (s.transform ? `transform:${s.transform};` : '');
-        }
-
-        function nextTour() { tourIdx++; showTourStep(); }
-        function endTour() { document.getElementById('tourTip').style.display = 'none'; }
-
-        // ===== WARMUP DIALOG =====
-        const WU_INTRO = [
-            (name) => `Привіт, ${name}! Радий тебе бачити! 👋`,
-            ()     => 'Я створив Кодомандри, щоб ти навчився програмувати і робив власні ігри! 🎮',
-            ()     => 'Задай мені будь-які 3 питання — і тоді поїхали! 🚀',
-        ];
-
-        const WU_QUESTIONS = [
-            'Що таке програмування?',
-            'Чи це складно?',
-            'Чому мені потрібно вміти кодувати?',
-            'Що я зможу зробити після курсу?',
-            'Скільки тривають заняття?',
-            'Хто такий Скретчик?',
-        ];
-
-        let wuState = { phase: 'intro', introIdx: 0, questionsLeft: 3, usedQs: new Set() };
-
-        function startWarmupDialog() {
-            const overlay = document.getElementById('warmupOverlay');
-            if (!overlay) return;
-
-            const profileRaw = localStorage.getItem(`profile_${uid}`);
-            const profile = profileRaw ? JSON.parse(profileRaw) : null;
-            if (profile) {
-                document.getElementById('wuStudentAvatar').textContent = profile.avatarEmoji || '🧑';
-                document.getElementById('wuStudentName').textContent = profile.name || 'Ти';
-            }
-
-            wuState = { phase: 'intro', introIdx: 0, questionsLeft: 3, usedQs: new Set() };
-            overlay.classList.add('open');
-            wuShowIntro();
-        }
-
-        function wuShowIntro() {
-            const profileRaw = localStorage.getItem(`profile_${uid}`);
-            const name = profileRaw ? (JSON.parse(profileRaw).name || 'друже') : 'друже';
-
-            const text = WU_INTRO[wuState.introIdx](name);
-            wuTeacherSay(text);
-
-            document.getElementById('wuQuestions').innerHTML = '';
-            document.getElementById('wuStudentBubble').classList.remove('show');
-            document.getElementById('wuCenterLabel').textContent = '';
-
-            const nextBtn = document.getElementById('wuNextBtn');
-            nextBtn.style.display = 'block';
-            nextBtn.textContent = wuState.introIdx < WU_INTRO.length - 1 ? 'Далі →' : 'Питання! 🙋';
-            nextBtn.onclick = () => wuNext();
-            wuState.phase = 'intro';
-
-            wuSpeak(text);
-        }
-
-        function wuNext() {
-            if (wuState.phase === 'intro') {
-                wuState.introIdx++;
-                if (wuState.introIdx < WU_INTRO.length) {
-                    wuShowIntro();
-                } else {
-                    wuShowQuestions();
-                }
-            } else if (wuState.phase === 'done') {
-                wuFinish();
-            }
-        }
-
-        function wuShowQuestions() {
-            wuState.phase = 'questions';
-            document.getElementById('wuNextBtn').style.display = 'none';
-            wuUpdateProgress();
-
-            document.getElementById('wuCenterLabel').textContent = `Питань залишилось: ${wuState.questionsLeft}`;
-
-            const qEl = document.getElementById('wuQuestions');
-            qEl.innerHTML = '';
-            WU_QUESTIONS
-                .filter((_, i) => !wuState.usedQs.has(i))
-                .forEach(q => {
-                    const origIdx = WU_QUESTIONS.indexOf(q);
-                    const btn = document.createElement('button');
-                    btn.className = 'wu-q-btn';
-                    btn.textContent = q;
-                    btn.onclick = () => wuAskQuestion(origIdx, q);
-                    qEl.appendChild(btn);
-                });
-
-            document.getElementById('wuTeacherBubble').classList.remove('show');
-            document.getElementById('wuTeacherAvatar').classList.remove('speaking');
-        }
-
-        async function wuAskQuestion(idx, question) {
-            wuState.usedQs.add(idx);
-            wuState.questionsLeft--;
-
-            document.querySelectorAll('.wu-q-btn').forEach(b => b.disabled = true);
-
-            const sb = document.getElementById('wuStudentBubble');
-            sb.textContent = question;
-            sb.classList.add('show');
-
-            document.getElementById('wuCenterLabel').textContent = 'Викладач думає...';
-            document.getElementById('wuQuestions').innerHTML = '';
-
-            const answer = await wuGetHint(question)
-                || 'Гарне питання! 😄 Дізнаєшся дуже скоро!';
-
-            wuTeacherSay(answer);
-            wuSpeak(answer);
-
-            const nextBtn = document.getElementById('wuNextBtn');
-            nextBtn.style.display = 'block';
-            wuUpdateProgress();
-
-            if (wuState.questionsLeft > 0) {
-                nextBtn.textContent = `Ще питання (${wuState.questionsLeft}) →`;
-                wuState.phase = 'questions_wait';
-                nextBtn.onclick = () => wuShowQuestions();
-            } else {
-                nextBtn.textContent = 'Поїхали! 🚀';
-                wuState.phase = 'done';
-                nextBtn.onclick = () => wuFinish();
-            }
-        }
-
-        function wuUpdateProgress() {
-            const done = 3 - wuState.questionsLeft;
-            document.getElementById('wuProgressDots').innerHTML =
-                Array.from({ length: 3 }, (_, i) =>
-                    `<div class="wu-progress-dot${i < done ? ' done' : ''}"></div>`
-                ).join('');
-        }
-
-        function wuTeacherSay(text) {
-            const bubble = document.getElementById('wuTeacherBubble');
-            const avatar = document.getElementById('wuTeacherAvatar');
-            bubble.classList.remove('show');
-            void bubble.offsetWidth;
-            bubble.textContent = text;
-            bubble.classList.add('show');
-            avatar.classList.add('speaking');
-            setTimeout(() => avatar.classList.remove('speaking'), 2000);
-        }
-
-        async function wuGetHint(question) {
-            try {
-                const res = await fetch('/api/hint', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'warmup', task: { question } })
-                });
-                if (!res.ok) return null;
-                const data = await res.json();
-                return data.hint || null;
-            } catch (e) { return null; }
-        }
-
-        let _wuCurrentAudio = null;
-
-        function wuStopAudio() {
-            if (_wuCurrentAudio) {
-                _wuCurrentAudio.pause();
-                _wuCurrentAudio.src = '';
-                _wuCurrentAudio = null;
-            }
-            speechSynthesis.cancel();
-        }
-
-        function wuSpeak(text) {
-            wuStopAudio();
-            fetch('/api/tts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
-            }).then(r => {
-                if (!r.ok) throw new Error(r.status);
-                return r.blob();
-            }).then(blob => {
-                const audio = new Audio(URL.createObjectURL(blob));
-                _wuCurrentAudio = audio;
-                audio.onended = () => { if (_wuCurrentAudio === audio) _wuCurrentAudio = null; };
-                audio.play().catch(() => wuSpeechFallback(text));
-            }).catch(() => wuSpeechFallback(text));
-        }
-
-        function wuSpeechFallback(text) {
-            speechSynthesis.cancel();
-            const utt = new SpeechSynthesisUtterance(text);
-            utt.lang = 'uk-UA';
-            utt.rate = 0.9;
-            speechSynthesis.speak(utt);
-        }
-
-        function wuFinish() {
-            localStorage.setItem(`dialog_done_${uid}`, '1');
-            document.getElementById('warmupOverlay').classList.remove('open');
-            startTour();
-        }
-
-        checkOnboarding();
+        checkOnboarding(uid);
         init();
     </script>
 </body>

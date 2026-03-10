@@ -1,0 +1,30 @@
+#introOverlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.9);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-radius: 1.5rem;
+}
+#introOverlay.active { display: flex; }
+
+.intro-text {
+    color: var(--primary-light, #818cf8);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-align: center;
+    padding: 0 2rem;
+    max-width: 340px;
+    line-height: 1.5;
+    animation: introPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes introPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.65; transform: scale(1.05); }
+}

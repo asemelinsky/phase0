@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Анімації — Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="fab_tooltip.css">
+    <link rel="stylesheet" href="intro_overlay.css">
+    <link rel="stylesheet" href="tour.css">
+    <link rel="stylesheet" href="onboarding.css">
+    <link rel="stylesheet" href="warmup_dialog.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            padding: 2rem;
+        }
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+        }
+        .card-id   { font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: #6366f1; margin-bottom: 0.3rem; }
+        .card-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+        .card-desc { font-size: 0.82rem; color: #94a3b8; line-height: 1.4; margin-bottom: 1rem; }
+        .card-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+        .tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(99,102,241,0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.3);
+        }
+        .btn-preview {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-preview:hover { opacity: 0.85; }
+        .btn-reset {
+            width: 100%;
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.4rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-reset:hover { color: #f8fafc; border-color: #64748b; }
+
+        /* Mock blockly area for intro_overlay preview */
+        #mockBlocklyArea {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 1.2rem;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+
+        /* Mock FAB for fab_tooltip preview */
+        .mock-fab-wrap {
+            position: relative;
+            display: inline-flex;
+            margin-bottom: 1rem;
+        }
+        .mock-fab-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: 3px solid rgba(255,255,255,0.3);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 Навчальні анімації</h1>
+    <p class="subtitle">Натисни ▶ Показати для перегляду кожної анімації. «Скинути» прибирає localStorage-прапорець щоб можна було показати ще раз.</p>
+
+    <!-- Mock DOM elements needed by animations -->
+    <div id="mockBlocklyArea">
+        [Blockly area]
+        <div id="introOverlay">
+            <div class="intro-text" id="introText"></div>
+            <button style="background:#6366f1;color:white;border:none;border-radius:0.75rem;padding:0.6rem 1.6rem;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;margin-top:0.5rem;" id="introOk">Зрозумів! 👍</button>
+        </div>
+    </div>
+
+    <div class="grid" id="animGrid"></div>
+
+    <!-- Mock FAB (hidden, used by fab_tooltip) -->
+    <div style="position:fixed;bottom:24px;right:24px;z-index:900;">
+        <div class="scratchy-tooltip hidden" id="fabTooltip">Натисни мене! 👆</div>
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:3px solid rgba(255,255,255,0.3);font-size:1.8rem;display:flex;align-items:center;justify-content:center;">🤖</div>
+    </div>
+
+    <script src="engine.js"></script>
+    <script src="fab_tooltip.js"></script>
+    <script src="intro_overlay.js"></script>
+    <script src="tour.js"></script>
+    <script src="onboarding.js"></script>
+    <script src="warmup_dialog.js"></script>
+
+    <script>
+        const PREVIEW_UID = 'preview_user';
+
+        const PREVIEWS = [
+            {
+                id: 'anim_fab_tooltip',
+                name: 'Підказка до помічника',
+                desc: 'Підказка "Натисни мене!" над кнопкою Скретчика',
+                tags: ['День 1', 'Перший запуск', 'Один раз'],
+                run() {
+                    localStorage.removeItem('fab_tooltip_seen');
+                    localStorage.removeItem('fab_tooltip_day');
+                    AnimEngine.trigger('fab_tooltip');
+                },
+                reset() {
+                    localStorage.setItem('fab_tooltip_seen', '1');
+                    document.getElementById('fabTooltip').classList.add('hidden');
+                }
+            },
+            {
+                id: 'anim_intro_overlay',
+                name: 'Інтро нового блоку',
+                desc: 'Оверлей з описом нового Blockly-блоку',
+                tags: ['Будь-який день', 'Перший запуск', 'Один раз'],
+                run() {
+                    localStorage.removeItem(`intro_preview_task_${PREVIEW_UID}`);
+                    AnimEngine.trigger('intro_overlay', {
+                        taskId: 'preview_task',
+                        uid: PREVIEW_UID,
+                        text: 'Це новий блок — «Рухатись»! Перетягни його на поле і постав скільки кроків зробити.'
+                    });
+                },
+                reset() {
+                    localStorage.removeItem(`intro_preview_task_${PREVIEW_UID}`);
+                    document.getElementById('introOverlay').classList.remove('active');
+                }
+            },
+            {
+                id: 'anim_tour',
+                name: 'Тур по карті прогресу',
+                desc: '4 тултіпи що знайомлять з елементами сторінки',
+                tags: ['Онбординг', 'Перший запуск', 'Один раз'],
+                run()   { AnimEngine.trigger('tour'); },
+                reset() { endTour(); }
+            },
+            {
+                id: 'anim_onboarding',
+                name: 'Онбординг: аватар і ім\'я',
+                desc: 'Вибір аватара та введення імені при першому вході',
+                tags: ['Онбординг', 'Перший запуск', 'Один раз'],
+                run() {
+                    localStorage.removeItem(`onboarding_done_${PREVIEW_UID}`);
+                    const el = document.getElementById('onboardingOverlay');
+                    if (el) el.remove();
+                    AnimEngine.trigger('onboarding', { uid: PREVIEW_UID, onDone: () => {} });
+                },
+                reset() {
+                    localStorage.setItem(`onboarding_done_${PREVIEW_UID}`, '1');
+                    const el = document.getElementById('onboardingOverlay');
+                    if (el) el.classList.remove('open');
+                }
+            },
+            {
+                id: 'anim_warmup_dialog',
+                name: 'Діалог-розігрів',
+                desc: 'Викладач + учень: вступ і 3 питання з AI-відповідями',
+                tags: ['Онбординг', 'Перший запуск', 'Один раз'],
+                run() {
+                    localStorage.removeItem(`dialog_done_${PREVIEW_UID}`);
+                    const el = document.getElementById('warmupOverlay');
+                    if (el) el.remove();
+                    startWarmupDialog(PREVIEW_UID);
+                },
+                reset() {
+                    localStorage.setItem(`dialog_done_${PREVIEW_UID}`, '1');
+                    const el = document.getElementById('warmupOverlay');
+                    if (el) el.classList.remove('open');
+                }
+            },
+        ];
+
+        const grid = document.getElementById('animGrid');
+        PREVIEWS.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-id">${p.id}</div>
+                <div class="card-name">${p.name}</div>
+                <div class="card-desc">${p.desc}</div>
+                <div class="card-meta">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+                <button class="btn-preview" onclick="PREVIEWS[${PREVIEWS.indexOf(p)}].run()">▶ Показати</button>
+                <button class="btn-reset"   onclick="PREVIEWS[${PREVIEWS.indexOf(p)}].reset()">↺ Скинути</button>`;
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
