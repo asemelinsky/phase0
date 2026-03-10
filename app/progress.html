@@ -1110,7 +1110,19 @@
             } catch (e) { return null; }
         }
 
+        let _wuCurrentAudio = null;
+
+        function wuStopAudio() {
+            if (_wuCurrentAudio) {
+                _wuCurrentAudio.pause();
+                _wuCurrentAudio.src = '';
+                _wuCurrentAudio = null;
+            }
+            speechSynthesis.cancel();
+        }
+
         function wuSpeak(text) {
+            wuStopAudio();
             fetch('/api/tts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1120,11 +1132,14 @@
                 return r.blob();
             }).then(blob => {
                 const audio = new Audio(URL.createObjectURL(blob));
+                _wuCurrentAudio = audio;
+                audio.onended = () => { if (_wuCurrentAudio === audio) _wuCurrentAudio = null; };
                 audio.play().catch(() => wuSpeechFallback(text));
             }).catch(() => wuSpeechFallback(text));
         }
 
         function wuSpeechFallback(text) {
+            speechSynthesis.cancel();
             const utt = new SpeechSynthesisUtterance(text);
             utt.lang = 'uk-UA';
             utt.rate = 0.9;

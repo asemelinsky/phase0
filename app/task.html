@@ -469,9 +469,7 @@
             }
 
             .hint-card {
-                order: 1;
-                min-height: auto;
-                padding: 0.5rem 0.75rem;
+                display: none;
             }
 
             .hint-avatar {
@@ -506,6 +504,51 @@
                 height: 40vh;
                 flex-shrink: 0;
             }
+
+            /* FAB посередині між сценою і робочим столом */
+            .scratchy-fab {
+                bottom: calc(40vh + 0.4rem + 8px);
+                right: 12px;
+            }
+        }
+
+        /* ===== MOBILE TASK MODAL ===== */
+        #mobileTaskModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.93);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        #mobileTaskModal.active { display: flex; }
+        .mtm-box {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            max-width: 90vw;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            align-items: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .mtm-emoji { font-size: 3.5rem; }
+        .mtm-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+        .mtm-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text);
         }
 
         /* ===== СКРЕТЧИК FAB ===== */
@@ -837,6 +880,16 @@
 
     <div id="saveToast">Збережено ✓</div>
 
+    <!-- Mobile task announcement modal -->
+    <div id="mobileTaskModal">
+        <div class="mtm-box">
+            <div class="mtm-emoji" id="mtmEmoji">👾</div>
+            <div class="mtm-title" id="mtmTitle"></div>
+            <div class="mtm-text" id="mtmText"></div>
+            <button class="btn-run" id="mtmOk">Зрозумів! 👍</button>
+        </div>
+    </div>
+
     <div id="resumeOverlay">
         <div class="resume-box">
             <h3>💾 Є збережений код</h3>
@@ -962,6 +1015,23 @@
                         document.getElementById('introOverlay').classList.remove('active');
                     };
                 }
+            }
+
+            // Mobile: show task announcement modal with TTS
+            if (isMobile) {
+                const charEmojis = {
+                    'cat':'🐱','dog':'🐶','parrot':'🦜','snail':'🐌','frog':'🐸',
+                    'rabbit':'🐰','robot':'🤖','bee':'🐝','turtle':'🐢','pixel':'👾'
+                };
+                const introText = currentTask.audio_intro || currentTask.description || '';
+                document.getElementById('mtmEmoji').textContent = charEmojis[currentTask.character] || '🤖';
+                document.getElementById('mtmTitle').textContent = currentTask.title || '';
+                document.getElementById('mtmText').textContent = introText;
+                document.getElementById('mobileTaskModal').classList.add('active');
+                document.getElementById('mtmOk').onclick = () => {
+                    document.getElementById('mobileTaskModal').classList.remove('active');
+                };
+                if (introText) speak(introText);
             }
         }
 
@@ -1372,6 +1442,7 @@
             pencilDown = false;
             pencilTrail = [];
             moveLog = [];
+            _outOfBounds = false;
             document.getElementById('successOverlay').classList.remove('active');
 
             // If task has event blocks — only run chains connected to event blocks
@@ -1415,6 +1486,11 @@
             return false;
         }
 
+        // Scene logical bounds (matches LOGICAL_W/H in initCanvas)
+        const SCENE_MAX_X = 550; // 600 - 50 (one step)
+        const SCENE_MAX_Y = 400; // 450 - 50 (one step)
+        let _outOfBounds = false;
+
         function move(type) {
             if (['repair_bridge', 'hit_hammer', 'use_water', 'strike_sword'].includes(type)) {
                 return new Promise(r => setTimeout(() => r(false), 500));
@@ -1442,6 +1518,15 @@
                         clearInterval(interval);
                         charPos.x = Math.round(charPos.x / 50) * 50;
                         charPos.y = Math.round(charPos.y / 50) * 50;
+
+                        // Bounds check — герой не може виходити за межі сцени
+                        if (type !== 'jump' && (charPos.x < 0 || charPos.x > SCENE_MAX_X || charPos.y < 0 || charPos.y > SCENE_MAX_Y)) {
+                            charPos.x = Math.max(0, Math.min(SCENE_MAX_X, charPos.x));
+                            charPos.y = Math.max(0, Math.min(SCENE_MAX_Y, charPos.y));
+                            _outOfBounds = true;
+                            resolve(true);
+                            return;
+                        }
 
                         // Record pencil trail segment
                         if (pencilDown && type !== 'jump') {
@@ -1744,7 +1829,9 @@
                 triggerFailAnimation();
                 const errorMsg = successRun
                     ? currentTask.hint_2 || currentTask.audio_hint || 'Спробуй ще раз!'
-                    : 'Ой! Ти врізався в перешкоду. Спробуй ще раз.';
+                    : _outOfBounds
+                        ? '🚧 Стоп! Піксель виходить за межі сцени. Перевір кількість кроків!'
+                        : 'Ой! Ти врізався в перешкоду. Спробуй ще раз.';
                 document.getElementById('hintBox').innerText = errorMsg;
                 document.getElementById('hintBox').style.color = '#f43f5e';
                 setTimeout(() => {
@@ -1916,6 +2003,9 @@
         if (btn) btn.disabled = true;
     }
 
+    // ---- Mobile detection ----
+    const isMobile = matchMedia('(pointer:coarse) and (orientation:portrait),(max-width:768px)').matches;
+
     // ---- TTS (ElevenLabs або Google Translate — вирішує сервер) ----
     // Silent WAV to unlock autoplay on iOS/Android (must be called synchronously in user gesture)
     const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
@@ -2019,6 +2109,10 @@
 
     async function doHelp() {
         closeFab();
+        if (isMobile) {
+            const text = currentTask.audio_intro || currentTask.description || '';
+            if (text) { speak(text); return; }
+        }
         const hint = await getHint('start');
         if (hint) speak(hint);
         // Help is always available — no markUsedToday
