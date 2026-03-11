@@ -249,6 +249,37 @@ app.post('/api/tts', (req, res) => {
     runTTSChain(text, getTTSChain(), 0, res);
 });
 
+// ─── Schedule API ────────────────────────────────────────────────────────────
+
+const SCHEDULES_PATH = path.join(__dirname, 'data', 'schedules.json');
+
+function loadSchedules() {
+    try { return JSON.parse(require('fs').readFileSync(SCHEDULES_PATH, 'utf-8')); }
+    catch (_) { return {}; }
+}
+
+function saveSchedules(data) {
+    require('fs').writeFileSync(SCHEDULES_PATH, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+app.get('/api/schedule', (req, res) => {
+    const uid = req.query.uid;
+    if (!uid) return res.status(400).json({ error: 'uid required' });
+    const schedules = loadSchedules();
+    // Default: every day
+    const result = schedules[uid] || { days: [1, 2, 3, 4, 5, 6, 7] };
+    res.json(result);
+});
+
+app.post('/api/schedule', (req, res) => {
+    const { uid, days } = req.body;
+    if (!uid || !Array.isArray(days)) return res.status(400).json({ error: 'uid and days required' });
+    const schedules = loadSchedules();
+    schedules[uid] = { days: days.filter(d => Number.isInteger(d) && d >= 1 && d <= 7).sort((a, b) => a - b) };
+    saveSchedules(schedules);
+    res.json({ success: true });
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Сервер: http://localhost:${PORT}`);
     console.log(`🔗 Завдання: http://localhost:${PORT}/app/task.html`);

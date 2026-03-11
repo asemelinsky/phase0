@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій кабінет — Кодомандри</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 3rem;
+        }
+        header {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #94a3b8;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.14); }
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+        .spacer { width: 80px; }
+
+        .content {
+            width: 100%;
+            max-width: 540px;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* ── User card ── */
+        .user-card {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .user-avatar {
+            font-size: 2.5rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            background: rgba(99,102,241,0.15);
+            border: 2px solid rgba(99,102,241,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .user-info { flex: 1; }
+        .user-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.35rem;
+        }
+        .user-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .user-stats span { font-weight: 600; color: #e2e8f0; }
+
+        /* ── Section card ── */
+        .section-card {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-hint {
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-bottom: 1.25rem;
+            line-height: 1.4;
+        }
+
+        /* ── Presets ── */
+        .presets {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .preset-btn {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            border-radius: 2rem;
+            padding: 0.35rem 0.85rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover, .preset-btn.active {
+            background: rgba(99,102,241,0.2);
+            border-color: #6366f1;
+            color: #818cf8;
+        }
+
+        /* ── Days grid ── */
+        .days-grid {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+        .day-btn {
+            flex: 1;
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.07);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 0.75rem;
+            color: #64748b;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.2rem;
+        }
+        .day-btn .day-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: transparent;
+        }
+        .day-btn.selected {
+            background: rgba(99,102,241,0.25);
+            border-color: #6366f1;
+            color: #818cf8;
+        }
+        .day-btn.selected .day-dot {
+            background: #6366f1;
+        }
+        .day-btn:hover:not(.selected) {
+            border-color: rgba(99,102,241,0.4);
+            color: #cbd5e1;
+        }
+
+        /* ── Save button ── */
+        .save-btn {
+            width: 100%;
+            background: #6366f1;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.85rem;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .save-btn:hover { background: #4f46e5; }
+        .save-btn:disabled { background: #334155; color: #64748b; cursor: default; }
+
+        .save-status {
+            text-align: center;
+            font-size: 0.82rem;
+            color: #10b981;
+            min-height: 1.2em;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="back-btn" onclick="history.back()">← Назад</button>
+        <h1>👤 Мій кабінет</h1>
+        <div class="spacer"></div>
+    </header>
+
+    <div class="content">
+        <!-- User info -->
+        <div class="user-card">
+            <div class="user-avatar">👤</div>
+            <div class="user-info">
+                <div class="user-name" id="userName">Учень</div>
+                <div class="user-stats">
+                    ⭐ <span id="starsVal">0</span>&nbsp;&nbsp;
+                    🔥 <span id="streakVal">0</span> днів підряд
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="section-card">
+            <div class="section-title">📅 Мій розклад</div>
+            <div class="section-hint">
+                Оберіть дні, коли плануєте займатися.<br>
+                Нагадування від бота надходитимуть тільки в обрані дні.
+            </div>
+
+            <div class="presets">
+                <button class="preset-btn" onclick="setPreset('all')">Щодня</button>
+                <button class="preset-btn" onclick="setPreset('alt')">Через день</button>
+                <button class="preset-btn" onclick="setPreset('weekend')">Вихідні</button>
+                <button class="preset-btn" onclick="setPreset('weekdays')">Будні</button>
+            </div>
+
+            <div class="days-grid" id="daysGrid"></div>
+
+            <button class="save-btn" id="saveBtn" onclick="saveSchedule()">Зберегти розклад</button>
+            <div class="save-status" id="saveStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
+
+        // Days: 1=Пн ... 7=Нд (ISO weekday)
+        const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+        const PRESETS = {
+            all:      [1,2,3,4,5,6,7],
+            alt:      [1,3,5],
+            weekend:  [6,7],
+            weekdays: [1,2,3,4,5],
+        };
+
+        let selectedDays = new Set();
+
+        function renderDays() {
+            const grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+            DAY_LABELS.forEach((label, i) => {
+                const day = i + 1;
+                const btn = document.createElement('button');
+                btn.className = 'day-btn' + (selectedDays.has(day) ? ' selected' : '');
+                btn.innerHTML = `${label}<div class="day-dot"></div>`;
+                btn.onclick = () => {
+                    if (selectedDays.has(day)) selectedDays.delete(day);
+                    else selectedDays.add(day);
+                    renderDays();
+                    document.getElementById('saveStatus').textContent = '';
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function setPreset(name) {
+            selectedDays = new Set(PRESETS[name] || []);
+            renderDays();
+            document.getElementById('saveStatus').textContent = '';
+        }
+
+        async function saveSchedule() {
+            const days = [...selectedDays].sort((a, b) => a - b);
+            // Save to localStorage
+            localStorage.setItem(`schedule_${uid}`, JSON.stringify({ days }));
+
+            // Persist to server
+            try {
+                await fetch('/api/schedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uid, days }),
+                });
+            } catch (_) {}
+
+            document.getElementById('saveStatus').textContent = '✅ Розклад збережено!';
+        }
+
+        function init() {
+            const name     = localStorage.getItem(`name_${uid}`) || 'Учень';
+            const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{}');
+            document.getElementById('userName').textContent  = name;
+            document.getElementById('starsVal').textContent  = progress.stars  || 0;
+            document.getElementById('streakVal').textContent = progress.streak || 0;
+
+            // Load saved schedule
+            const saved = JSON.parse(localStorage.getItem(`schedule_${uid}`) || 'null');
+            if (saved && Array.isArray(saved.days)) {
+                selectedDays = new Set(saved.days);
+            }
+            renderDays();
+        }
+
+        init();
+    </script>
+</body>
+</html>

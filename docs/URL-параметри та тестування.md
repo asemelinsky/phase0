@@ -52,6 +52,12 @@
 
 # Профіль учня
 /app/profile.html?uid=test_user
+
+# Особистий кабінет (розклад занять)
+/app/cabinet.html?uid=test_user
+
+# Таблиця чемпіонів
+/app/leaderboard.html?uid=test_user
 ```
 
 ---
@@ -66,6 +72,7 @@
 | `progress_${uid}` | `{"completedTasks":[],"streak":0,"stars":0}` | Прогрес учня |
 | `reg_${uid}` | ISO-дата | Дата реєстрації (визначає які дні відкриті) |
 | `last_uid` | рядок | Останній використаний UID |
+| `schedule_${uid}` | `{"days":[1,3,5]}` | Розклад занять: масив днів тижня (1=Пн…7=Нд) |
 
 ### Скинути вручну (DevTools → Console):
 ```js

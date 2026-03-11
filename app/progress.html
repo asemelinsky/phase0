@@ -373,6 +373,7 @@
         if (uid) localStorage.setItem('last_uid', uid);
 
         document.getElementById('leaderboardLink').href = `leaderboard.html?uid=${uid}`;
+        document.getElementById('avatarBubble').href = `cabinet.html?uid=${uid}`;
 
         const isTestUser = uid === 'test_user';
 
