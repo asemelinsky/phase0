@@ -18,6 +18,7 @@ AnimEngine.register('onboarding', {
         _onboardingOnDone = onDone || null;
         _ensureOnboardingDOM();
         document.getElementById('onboardingOverlay').classList.add('open');
+        AppTTS.speak('Обери свій Скін та напиши ім\'я. Тепер ти зможеш дивитись свій прогрес та приймати участь в змаганнях');
     }
 });
 
@@ -89,10 +90,10 @@ function checkOnboarding(uid) {
     const params = new URLSearchParams(window.location.search);
     if (params.has('onboarding')) {
         localStorage.removeItem(`onboarding_done_${uid}`);
-        localStorage.removeItem(`dialog_done_${uid}`);
+        localStorage.removeItem(`warmup_v2_done_${uid}`);
     }
     if (params.has('warmup')) {
-        localStorage.removeItem(`dialog_done_${uid}`);
+        localStorage.removeItem(`warmup_v2_done_${uid}`);
     }
 
     const profileRaw = localStorage.getItem(`profile_${uid}`);
@@ -103,11 +104,10 @@ function checkOnboarding(uid) {
     }
 
     const onboardingDone = localStorage.getItem(`onboarding_done_${uid}`);
-    const dialogDone     = localStorage.getItem(`dialog_done_${uid}`);
 
     if (!onboardingDone && uid !== 'guest') {
-        AnimEngine.trigger('onboarding', { uid, onDone: () => startWarmupDialog(uid) });
-    } else if (!dialogDone) {
-        startWarmupDialog(uid);
+        AnimEngine.trigger('onboarding', { uid, onDone: () => startWarmupV2(uid) });
+    } else if (!localStorage.getItem(`warmup_v2_done_${uid}`)) {
+        startWarmupV2(uid);
     }
 }

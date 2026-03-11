@@ -1,0 +1,220 @@
+/* warmup_dialog_v2 — повноекранний онбординг-діалог */
+
+.wu2-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 2rem;
+}
+.wu2-overlay.open { display: flex; }
+
+/* ── Сцена з персонажами ── */
+.wu2-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+    padding: 0 1rem;
+    flex: 1;
+    position: relative;
+}
+
+/* ── Персонаж (вчитель / учень) ── */
+.wu2-char {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+}
+.wu2-avatar {
+    font-size: 3.5rem;
+    transition: transform 0.15s ease;
+}
+.wu2-avatar.speaking {
+    animation: wu2Bounce 0.6s ease infinite;
+}
+@keyframes wu2Bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+.wu2-name {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+.wu2-bubble {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    max-width: 180px;
+    min-width: 120px;
+    opacity: 0;
+    transform: scale(0.9) translateY(6px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+}
+.wu2-char.teacher .wu2-bubble { left: 0; }
+.wu2-char.student .wu2-bubble { right: 0; }
+.wu2-bubble.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* ── Скретчик (центр, Фаза 2) ── */
+.wu2-scratchik {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.wu2-scratchik.visible {
+    transform: translateX(-50%) scale(1);
+}
+.wu2-scratchik-avatar { font-size: 3rem; }
+.wu2-scratchik-name {
+    color: #10b981;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* ── Центральна панель (кнопки / FAB-презентація) ── */
+.wu2-panel {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 160px;
+}
+
+.wu2-label {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+/* ── Кнопки вибору ── */
+.wu2-btns {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.wu2-btn {
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: 2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+}
+.wu2-btn:active { transform: scale(0.95); }
+.wu2-btn.yes  { background: #10b981; color: #fff; }
+.wu2-btn.no   { background: rgba(255,255,255,0.15); color: #fff; }
+.wu2-btn.next { background: #6366f1; color: #fff; }
+.wu2-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+/* ── STT-індикатор ── */
+.wu2-mic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+}
+.wu2-mic-icon {
+    font-size: 2.5rem;
+    animation: wu2Pulse 1s ease infinite;
+}
+@keyframes wu2Pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(1.15); }
+}
+.wu2-mic-label {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+}
+
+/* ── FAB-презентація (Фаза 2) ── */
+.wu2-fab-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 360px;
+}
+.wu2-fab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    opacity: 0.35;
+    transition: opacity 0.3s, transform 0.3s;
+}
+.wu2-fab-item.active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+.wu2-fab-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.wu2-fab-item.active .wu2-fab-btn {
+    animation: wu2FabPulse 0.8s ease infinite;
+    background: rgba(99,102,241,0.5);
+    border-color: #6366f1;
+}
+@keyframes wu2FabPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.6); }
+    50%       { box-shadow: 0 0 0 10px rgba(99,102,241,0); }
+}
+.wu2-fab-label {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+}
+
+/* ── Прогрес-точки ── */
+.wu2-dots {
+    display: flex;
+    gap: 0.4rem;
+}
+.wu2-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transition: background 0.3s;
+}
+.wu2-dot.done { background: #10b981; }

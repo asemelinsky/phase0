@@ -35,7 +35,6 @@ const WU_QUESTIONS = [
 
 let _wuState = { phase: 'intro', introIdx: 0, questionsLeft: 3, usedQs: new Set() };
 let _wuUid   = null;
-let _wuCurrentAudio = null;
 
 function startWarmupDialog(uid) {
     _wuUid = uid;
@@ -194,34 +193,7 @@ async function _wuGetHint(question) {
 }
 
 function _wuSpeak(text) {
-    if (_wuCurrentAudio) {
-        _wuCurrentAudio.pause();
-        _wuCurrentAudio.src = '';
-        _wuCurrentAudio = null;
-    }
-    speechSynthesis.cancel();
-
-    fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
-    }).then(r => {
-        if (!r.ok) throw new Error(r.status);
-        return r.blob();
-    }).then(blob => {
-        const audio = new Audio(URL.createObjectURL(blob));
-        _wuCurrentAudio = audio;
-        audio.onended = () => { if (_wuCurrentAudio === audio) _wuCurrentAudio = null; };
-        audio.play().catch(() => _wuSpeechFallback(text));
-    }).catch(() => _wuSpeechFallback(text));
-}
-
-function _wuSpeechFallback(text) {
-    speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'uk-UA';
-    utt.rate = 0.9;
-    speechSynthesis.speak(utt);
+    AppTTS.speak(text);
 }
 
 function _wuFinish() {

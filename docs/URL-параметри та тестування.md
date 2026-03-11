@@ -16,8 +16,8 @@
 |----------|---------|-----------|
 | `uid` | `?uid=test_user` | Встановлює поточного користувача |
 | `debugDay` | `?debugDay=3` | Емулює, ніби пройшло N днів з реєстрації (для перевірки розблокування) |
-| `onboarding` | `?onboarding=1` | **Скидає онбординг + вітання** — показує модал аватара/імені з нуля |
-| `warmup` | `?warmup=1` | **Скидає тільки вітання** — онбординг залишається, одразу відкривається діалог учитель+учень |
+| `onboarding` | `?onboarding=1` | **Скидає онбординг + розігрів** — показує модал аватара/імені з нуля, потім `warmup_dialog_v2` |
+| `warmup` | `?warmup=1` | **Скидає тільки розігрів** — онбординг залишається, одразу відкривається `warmup_dialog_v2` |
 
 ### `task.html`
 
@@ -62,7 +62,7 @@
 |------|----------|------|
 | `profile_${uid}` | `{"name":"Олексій","avatarId":0,"avatarEmoji":"🧑"}` | Ім'я та аватар учня |
 | `onboarding_done_${uid}` | `"1"` | Флаг: онбординг пройдено. Видали — покажеться знову |
-| `dialog_done_${uid}` | `"1"` | Флаг: вітальний діалог (учитель+учень) показано. Видали — покажеться знову |
+| `warmup_v2_done_${uid}` | `"1"` | Флаг: розігрів v2 (warmup_dialog_v2) показано. Видали — покажеться знову |
 | `progress_${uid}` | `{"completedTasks":[],"streak":0,"stars":0}` | Прогрес учня |
 | `reg_${uid}` | ISO-дата | Дата реєстрації (визначає які дні відкриті) |
 | `last_uid` | рядок | Останній використаний UID |
@@ -72,12 +72,12 @@
 // Тільки онбординг (аватар/ім'я)
 localStorage.removeItem('onboarding_done_test_user')
 
-// Тільки вітальний діалог
-localStorage.removeItem('dialog_done_test_user')
+// Тільки розігрів v2
+localStorage.removeItem('warmup_v2_done_test_user')
 
 // Все з нуля
 localStorage.removeItem('onboarding_done_test_user')
-localStorage.removeItem('dialog_done_test_user')
+localStorage.removeItem('warmup_v2_done_test_user')
 ```
 
 ---

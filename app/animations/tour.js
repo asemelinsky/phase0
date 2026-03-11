@@ -53,7 +53,9 @@ function showTourStep() {
         (s.left  ? `left:${s.left};`   : '') +
         (s.right ? `right:${s.right};` : '') +
         (s.transform ? `transform:${s.transform};` : '');
+
+    AppTTS.speak(s.text);
 }
 
 function nextTour() { _tourIdx++; showTourStep(); }
-function endTour()  { const el = document.getElementById('tourTip'); if (el) el.style.display = 'none'; }
+function endTour()  { const el = document.getElementById('tourTip'); if (el) el.style.display = 'none'; AppTTS.stop(); }

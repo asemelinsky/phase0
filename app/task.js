@@ -1084,66 +1084,12 @@
 
     // ---- TTS (ElevenLabs або Google Translate — вирішує сервер) ----
     // Silent WAV to unlock autoplay on iOS/Android (must be called synchronously in user gesture)
-    const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-    let _currentAudio = null;
-
-    function stripMarkdown(t) {
-        return t
-            .replace(/\*\*(.*?)\*\*/g, '$1')  // **bold**
-            .replace(/\*(.*?)\*/g, '$1')        // *italic*
-            .replace(/`([^`]+)`/g, '$1')        // `code`
-            .replace(/_{1,2}(.*?)_{1,2}/g, '$1')// _italic_ or __bold__
-            .replace(/#+\s/g, '')               // # headings
-            .trim();
-    }
-
     function speak(text, onEnd) {
-        text = stripMarkdown(text);
-        // Stop any playing audio first
-        if (_currentAudio) {
-            _currentAudio.pause();
-            _currentAudio.src = '';
-            _currentAudio = null;
-        }
-
         const avatar = document.getElementById('fabAvatar');
-        avatar.classList.add('speaking');
-
-        // Unlock autoplay synchronously (iOS/Android requirement)
-        const audio = new Audio(SILENT_WAV);
-        _currentAudio = audio;
-        audio.play().catch(() => {});
-
-        const finish = () => {
-            if (_currentAudio === audio) _currentAudio = null;
-            avatar.classList.remove('speaking');
+        if (avatar) avatar.classList.add('speaking');
+        AppTTS.speak(text, () => {
+            if (avatar) avatar.classList.remove('speaking');
             if (onEnd) onEnd();
-        };
-
-        fetch('/api/tts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text })
-        }).then(r => {
-            if (!r.ok) throw new Error(r.status);
-            return r.blob();
-        }).then(blob => {
-            if (_currentAudio !== audio) return; // cancelled
-            const url = URL.createObjectURL(blob);
-            audio.src = url;
-            audio.onended = () => { URL.revokeObjectURL(url); finish(); };
-            audio.onerror = finish;
-            audio.play().catch(finish);
-        }).catch(() => {
-            // Server TTS failed — fallback to browser speechSynthesis
-            if (_currentAudio !== audio) return;
-            _currentAudio = null;
-            const utt = new SpeechSynthesisUtterance(text);
-            utt.lang = 'uk-UA';
-            utt.rate = 0.9;
-            utt.onend  = finish;
-            utt.onerror = finish;
-            speechSynthesis.speak(utt);
         });
     }
 
@@ -1205,8 +1151,7 @@
 
     // ---- STT ----
     function startListening() {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SR) {
+        if (!AppSTT.supported()) {
             speak('Схоже, твій браузер не підтримує мікрофон. Спробуй Chrome! 🎤');
             return;
         }
@@ -1214,26 +1159,18 @@
         const mic = document.getElementById('micIndicator');
         mic.classList.add('active');
 
-        const recognition = new SR();
-        recognition.lang = 'uk-UA';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = async e => {
-            mic.classList.remove('active');
-            const question = e.results[0][0].transcript;
-            const hint = await getHint('question', { question });
-            if (hint) speak(hint);
-            markUsedToday('question');
-        };
-
-        recognition.onerror = () => {
-            mic.classList.remove('active');
-            speak('Не почув тебе. Спробуй ще раз! 🎤');
-        };
-
-        recognition.onend = () => mic.classList.remove('active');
-        recognition.start();
+        AppSTT.listen(
+            async question => {
+                mic.classList.remove('active');
+                const hint = await getHint('question', { question });
+                if (hint) speak(hint);
+                markUsedToday('question');
+            },
+            () => {
+                mic.classList.remove('active');
+                speak('Не почув тебе. Спробуй ще раз! 🎤');
+            }
+        );
     }
 
     // ---- Mark task done (for joke unlock) ----

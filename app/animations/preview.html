@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="tour.css">
     <link rel="stylesheet" href="onboarding.css">
     <link rel="stylesheet" href="warmup_dialog.css">
+    <link rel="stylesheet" href="warmup_dialog_v2.css">
     <style>
         :root {
             --primary: #6366f1;
@@ -150,6 +151,7 @@
     <script src="tour.js"></script>
     <script src="onboarding.js"></script>
     <script src="warmup_dialog.js"></script>
+    <script src="warmup_dialog_v2.js"></script>
 
     <script>
         const PREVIEW_UID = 'preview_user';
@@ -219,8 +221,8 @@
             },
             {
                 id: 'anim_warmup_dialog',
-                name: 'Діалог-розігрів',
-                desc: 'Викладач + учень: вступ і 3 питання з AI-відповідями',
+                name: 'Діалог-розігрів (v1, архів)',
+                desc: 'Викладач і учень на екрані: 3 репліки вступу + учень задає 3 питання з AI-відповідями',
                 tags: ['Онбординг', 'Перший запуск', 'Один раз'],
                 run() {
                     localStorage.removeItem(`dialog_done_${PREVIEW_UID}`);
@@ -231,6 +233,23 @@
                 reset() {
                     localStorage.setItem(`dialog_done_${PREVIEW_UID}`, '1');
                     const el = document.getElementById('warmupOverlay');
+                    if (el) el.classList.remove('open');
+                }
+            },
+            {
+                id: 'anim_warmup_dialog_v2',
+                name: 'Діалог-розігрів v2',
+                desc: 'Живий діалог з голосовими питаннями + анімована презентація Скретчика і його 4 кнопок',
+                tags: ['Онбординг', 'Перший запуск', 'Один раз'],
+                run() {
+                    localStorage.removeItem(`warmup_v2_done_${PREVIEW_UID}`);
+                    const el = document.getElementById('wu2Overlay');
+                    if (el) el.remove();
+                    startWarmupV2(PREVIEW_UID);
+                },
+                reset() {
+                    localStorage.setItem(`warmup_v2_done_${PREVIEW_UID}`, '1');
+                    const el = document.getElementById('wu2Overlay');
                     if (el) el.classList.remove('open');
                 }
             },
