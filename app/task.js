@@ -119,6 +119,11 @@
                 });
             }
 
+            // Task tour — once per user on first visit
+            if (typeof AnimEngine !== 'undefined') {
+                AnimEngine.trigger('task_tour', { uid });
+            }
+
             // Mobile: show task announcement modal with TTS
             if (isMobile) {
                 const charEmojis = {

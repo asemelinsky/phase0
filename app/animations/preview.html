@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="onboarding.css">
     <link rel="stylesheet" href="warmup_dialog.css">
     <link rel="stylesheet" href="warmup_dialog_v2.css">
+    <link rel="stylesheet" href="task_tour.css">
     <style>
         :root {
             --primary: #6366f1;
@@ -152,6 +153,7 @@
     <script src="onboarding.js"></script>
     <script src="warmup_dialog.js"></script>
     <script src="warmup_dialog_v2.js"></script>
+    <script src="task_tour.js"></script>
 
     <script>
         const PREVIEW_UID = 'preview_user';
@@ -251,6 +253,24 @@
                     localStorage.setItem(`warmup_v2_done_${PREVIEW_UID}`, '1');
                     const el = document.getElementById('wu2Overlay');
                     if (el) el.classList.remove('open');
+                }
+            },
+            {
+                id: 'anim_task_tour',
+                name: 'Тур по завданню',
+                desc: '5 кроків знайомства з task.html: перетягни блок, з\'єднай, видали, zoom, запусти',
+                tags: ['День 1', 'Перший запуск', 'Один раз'],
+                run() {
+                    localStorage.removeItem(`task_tour_done_${PREVIEW_UID}`);
+                    const el = document.getElementById('taskTourTip');
+                    if (el) el.remove();
+                    AnimEngine.trigger('task_tour', { uid: PREVIEW_UID });
+                },
+                reset() {
+                    localStorage.setItem(`task_tour_done_${PREVIEW_UID}`, '1');
+                    const el = document.getElementById('taskTourTip');
+                    if (el) el.style.display = 'none';
+                    _ttCleanHighlight();
                 }
             },
         ];
