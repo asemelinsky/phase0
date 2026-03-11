@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const https = require('https');
+const fs = require('fs');
 const { Anthropic } = require('@anthropic-ai/sdk');
 require('dotenv').config();
 
@@ -254,12 +255,12 @@ app.post('/api/tts', (req, res) => {
 const SCHEDULES_PATH = path.join(__dirname, 'data', 'schedules.json');
 
 function loadSchedules() {
-    try { return JSON.parse(require('fs').readFileSync(SCHEDULES_PATH, 'utf-8')); }
+    try { return JSON.parse(fs.readFileSync(SCHEDULES_PATH, 'utf-8')); }
     catch (_) { return {}; }
 }
 
 function saveSchedules(data) {
-    require('fs').writeFileSync(SCHEDULES_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    fs.writeFileSync(SCHEDULES_PATH, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 app.get('/api/schedule', (req, res) => {
@@ -277,6 +278,83 @@ app.post('/api/schedule', (req, res) => {
     const schedules = loadSchedules();
     schedules[uid] = { days: days.filter(d => Number.isInteger(d) && d >= 1 && d <= 7).sort((a, b) => a - b) };
     saveSchedules(schedules);
+    res.json({ success: true });
+});
+
+// ─── User State API ──────────────────────────────────────────────────────────
+
+const STATES_PATH = path.join(__dirname, 'data', 'user-states.json');
+
+function loadStates() {
+    try { return JSON.parse(fs.readFileSync(STATES_PATH, 'utf-8')); }
+    catch (_) { return {}; }
+}
+function saveStates(data) {
+    fs.writeFileSync(STATES_PATH, JSON.stringify(data, null, 2), 'utf-8');
+}
+function todayStr() {
+    return new Date().toISOString().slice(0, 10);
+}
+function defaultState() {
+    return { lastActivityDate: null, missedDays: 0, frozenUntil: null, frozenAt: null, skippedHard: [] };
+}
+
+// GET /api/user-state?uid=xxx — for bot and progress.html
+app.get('/api/user-state', (req, res) => {
+    const { uid } = req.query;
+    if (!uid) return res.status(400).json({ error: 'uid required' });
+    const states    = loadStates();
+    const schedules = loadSchedules();
+    const state     = states[uid] || defaultState();
+    res.json({ ...state, schedule: schedules[uid] || { days: [1, 2, 3, 4, 5, 6, 7] } });
+});
+
+// POST /api/activity — client reports task_open / task_done / skip_hard
+app.post('/api/activity', (req, res) => {
+    const { uid, action, taskId } = req.body;
+    if (!uid || !action) return res.status(400).json({ error: 'uid and action required' });
+    const states = loadStates();
+    if (!states[uid]) states[uid] = defaultState();
+    const s = states[uid];
+
+    if (action === 'task_open' || action === 'task_done') {
+        s.lastActivityDate = todayStr();
+        if (action === 'task_done') {
+            s.missedDays  = 0;
+            s.frozenUntil = null; // auto-unfreeze when user actually studies
+            s.frozenAt    = null;
+        }
+    }
+    if (action === 'skip_hard' && taskId) {
+        if (!s.skippedHard) s.skippedHard = [];
+        if (!s.skippedHard.includes(taskId)) s.skippedHard.push(taskId);
+    }
+    saveStates(states);
+    res.json({ success: true });
+});
+
+// POST /api/freeze-action — bot freezes / unfreezes / increments missed counter
+app.post('/api/freeze-action', (req, res) => {
+    const { uid, action, missedDays } = req.body;
+    if (!uid || !action) return res.status(400).json({ error: 'uid and action required' });
+    const states = loadStates();
+    if (!states[uid]) states[uid] = defaultState();
+    const s = states[uid];
+
+    if (action === 'freeze') {
+        const until = new Date();
+        until.setDate(until.getDate() + 5);
+        s.frozenUntil = until.toISOString().slice(0, 10);
+        s.frozenAt    = todayStr();
+        s.missedDays  = 3;
+    } else if (action === 'unfreeze') {
+        s.frozenUntil = null;
+        s.frozenAt    = null;
+        s.missedDays  = 0;
+    } else if (action === 'increment_missed' && typeof missedDays === 'number') {
+        s.missedDays = missedDays;
+    }
+    saveStates(states);
     res.json({ success: true });
 });
 

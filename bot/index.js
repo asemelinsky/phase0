@@ -83,21 +83,110 @@ bot.command('progress', (ctx) => {
     );
 });
 
+// --- User state helpers ---
+const SERVER_URL = process.env.APP_URL || 'https://phase0-five.vercel.app';
+
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function todayDow() {
+    // 1=Пн ... 7=Нд (ISO weekday)
+    const d = new Date().getDay(); // 0=Sun..6=Sat
+    return d === 0 ? 7 : d;
+}
+
+async function fetchUserState(uid) {
+    return new Promise((resolve) => {
+        const url = new URL(`/api/user-state?uid=${uid}`, SERVER_URL);
+        const mod = url.protocol === 'https:' ? require('https') : require('http');
+        mod.get(url.toString(), (res) => {
+            let data = '';
+            res.on('data', c => data += c);
+            res.on('end', () => {
+                try { resolve(JSON.parse(data)); } catch (_) { resolve({}); }
+            });
+        }).on('error', () => resolve({}));
+    });
+}
+
+async function postFreezeAction(uid, body) {
+    return new Promise((resolve) => {
+        const url = new URL('/api/freeze-action', SERVER_URL);
+        const bodyStr = JSON.stringify({ uid, ...body });
+        const mod = url.protocol === 'https:' ? require('https') : require('http');
+        const req = mod.request(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(bodyStr) }
+        }, (res) => { res.resume(); resolve(); });
+        req.on('error', () => resolve());
+        req.write(bodyStr);
+        req.end();
+    });
+}
+
 // --- Daily Cron Job (09:00 Kyiv time) ---
-function runDailyBroadcast() {
+async function runDailyBroadcast() {
     console.log("Running daily broadcast...");
+    const today = todayStr();
+    const dow   = todayDow();
 
     for (const chatId in usersDB) {
-        const user = usersDB[chatId];
-        const appUrl = `https://phase0-five.vercel.app/app/progress.html?uid=${user.uid}`;
+        const botUser = usersDB[chatId];
+        const uid = botUser.uid;
+        const appUrl = `${SERVER_URL}/app/progress.html?uid=${uid}`;
 
-        bot.telegram.sendMessage(
-            chatId,
-            `⏰ Час для нового завдання!\n\n` +
-            `Твоє завдання дня вже доступне:\n` +
-            `▶️ ${appUrl}`
-        ).catch(err => console.error(`Failed to send to ${chatId}:`, err));
+        try {
+            const state = await fetchUserState(uid);
+            const scheduledDays = state.schedule?.days || [1,2,3,4,5,6,7];
+
+            // 1. Not a scheduled day — skip
+            if (!scheduledDays.includes(dow)) continue;
+
+            // 2. Freeze expired → auto-unfreeze and notify
+            if (state.frozenUntil && today > state.frozenUntil) {
+                await postFreezeAction(uid, { action: 'unfreeze' });
+                await bot.telegram.sendMessage(chatId,
+                    `👋 Пройшло 5 днів. Доступ відновлено!\n\nПовертайся — твої завдання чекають:\n▶️ ${appUrl}`
+                );
+                botUser.lastReminderDate = today;
+                continue;
+            }
+
+            // 3. Still frozen — skip
+            if (state.frozenUntil && today <= state.frozenUntil) continue;
+
+            // 4. Already studied today — skip
+            if (state.lastActivityDate === today) continue;
+
+            // 5. Check if missed: had reminder before and didn't study since then
+            let missedDays = state.missedDays || 0;
+            const lastReminder = botUser.lastReminderDate;
+            if (lastReminder && lastReminder < today &&
+                (!state.lastActivityDate || state.lastActivityDate < lastReminder)) {
+                missedDays++;
+                await postFreezeAction(uid, { action: 'increment_missed', missedDays });
+            }
+
+            // 6. Choose message
+            let msg;
+            if (missedDays === 0) {
+                msg = `⏰ Час для заняття! Твоє завдання вже чекає:\n▶️ ${appUrl}`;
+            } else if (missedDays === 1) {
+                msg = `😔 Вчора ти не займався. Залишилось 2 пропуски 😉\n▶️ ${appUrl}`;
+            } else if (missedDays === 2) {
+                msg = `⚠️ Увага! Вже 2 пропуски. Ще один — і доступ заморозиться на 5 днів!\n▶️ ${appUrl}`;
+            } else {
+                // missedDays >= 3 → freeze
+                await postFreezeAction(uid, { action: 'freeze' });
+                msg = `❄️ Вибач, ти не займаєшся вже 3 заняття поспіль. Заморожую доступ на 5 днів. Повернемось через 5 днів!`;
+            }
+
+            await bot.telegram.sendMessage(chatId, msg);
+            botUser.lastReminderDate = today;
+
+        } catch (err) {
+            console.error(`Error processing ${chatId}:`, err.message);
+        }
     }
+    saveDB();
 }
 
 cron.schedule('0 9 * * *', runDailyBroadcast, {
@@ -106,28 +195,15 @@ cron.schedule('0 9 * * *', runDailyBroadcast, {
 });
 
 // --- Test Command for Debugging ---
-bot.command('test_broadcast', (ctx) => {
-    ctx.reply("Запускаю тестову розсилку щоденного завдання...");
-
+bot.command('test_broadcast', async (ctx) => {
     const chatId = ctx.from.id;
     if (!usersDB[chatId]) {
-        // Mock a user if they aren't registered yet so the broadcast works
-        usersDB[chatId] = {
-            uid: generateUid(),
-            registeredAt: new Date()
-        };
-        saveDB(); // Save mock state persistently
+        usersDB[chatId] = { uid: generateUid(), registeredAt: new Date() };
+        saveDB();
     }
-
-    const user = usersDB[chatId];
-    const appUrl = `https://phase0-five.vercel.app/app/progress.html?uid=${user.uid}`;
-
-    bot.telegram.sendMessage(
-        chatId,
-        `⏰ Час для нового завдання!\n\n` +
-        `Твоє завдання дня вже доступне:\n` +
-        `▶️ ${appUrl}`
-    ).catch(err => console.error(`Failed to send to ${chatId}:`, err));
+    ctx.reply("Запускаю тестову розсилку...");
+    await runDailyBroadcast();
+    ctx.reply("Готово!");
 });
 
 // Start the bot

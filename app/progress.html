@@ -330,6 +330,11 @@
         </div>
     </header>
 
+    <!-- Freeze banner (hidden by default) -->
+    <div id="freezeBanner" style="display:none;width:100%;max-width:1000px;margin:0 auto 1rem;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);border-radius:0.75rem;padding:0.85rem 1.25rem;text-align:center;font-size:0.9rem;color:#a5b4fc;">
+        ❄️ <strong>Доступ заморожено</strong> — нові дні не відкриваються до <span id="freezeUntilLabel"></span>. Щоб відновити — просто займися будь-яким відкритим завданням.
+    </div>
+
     <div class="progress-container">
         <div class="progress-fill" id="progressFill"></div>
     </div>
@@ -392,6 +397,16 @@
             }
             const debugDay = parseInt(new URLSearchParams(window.location.search).get('debugDay'));
             if (!isNaN(debugDay)) currentDayIdx = debugDay - 1;
+
+            // During freeze: cap currentDayIdx at the day frozen (no new days open)
+            if (window._frozenAt && !isTestUser) {
+                const regDate2 = localStorage.getItem(`reg_${uid}`);
+                if (regDate2) {
+                    const frozenDiff = Math.max(0, new Date(window._frozenAt) - new Date(regDate2));
+                    const frozenDayIdx = Math.floor(frozenDiff / (1000 * 60 * 60 * 24));
+                    currentDayIdx = Math.min(currentDayIdx, frozenDayIdx);
+                }
+            }
 
             // Group tasks by day
             const days = {};
@@ -501,7 +516,26 @@
             if (e.target === e.currentTarget) closePopup();
         });
 
+        // ---- Freeze state check ----
+        async function checkFreezeState() {
+            try {
+                const res = await fetch(`/api/user-state?uid=${uid}`);
+                if (!res.ok) return;
+                const state = await res.json();
+                const today = new Date().toISOString().slice(0, 10);
+                if (state.frozenUntil && state.frozenUntil > today) {
+                    const d = new Date(state.frozenUntil);
+                    document.getElementById('freezeUntilLabel').textContent =
+                        d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long' });
+                    document.getElementById('freezeBanner').style.display = 'block';
+                    // Store freeze info so init() can cap unlocked days
+                    window._frozenAt = state.frozenAt;
+                }
+            } catch (_) {}
+        }
+
         checkOnboarding(uid);
+        checkFreezeState();
         init();
     </script>
 </body>

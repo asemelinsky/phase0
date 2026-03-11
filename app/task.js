@@ -4,6 +4,8 @@
         let workspace = null;
         let charPos = { x: 0, y: 0 };
         let taskSucceeded = false;  // tracks if current task already solved
+        let failCount = 0;          // counts consecutive failed run attempts
+        let stuckTimer = null;      // 8-min timer for stuck detection
         let uid = new URLSearchParams(window.location.search).get('uid');
 
         // Persistence for UID
@@ -55,6 +57,8 @@
                 loadWorkspace();
                 workspace.addChangeListener(saveWorkspace);
                 updateUI();
+                reportActivity('task_open', currentTask.id);
+                startStuckTimer();
                 initCanvas();
                 if (new URLSearchParams(window.location.search).has('admin')) {
                     document.getElementById('adminPanel').style.display = 'flex';
@@ -881,8 +885,10 @@
 
             if (isCorrect) {
                 taskSucceeded = true;
+                clearTimeout(stuckTimer);
                 playSuccessSound();
                 markTaskDoneToday();
+                reportActivity('task_done', currentTask.id);
                 document.getElementById('successOverlay').classList.add('active');
                 let progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"completedTasks":[], "completedDays":[], "streak":0, "stars":0}');
                 if (!progress.completedDays) progress.completedDays = [];
@@ -945,6 +951,8 @@
                 charPos = { x: currentTask.startX, y: currentTask.startY };
                 playFailSound();
                 triggerFailAnimation();
+                failCount++;
+                if (failCount >= 3) checkStuck();
                 const errorMsg = successRun
                     ? currentTask.hint_2 || currentTask.audio_hint || 'Спробуй ще раз!'
                     : _outOfBounds
@@ -1220,6 +1228,64 @@
 
     function goToProgress() {
         location.href = `progress.html?uid=${uid}`;
+    }
+
+    // ---- Activity reporting ----
+    async function reportActivity(action, taskId) {
+        try {
+            await fetch('/api/activity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uid, action, taskId }),
+            });
+        } catch (_) {}
+    }
+
+    // ---- Stuck detection ----
+    function startStuckTimer() {
+        clearTimeout(stuckTimer);
+        stuckTimer = setTimeout(() => { if (!taskSucceeded) checkStuck(); }, 8 * 60 * 1000);
+    }
+
+    function checkStuck() {
+        if (taskSucceeded) return;
+        clearTimeout(stuckTimer);
+        reportActivity('stuck', currentTask?.id);
+        showStuckHelper();
+    }
+
+    function showStuckHelper() {
+        const hintBox = document.getElementById('hintBox');
+        if (!hintBox) return;
+        hintBox.style.color = '#f59e0b';
+        hintBox.innerHTML =
+            'Схоже, це завдання дається важко 😟 Це нормально! ' +
+            '<button onclick="skipHard()" style="margin-left:0.5rem;background:#f59e0b;border:none;' +
+            'border-radius:0.4rem;padding:0.25rem 0.6rem;cursor:pointer;font-size:0.85rem;color:#0f172a;font-weight:700;">' +
+            '⏩ Пропустити без штрафу</button>';
+        setTimeout(() => {
+            if (!taskSucceeded) {
+                hintBox.style.color = '';
+                hintBox.innerHTML = currentTask?.description || '';
+            }
+        }, 12000);
+    }
+
+    async function skipHard() {
+        if (!currentTask) return;
+        // Save to localStorage
+        const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{}');
+        if (!progress.skippedHard) progress.skippedHard = [];
+        if (!progress.skippedHard.includes(currentTask.id)) progress.skippedHard.push(currentTask.id);
+        localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
+        // Report to server
+        await reportActivity('skip_hard', currentTask.id);
+        // Navigate: same logic as success — next lesson in day, or first of next day
+        const nextTask =
+            allTasks.find(t => t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1 && t.type !== 'challenge')
+            || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1);
+        if (nextTask) location.href = `task.html?task=${nextTask.id}&uid=${uid}`;
+        else location.href = `progress.html?uid=${uid}`;
     }
 
     // ---- Wire up button clicks ----
