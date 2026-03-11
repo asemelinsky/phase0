@@ -322,7 +322,7 @@
         }
 
         function init() {
-            document.getElementById('editProfileBtn').href = `profile.html?uid=${uid}`;
+            document.getElementById('editProfileBtn').href = `profile.html?uid=${uid}&from=cabinet`;
             const profile  = JSON.parse(localStorage.getItem(`profile_${uid}`) || '{}');
             const name     = profile.name || localStorage.getItem(`name_${uid}`) || 'Учень';
             const avatar   = profile.avatarEmoji || '👤';

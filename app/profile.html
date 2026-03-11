@@ -234,9 +234,12 @@
 
     <script>
         const AVATARS = ['🧑', '🧒', '👧', '👩'];
-        const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
+        const params = new URLSearchParams(window.location.search);
+        const uid  = params.get('uid') || localStorage.getItem('last_uid') || 'guest';
+        const from = params.get('from'); // 'cabinet' | null
 
-        document.getElementById('backLink').href = `progress.html?uid=${uid}`;
+        const backHref = from === 'cabinet' ? `cabinet.html?uid=${uid}` : `progress.html?uid=${uid}`;
+        document.getElementById('backLink').href = backHref;
         document.getElementById('profileUid').textContent = `ID: ${uid}`;
 
         let selectedAvatarId = 0;
@@ -276,12 +279,13 @@
             localStorage.setItem(`profile_${uid}`, JSON.stringify(profile));
             localStorage.setItem(`onboarding_done_${uid}`, '1');
 
-            document.getElementById('profileName').textContent = name;
-            document.getElementById('avatarBig').textContent = AVATARS[selectedAvatarId];
-
-            const msg = document.getElementById('saveMsg');
-            msg.classList.add('visible');
-            setTimeout(() => msg.classList.remove('visible'), 2500);
+            if (from === 'cabinet') {
+                // Повернутись у кабінет
+                window.location.href = `cabinet.html?uid=${uid}`;
+            } else {
+                // Перший раз — перейти на карту, де спрацює warmup
+                window.location.href = `progress.html?uid=${uid}`;
+            }
         }
 
         loadProfile();
