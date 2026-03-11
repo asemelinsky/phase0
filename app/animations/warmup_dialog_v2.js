@@ -74,15 +74,15 @@ function _ensureWu2DOM() {
                 <div class="wu2-avatar" id="wu2TeacherAvatar">👨‍🏫</div>
                 <div class="wu2-name">Олексій</div>
             </div>
-            <div class="wu2-scratchik" id="wu2Scratchik">
-                <div class="wu2-scratchik-avatar">🤖</div>
-                <div class="wu2-scratchik-name">Скретчик</div>
-            </div>
             <div class="wu2-char student">
                 <div class="wu2-bubble" id="wu2StudentBubble"></div>
                 <div class="wu2-avatar" id="wu2StudentAvatar">🧑</div>
                 <div class="wu2-name" id="wu2StudentName">Ти</div>
             </div>
+        </div>
+        <div class="wu2-scratchik" id="wu2Scratchik">
+            <div class="wu2-scratchik-avatar">🤖</div>
+            <div class="wu2-scratchik-name">Скретчик</div>
         </div>
         <div class="wu2-panel" id="wu2Panel"></div>`;
     document.body.appendChild(el);

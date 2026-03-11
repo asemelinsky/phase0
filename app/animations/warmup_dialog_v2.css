@@ -22,7 +22,6 @@
     max-width: 600px;
     padding: 0 1rem;
     flex: 1;
-    position: relative;
 }
 
 /* ── Персонаж (вчитель / учень) ── */
@@ -75,20 +74,17 @@
     transform: scale(1) translateY(0);
 }
 
-/* ── Скретчик (центр, Фаза 2) ── */
+/* ── Скретчик (між сценою і панеллю, Фаза 2) ── */
 .wu2-scratchik {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%) scale(0);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
+    transform: scale(0);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .wu2-scratchik.visible {
-    transform: translateX(-50%) scale(1);
+    transform: scale(1);
 }
 .wu2-scratchik-avatar { font-size: 3rem; }
 .wu2-scratchik-name {
