@@ -9,7 +9,13 @@
         "validate": "node scripts/validate-tasks.js --check",
         "fix": "node scripts/validate-tasks.js --fix",
         "bugs": "node scripts/list-bugs.js",
-        "bugs:critical": "node scripts/list-bugs.js --critical"
+        "bugs:critical": "node scripts/list-bugs.js --critical",
+        "tts": "node scripts/tts-mode.js",
+        "tts:test": "node scripts/tts-mode.js test",
+        "tts:real": "node scripts/tts-mode.js real",
+        "tts:test:vercel": "node scripts/tts-mode.js test --vercel",
+        "tts:real:vercel": "node scripts/tts-mode.js real --vercel",
+        "test": "jest tests/"
     },
     "dependencies": {
         "@anthropic-ai/sdk": "^0.78.0",
@@ -19,6 +25,7 @@
         "node-fetch": "^2.7.0"
     },
     "devDependencies": {
+        "jest": "^30.3.0",
         "nodemon": "^3.0.1"
     }
 }
