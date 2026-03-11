@@ -86,8 +86,26 @@
             gap: 1rem;
             font-size: 0.9rem;
             color: #94a3b8;
+            margin-bottom: 0.6rem;
         }
         .user-stats span { font-weight: 600; color: #e2e8f0; }
+        .edit-profile-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            color: #818cf8;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.7rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .edit-profile-btn:hover { background: rgba(99,102,241,0.28); }
 
         /* ── Section card ── */
         .section-card {
@@ -222,6 +240,7 @@
                     ⭐ <span id="starsVal">0</span>&nbsp;&nbsp;
                     🔥 <span id="streakVal">0</span> днів підряд
                 </div>
+                <a id="editProfileBtn" href="profile.html" class="edit-profile-btn">✏️ Змінити ім'я та аватар</a>
             </div>
         </div>
 
@@ -303,7 +322,11 @@
         }
 
         function init() {
-            const name     = localStorage.getItem(`name_${uid}`) || 'Учень';
+            document.getElementById('editProfileBtn').href = `profile.html?uid=${uid}`;
+            const profile  = JSON.parse(localStorage.getItem(`profile_${uid}`) || '{}');
+            const name     = profile.name || localStorage.getItem(`name_${uid}`) || 'Учень';
+            const avatar   = profile.avatarEmoji || '👤';
+            document.querySelector('.user-avatar').textContent = avatar;
             const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{}');
             document.getElementById('userName').textContent  = name;
             document.getElementById('starsVal').textContent  = progress.stars  || 0;
