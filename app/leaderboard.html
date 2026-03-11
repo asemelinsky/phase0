@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Таблиця чемпіонів — Кодомандри</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #94a3b8;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.14); }
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .spacer { width: 80px; }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard {
+            width: 100%;
+            max-width: 600px;
+            padding: 0 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .lb-row.me {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .lb-row.top1 { background: rgba(250,204,21,0.12); border-color: rgba(250,204,21,0.4); }
+        .lb-row.top2 { background: rgba(148,163,184,0.10); border-color: rgba(148,163,184,0.3); }
+        .lb-row.top3 { background: rgba(180,120,60,0.10); border-color: rgba(180,120,60,0.3); }
+
+        .lb-rank {
+            width: 1.8rem;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .lb-avatar {
+            font-size: 1.6rem;
+            width: 2.2rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .lb-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .lb-name .you-tag {
+            font-size: 0.7rem;
+            background: rgba(245,158,11,0.25);
+            color: #fbbf24;
+            border-radius: 0.3rem;
+            padding: 0.1rem 0.4rem;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+        .lb-stars {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fbbf24;
+            white-space: nowrap;
+        }
+        .lb-streak {
+            font-size: 0.85rem;
+            color: #fb923c;
+            white-space: nowrap;
+            min-width: 3.5rem;
+            text-align: right;
+        }
+
+        .phase0-note {
+            max-width: 600px;
+            width: 100%;
+            padding: 0 1rem;
+            text-align: center;
+            color: #475569;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="back-btn" onclick="history.back()">← Назад</button>
+        <h1>🏆 Чемпіони</h1>
+        <div class="spacer"></div>
+    </header>
+
+    <div class="leaderboard" id="leaderboard"></div>
+    <div class="phase0-note" id="phase0note"></div>
+
+    <script>
+        const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
+
+        // Mock players for Фаза 0 (closed beta visual)
+        const MOCK_PLAYERS = [
+            { uid: 'sonya_k',   name: 'Соня К.',    avatar: '👧', stars: 47, streak: 8 },
+            { uid: 'maxym_b',   name: 'Максим Б.',  avatar: '🧑', stars: 39, streak: 6 },
+            { uid: 'tymur_v',   name: 'Тимур В.',   avatar: '🧒', stars: 31, streak: 5 },
+            { uid: 'dasha_p',   name: 'Даша П.',    avatar: '👩', stars: 28, streak: 4 },
+            { uid: 'artem_s',   name: 'Артем С.',   avatar: '🧑', stars: 22, streak: 3 },
+            { uid: 'nastia_r',  name: 'Настя Р.',   avatar: '👧', stars: 17, streak: 2 },
+            { uid: 'ivan_z',    name: 'Іван З.',    avatar: '🧒', stars: 11, streak: 1 },
+        ];
+
+        function init() {
+            const progress = JSON.parse(localStorage.getItem(`progress_${uid}`) || '{"stars":0,"streak":0}');
+            const myStars  = progress.stars  || 0;
+            const myStreak = progress.streak || 0;
+            const myName   = localStorage.getItem(`name_${uid}`) || 'Ти';
+
+            // Build combined list: mock + current user (avoid duplicate if uid matches mock)
+            const mockWithoutMe = MOCK_PLAYERS.filter(p => p.uid !== uid);
+            const allPlayers = [
+                ...mockWithoutMe,
+                { uid, name: myName, avatar: '⭐', stars: myStars, streak: myStreak, isMe: true }
+            ].sort((a, b) => b.stars - a.stars || b.streak - a.streak);
+
+            const medals = ['🥇', '🥈', '🥉'];
+            const lb = document.getElementById('leaderboard');
+
+            allPlayers.forEach((p, i) => {
+                const rank = i + 1;
+                const isMe = p.isMe || p.uid === uid;
+                const topClass = rank <= 3 ? `top${rank}` : '';
+                const meClass  = isMe ? 'me' : '';
+
+                const row = document.createElement('div');
+                row.className = ['lb-row', topClass, meClass].filter(Boolean).join(' ');
+                row.innerHTML = `
+                    <div class="lb-rank">${medals[i] || rank}</div>
+                    <div class="lb-avatar">${p.avatar}</div>
+                    <div class="lb-name">${p.name}${isMe ? '<span class="you-tag">Ти</span>' : ''}</div>
+                    <div class="lb-stars">⭐ ${p.stars}</div>
+                    <div class="lb-streak">🔥 ${p.streak}</div>
+                `;
+                lb.appendChild(row);
+            });
+
+            document.getElementById('phase0note').textContent =
+                '🧪 Фаза 0 · Показані тестові дані закритої бети. Після запуску — реальний рейтинг усіх учнів.';
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -324,6 +324,7 @@
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:0.75rem;">
+            <a id="leaderboardLink" href="leaderboard.html" title="Таблиця чемпіонів" style="background:rgba(245,158,11,0.2);border:1px solid #f59e0b;color:#f59e0b;border-radius:50%;width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:1rem;">🏆</a>
             <a href="#" id="avatarBubble" class="avatar-bubble" title="Мій профіль">👤</a>
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
         </div>
@@ -370,6 +371,8 @@
 
         const uid = new URLSearchParams(window.location.search).get('uid') || localStorage.getItem('last_uid') || 'guest';
         if (uid) localStorage.setItem('last_uid', uid);
+
+        document.getElementById('leaderboardLink').href = `leaderboard.html?uid=${uid}`;
 
         const isTestUser = uid === 'test_user';
 

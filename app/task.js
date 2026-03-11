@@ -908,9 +908,9 @@
 
                     document.getElementById('starsLabel').innerText = `⭐ ${progress.stars}`;
 
-                    // Стрік зараховується лише коли закрито весь день (всі вправи + челендж)
-                    const dayTasks = allTasks.filter(t => t.day === currentTask.day);
-                    dayComplete = dayTasks.every(t => progress.completedTasks.includes(t.id));
+                    // День завершено коли виконані всі ВПРАВИ (челендж — опціональний бонус)
+                    const dayLessons = allTasks.filter(t => t.day === currentTask.day && t.type !== 'challenge');
+                    dayComplete = dayLessons.every(t => progress.completedTasks.includes(t.id));
                     if (dayComplete && !progress.completedDays.includes(currentTask.day)) {
                         progress.completedDays.push(currentTask.day);
                         progress.streak = (progress.streak || 0) + 1;
@@ -927,10 +927,11 @@
                     nextBtn.onclick = () => showDayComplete(currentTask.day, progress.stars);
                 } else {
                     // Navigate to next task
+                    // Після уроку → наступний урок того ж дня (не челендж) або перший урок наступного дня
+                    // Після челенджу → перший урок наступного дня
                     const nextTask = currentTask.type === 'challenge'
-                        ? allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.type === 'challenge')
-                          || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1)
-                        : allTasks.find(t => t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1)
+                        ? allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1)
+                        : allTasks.find(t => t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1 && t.type !== 'challenge')
                           || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1);
                     const nextBtn = document.getElementById('nextBtn');
                     if (nextTask) {
