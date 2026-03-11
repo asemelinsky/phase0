@@ -225,7 +225,7 @@
 </head>
 <body>
     <header>
-        <button class="back-btn" onclick="history.back()">← Назад</button>
+        <button class="back-btn" id="backBtn">← Назад</button>
         <h1>👤 Мій кабінет</h1>
         <div class="spacer"></div>
     </header>
@@ -322,6 +322,7 @@
         }
 
         function init() {
+            document.getElementById('backBtn').onclick = () => { window.location.href = `progress.html?uid=${uid}`; };
             document.getElementById('editProfileBtn').href = `profile.html?uid=${uid}&from=cabinet`;
             const profile  = JSON.parse(localStorage.getItem(`profile_${uid}`) || '{}');
             const name     = profile.name || localStorage.getItem(`name_${uid}`) || 'Учень';
