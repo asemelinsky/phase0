@@ -11,83 +11,12 @@
 
 const fs = require('fs');
 const path = require('path');
+const { simulateTask } = require('../lib/engine');
 
 const TASKS_PATH = path.join(__dirname, '..', 'data', 'tasks.json');
-const STEP = 50;       // px за один крок сітки
-const ALWAYS_MAX = 20; // кількість ітерацій 'always'
 
 const MODE_CHECK = '--check';
 const MODE_FIX = '--fix';
-
-// ──────────────────────────────────────────────────────────────
-// Розгортання solution у плоский список дій
-// Підтримує: рядки, об'єкти {block, steps}, масиви (repeat)
-// ──────────────────────────────────────────────────────────────
-function flattenSolution(solution) {
-    const actions = [];
-    let i = 0;
-    while (i < solution.length) {
-        const item = solution[i];
-        const next = solution[i + 1];
-
-        if (item === 'always' && Array.isArray(next)) {
-            for (let r = 0; r < ALWAYS_MAX; r++) actions.push(...flattenSolution(next));
-            i += 2;
-        } else if (item === 'repeat_2' && Array.isArray(next)) {
-            for (let r = 0; r < 2; r++) actions.push(...flattenSolution(next));
-            i += 2;
-        } else if (item === 'repeat_3' && Array.isArray(next)) {
-            for (let r = 0; r < 3; r++) actions.push(...flattenSolution(next));
-            i += 2;
-        } else if (item === 'repeat_5' && Array.isArray(next)) {
-            for (let r = 0; r < 5; r++) actions.push(...flattenSolution(next));
-            i += 2;
-        } else if (Array.isArray(item)) {
-            actions.push(...flattenSolution(item));
-            i++;
-        } else if (item === 'event_flag' || item === 'event_click') {
-            if (Array.isArray(next)) { actions.push(...flattenSolution(next)); i += 2; }
-            else i++;
-        } else if (typeof item === 'object' && item !== null && item.block) {
-            // {block: "move_right_steps", steps: N} → N разів move_right
-            const baseBlock = item.block.replace('_steps', '');
-            const steps = Math.abs(item.steps || 1);
-            for (let s = 0; s < steps; s++) actions.push(baseBlock);
-            i++;
-        } else if (typeof item === 'string') {
-            actions.push(item);
-            i++;
-        } else {
-            i++;
-        }
-    }
-    return actions;
-}
-
-// ──────────────────────────────────────────────────────────────
-// Застосування однієї дії до позиції
-// ──────────────────────────────────────────────────────────────
-function applyAction(pos, action) {
-    switch (action) {
-        case 'move_right': return { x: pos.x + STEP, y: pos.y };
-        case 'move_left':  return { x: pos.x - STEP, y: pos.y };
-        case 'move_up':    return { x: pos.x, y: pos.y - STEP };
-        case 'move_down':  return { x: pos.x, y: pos.y + STEP };
-        default: return { ...pos }; // pencil_down/up, jump — не змінюють позицію
-    }
-}
-
-// ──────────────────────────────────────────────────────────────
-// Симуляція фінальної позиції
-// ──────────────────────────────────────────────────────────────
-function simulateFinalPos(task) {
-    let pos = { x: task.startX, y: task.startY };
-    const actions = flattenSolution(task.solution || []);
-    for (const action of actions) {
-        pos = applyAction(pos, action);
-    }
-    return pos;
-}
 
 // ──────────────────────────────────────────────────────────────
 // Структурна валідація (нова плоска схема)
@@ -193,7 +122,7 @@ function main() {
         }
 
         // Симуляція координат
-        const simPos = simulateFinalPos(task);
+        const simPos = simulateTask(task).finalPos;
         const coordOk = simPos.x === task.target_x && simPos.y === task.target_y;
 
         if (coordOk) {
