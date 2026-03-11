@@ -2441,41 +2441,34 @@
   },
   {
     "id": "challenge_d9",
-    "title": "День 9 — ЧЕЛЕНДЖ: Лабіринт Ендеру",
+    "title": "День 9 — ЧЕЛЕНДЖ: Зоряний шлях",
     "day": 9,
     "order_in_day": 5,
     "type": "challenge",
     "character": "pixel",
-    "description": "Піксель в лабіринті Ендеру! Два блоки перегороджують шлях. Тільки той хто вміє рахувати кроки — знайде вихід до воріт замку!",
-    "hint_1": "Дві перешкоди. Обходь кожну окремо, рахуй клітинки.",
-    "hint_2": "Першу перешкоду (паркан) обійди вгору. Другу (камінь) — теж вгору, але інакше.",
-    "hint_3": "Один варіант: вгору(4)→вправо(5)→вгору(1)→вправо(3)→вниз(1). П'ять блоків!",
+    "description": "Піксель відкриває секрет зоряного шляху! Намалюй три сходинки олівцем — і доведи Пікселя до зірки в кінці шляху. Використай цикл і кроки!",
+    "hint_1": "Спочатку опусти олівець, потім повтори \"вправо + вгору\" три рази.",
+    "hint_2": "Після малювання підніми олівець і додай ще кроки вправо щоб дійти до зірки.",
+    "hint_3": "Рішення: олівець вниз → повтори 3: [вправо, вгору] → олівець вгору → вправо(4).",
     "available_blocks": [
+      "repeat_3",
+      "move_right",
+      "move_up",
       "move_right_steps",
-      "move_left_steps",
-      "move_up_steps",
-      "move_down_steps"
+      "pencil_down",
+      "pencil_up"
     ],
     "solution": [
+      "pencil_down",
+      "repeat_3",
+      [
+        "move_right",
+        "move_up"
+      ],
+      "pencil_up",
       {
-        "block": "move_up_steps",
+        "block": "move_right_steps",
         "steps": 4
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 5
-      },
-      {
-        "block": "move_up_steps",
-        "steps": 1
-      },
-      {
-        "block": "move_right_steps",
-        "steps": 3
-      },
-      {
-        "block": "move_down_steps",
-        "steps": 1
       }
     ],
     "stars": 3,
@@ -2483,27 +2476,21 @@
     "unlock_after_challenge_id": "challenge_d8",
     "attempt_limit": 2,
     "rollback_to_day": 9,
-    "pencil_enabled": false,
+    "pencil_enabled": true,
+    "drawingPattern": {
+      "requirePen": true,
+      "figureType": "stairs",
+      "stairCount": 3
+    },
     "startX": 50,
     "startY": 350,
-    "target_type": "castle_gate",
-    "target_x": 450,
-    "target_y": 150,
-    "obstacles": [
-      {
-        "x": 150,
-        "y": 350,
-        "type": "fence"
-      },
-      {
-        "x": 350,
-        "y": 150,
-        "type": "rock"
-      }
-    ],
-    "audio_intro": "Лабіринт Ендеру! Паркан і камінь блокують дорогу. Ворота замку чекають на тебе — знайди шлях!",
-    "audio_success": "ВОРОТА ВІДЧИНИЛИСЬ! Піксель пройшов лабіринт Ендеру! Завтра — фінальна битва!",
-    "audio_hint": "Розбий шлях на частини — спочатку обійди перший блок, потім другий."
+    "target_type": "star",
+    "target_x": 400,
+    "target_y": 200,
+    "obstacles": [],
+    "audio_intro": "Зоряний шлях! Намалюй сходинки олівцем і доведи Пікселя до зірки. Тут потрібен і цикл, і олівець!",
+    "audio_success": "БЛИСКУЧЕ! Піксель пройшов зоряний шлях! Малювання і рух — разом! Завтра — фінальна битва!",
+    "audio_hint": "Спочатку малюй сходинки циклом, потім підніми олівець і іди до зірки."
   },
   {
     "id": "task_d10_m1",

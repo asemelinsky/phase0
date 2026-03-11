@@ -96,6 +96,16 @@
         </div>
     </div>
 
+    <!-- Day complete celebration -->
+    <div id="dayCompleteOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;align-items:center;justify-content:center;">
+        <div style="background:#1e293b;border-radius:1.5rem;padding:2.5rem 2rem;text-align:center;max-width:360px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.5);">
+            <div style="font-size:4rem;margin-bottom:0.5rem;">🏆</div>
+            <h2 id="dayCompleteTitle" style="font-family:'Outfit';font-size:1.6rem;color:#fbbf24;margin:0 0 0.5rem;">День завершено!</h2>
+            <p id="dayCompleteStars" style="color:#94a3b8;margin:0 0 1.5rem;font-size:1rem;"></p>
+            <button class="btn-run" onclick="goToProgress()" style="width:100%;font-size:1rem;">🗺️ Мій прогрес</button>
+        </div>
+    </div>
+
     <!-- СКРЕТЧИК FAB -->
     <div class="scratchy-fab" id="scratchyFab">
         <div class="scratchy-tooltip" id="fabTooltip">Натисни мене! 👆</div>

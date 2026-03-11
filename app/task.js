@@ -3,6 +3,7 @@
         let allTasks = [];
         let workspace = null;
         let charPos = { x: 0, y: 0 };
+        let taskSucceeded = false;  // tracks if current task already solved
         let uid = new URLSearchParams(window.location.search).get('uid');
 
         // Persistence for UID
@@ -879,6 +880,7 @@
             }
 
             if (isCorrect) {
+                taskSucceeded = true;
                 playSuccessSound();
                 markTaskDoneToday();
                 document.getElementById('successOverlay').classList.add('active');
@@ -886,6 +888,7 @@
                 if (!progress.completedDays) progress.completedDays = [];
                 if (!progress.stars) progress.stars = 0;
 
+                let dayComplete = false;
                 if (!progress.completedTasks.includes(currentTask.id)) {
                     progress.completedTasks.push(currentTask.id);
 
@@ -907,7 +910,7 @@
 
                     // Стрік зараховується лише коли закрито весь день (всі вправи + челендж)
                     const dayTasks = allTasks.filter(t => t.day === currentTask.day);
-                    const dayComplete = dayTasks.every(t => progress.completedTasks.includes(t.id));
+                    dayComplete = dayTasks.every(t => progress.completedTasks.includes(t.id));
                     if (dayComplete && !progress.completedDays.includes(currentTask.day)) {
                         progress.completedDays.push(currentTask.day);
                         progress.streak = (progress.streak || 0) + 1;
@@ -916,19 +919,26 @@
 
                     localStorage.setItem(`progress_${uid}`, JSON.stringify(progress));
                 }
-                // Navigate to next task
-                // From challenge → next day's challenge; from lesson → next lesson or challenge
-                const nextTask = currentTask.type === 'challenge'
-                    ? allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.type === 'challenge')
-                      || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1)
-                    : allTasks.find(t => t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1)
-                      || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1);
-                const nextBtn = document.getElementById('nextBtn');
-                if (nextTask) {
-                    nextBtn.onclick = () => location.href = `task.html?task=${nextTask.id}&uid=${uid}`;
+
+                if (dayComplete) {
+                    // Show day complete celebration after success overlay closes
+                    const nextBtn = document.getElementById('nextBtn');
+                    nextBtn.textContent = 'Мій прогрес 🗺️';
+                    nextBtn.onclick = () => showDayComplete(currentTask.day, progress.stars);
                 } else {
-                    nextBtn.textContent = 'До карти курсу';
-                    nextBtn.onclick = () => location.href = `progress.html?uid=${uid}`;
+                    // Navigate to next task
+                    const nextTask = currentTask.type === 'challenge'
+                        ? allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.type === 'challenge')
+                          || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1)
+                        : allTasks.find(t => t.day === currentTask.day && t.order_in_day === currentTask.order_in_day + 1)
+                          || allTasks.find(t => t.day === (currentTask.day || 0) + 1 && t.order_in_day === 1);
+                    const nextBtn = document.getElementById('nextBtn');
+                    if (nextTask) {
+                        nextBtn.onclick = () => location.href = `task.html?task=${nextTask.id}&uid=${uid}`;
+                    } else {
+                        nextBtn.textContent = 'До карти курсу';
+                        nextBtn.onclick = () => location.href = `progress.html?uid=${uid}`;
+                    }
                 }
             } else {
                 charPos = { x: currentTask.startX, y: currentTask.startY };
@@ -1104,7 +1114,14 @@
             const resp = await fetch('/api/hint', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, task: { ...(currentTask || {}), ...extra } })
+                body: JSON.stringify({
+                    action,
+                    taskTitle:  currentTask?.title,
+                    taskDay:    currentTask?.day,
+                    taskStatus: taskSucceeded ? 'success' : 'in_progress',
+                    userInput:  extra.question || null,
+                    task: { ...(currentTask || {}), ...extra },
+                })
             });
             const data = await resp.json();
             if (data.success) return data.hint;
@@ -1182,6 +1199,26 @@
     // Called from success handler in main script
     function markTaskDoneToday() {
         localStorage.setItem('scratchy_task_done_day', new Date().toDateString());
+    }
+
+    // ---- Day complete celebration ----
+    function showDayComplete(day, stars) {
+        document.getElementById('successOverlay').classList.remove('active');
+        document.getElementById('dayCompleteTitle').textContent = `День ${day} завершено! 🎉`;
+        document.getElementById('dayCompleteStars').textContent = `Ти зібрав ${stars} ⭐ разом!`;
+        const overlay = document.getElementById('dayCompleteOverlay');
+        overlay.style.display = 'flex';
+
+        const phrases = [
+            'Ти молодець — пройшов усі завдання дня! До зустрічі на наступному занятті 🚀',
+            `Фантастично! День ${day} позаду, і ти впорався на відмінно. Побачимось на наступному занятті!`,
+            'Всі завдання виконано, всі зірки зібрано — ти справжній кодер! Чекаю тебе на наступному занятті 🌟',
+        ];
+        speak(phrases[Math.floor(Math.random() * phrases.length)]);
+    }
+
+    function goToProgress() {
+        location.href = `progress.html?uid=${uid}`;
     }
 
     // ---- Wire up button clicks ----

@@ -19,59 +19,43 @@ app.get('/', (_req, res) => res.redirect('/app/task.html'));
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `Ти — Скретчик, найкращий друг дитини 6–9 років.
-Ти веселий, любиш жартувати і завжди підбадьорюєш.
-Мова: тільки українська.
-Стиль: коротко (1–3 речення), тепло, з емодзі (максимум 3).
-Ніколи не давай відповідь прямо — тільки підказуй напрямок.
-Виняток: якщо дитина запитує "що робити" або "не розумію" — поясни завдання зрозуміло і конкретно.`;
+const { ASSISTANT_SYSTEM_PROMPT, buildUserMessage } = require('./data/assistant-config');
 
-function buildPrompt(action, task) {
-    const name = task?.title || 'завдання';
-    const desc = task?.description || '';
-
-    switch (action) {
-        case 'start':
-            return `Завдання: "${name}". ${desc}
-Дитина тільки відкрила завдання. Коротко привітай і дай перший натяк що треба зробити.`;
-
-        case 'wrong':
-            return `Завдання: "${name}".
-Дитина намагалась але щось пішло не так. М'яко підбадьор і дай натяк. Не кажи відповідь прямо.`;
-
-        case 'correct':
-            return `Завдання "${name}" виконано! Дитина молодець. Привітай радісно (1–2 речення).`;
-
-        case 'joke':
-            return `Розкажи смішний короткий жарт про програмування, комп'ютери або роботів для дитини 6–9 років. Жарт має бути простим і зрозумілим. 2–3 речення.`;
-
-        case 'fact':
-            return `Розкажи один дивовижний факт про програмування або комп'ютери для дитини 6–9 років. Факт має бути простим і захоплюючим. 1–2 речення.`;
-
-        case 'question':
-            return `Дитина зараз виконує завдання "${name}".
-Вона сказала вголос: ${task?.question || 'щось цікаве'}.
-Дай коротку і корисну відповідь. Якщо дитина питає що робити — поясни завдання просто і конкретно.`;
-
-        case 'warmup':
-            return `Ти — веселий викладач, який вперше зустрічається з учнем перед початком курсу програмування.
-Учень запитав: "${task?.question || 'щось цікаве'}".
-Дай жартівливу, коротку і дружню відповідь (1–2 речення). Зроби зв'язок з тим, що програмування — це весело і круто.`;
-
-        default:
-            return `Підкажи дитині щодо завдання "${name}". Коротко і дружньо.`;
-    }
-}
+// Special one-off prompts (fact/joke) that don't need task context
+const SPECIAL_PROMPTS = {
+    fact: `Розкажи один дивовижний факт про програмування або комп'ютери для дитини 6–9 років. Факт має бути простим і захоплюючим. 1–2 речення. Тільки українська мова.`,
+    joke: `Розкажи смішний короткий жарт про програмування, комп'ютери або роботів для дитини 6–9 років. Жарт має бути простим і зрозумілим. 2–3 речення. Тільки українська мова.`,
+    warmup: (q) => `Ти — веселий викладач, який вперше зустрічається з учнем перед початком курсу програмування. Учень запитав: "${q || 'щось цікаве'}". Дай жартівливу, коротку і дружню відповідь (1–2 речення). Зроби зв'язок з тим, що програмування — це весело і круто. Тільки українська мова.`,
+};
 
 app.post('/api/hint', async (req, res) => {
     try {
-        const { action = 'start', task = {} } = req.body;
+        const { action = 'start', taskTitle, taskDay, taskStatus, userInput, task = {} } = req.body;
+
+        let system = ASSISTANT_SYSTEM_PROMPT;
+        let userContent;
+
+        if (action === 'fact' || action === 'joke') {
+            system = 'Ти — веселий помічник для дітей 6–9 років. Тільки українська мова.';
+            userContent = SPECIAL_PROMPTS[action];
+        } else if (action === 'warmup') {
+            system = 'Ти — веселий викладач програмування для дітей. Тільки українська мова.';
+            userContent = SPECIAL_PROMPTS.warmup(userInput || task?.question);
+        } else {
+            // task help / voice question / success state
+            userContent = buildUserMessage({
+                taskTitle: taskTitle || task?.title,
+                taskDay:   taskDay   || task?.day,
+                taskStatus,
+                userInput: userInput || task?.question,
+            });
+        }
 
         const message = await anthropic.messages.create({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 200,
-            system: SYSTEM_PROMPT,
-            messages: [{ role: 'user', content: buildPrompt(action, task) }],
+            system,
+            messages: [{ role: 'user', content: userContent }],
         });
 
         res.json({ success: true, hint: message.content[0].text.trim() });
