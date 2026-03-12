@@ -17,8 +17,14 @@ for (const [family, blocks] of Object.entries(BLOCK_FAMILIES)) {
     for (const b of blocks) BLOCK_TO_FAMILY[b] = family;
 }
 
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
+
+const notion = new Client({ auth: process.env.NOTION_TOKEN });
+const DATA_SOURCE_ID = '1b30f907-13ea-42bd-97b2-d39e80b03520';
+
 const tasksPath = path.join(__dirname, '../data/tasks.json');
 const overlayPath = path.join(__dirname, '../app/animations/intro_overlay.js');
 
@@ -27,9 +33,6 @@ const tasks = JSON.parse(fs.readFileSync(tasksPath, 'utf8'));
 // --- Зчитати існуючі ключі BLOCK_DEFS з intro_overlay.js ---
 const overlaySource = fs.readFileSync(overlayPath, 'utf8');
 const existingKeys = new Set();
-const keyRegex = /^\s{4}(\w+):\s+\{/gm;
-let m;
-// Знаходимо тільки рядки всередині BLOCK_DEFS (між { і першим };)
 const blockDefsMatch = overlaySource.match(/const BLOCK_DEFS\s*=\s*\{([\s\S]*?)\};/);
 if (blockDefsMatch) {
     const inner = blockDefsMatch[1];
@@ -54,16 +57,13 @@ if (missing.length > 0) {
         ? '};  // END BLOCK_DEFS'
         : null;
 
-    // Формуємо рядки для вставки
     const newLines = missing.map(id =>
         `    ${id}: { label: '${id.replace(/_/g, ' ')}', hex: '#4C97FF', desc: 'TODO: опис блоку ${id}' },`
     ).join('\n');
 
-    // Вставляємо перед закриваючою дужкою BLOCK_DEFS
     if (insertPoint) {
         newSource = newSource.replace(insertPoint, `${newLines}\n${insertPoint}`);
     } else {
-        // Знаходимо кінець BLOCK_DEFS по закриваючій }; після const BLOCK_DEFS
         newSource = newSource.replace(
             /^(const BLOCK_DEFS\s*=\s*\{[\s\S]*?)(^};)/m,
             (_, body, closing) => `${body}${newLines}\n${closing}`
@@ -78,11 +78,11 @@ if (missing.length > 0) {
 
 // --- Тегування tasks.json ---
 const seenFamilies = new Set();
+const notionUpdates = []; // {taskId, intro_block?, intro_block_group?}
 let tagged = 0;
 let skipped = 0;
 
 for (const task of tasks) {
-    // Пропускаємо якщо вже є intro_block або intro_block_group
     if (task.intro_block || task.intro_block_group) {
         const b = task.intro_block ? task.intro_block.id : task.intro_block_group.id;
         const fam = BLOCK_TO_FAMILY[b] || b;
@@ -110,9 +110,11 @@ for (const task of tasks) {
         const famBlocks = newFamilyBlocks[fam];
         if (famBlocks.length === 1) {
             task.intro_block = { id: famBlocks[0] };
+            notionUpdates.push({ taskId: task.id, intro_block: task.intro_block });
             console.log(`✅ ${task.id}: intro_block = ${famBlocks[0]}`);
         } else {
             task.intro_block_group = { id: fam, blocks: famBlocks.map(id => ({ id })) };
+            notionUpdates.push({ taskId: task.id, intro_block_group: task.intro_block_group });
             console.log(`✅ ${task.id}: intro_block_group = ${fam} [${famBlocks.join(', ')}]`);
         }
         seenFamilies.add(fam);
@@ -121,6 +123,7 @@ for (const task of tasks) {
         const fam = newFamilies[0];
         const famBlocks = newFamilyBlocks[fam];
         task.intro_block = { id: famBlocks[0] };
+        notionUpdates.push({ taskId: task.id, intro_block: task.intro_block });
         console.log(`⚠️  ${task.id}: кілька нових сімейств (${newFamilies.join(', ')}) — взято перше: ${famBlocks[0]}`);
         seenFamilies.add(fam);
         tagged++;
@@ -129,3 +132,42 @@ for (const task of tasks) {
 
 fs.writeFileSync(tasksPath, JSON.stringify(tasks, null, 2), 'utf8');
 console.log(`\nГотово: ${tagged} завдань позначено, ${skipped} вже мали intro_block`);
+
+// --- Синхронізація тегів з Notion ---
+if (notionUpdates.length === 0) {
+    console.log('Notion: немає змін для синхронізації');
+    process.exit(0);
+}
+
+async function syncTagsToNotion() {
+    // Отримати всі сторінки → побудувати map taskId → pageId
+    const pages = [];
+    let cursor;
+    do {
+        const res = await notion.dataSources.query({ data_source_id: DATA_SOURCE_ID, start_cursor: cursor, page_size: 100 });
+        pages.push(...res.results);
+        cursor = res.has_more ? res.next_cursor : undefined;
+    } while (cursor);
+
+    const pageMap = {};
+    for (const page of pages) {
+        const idProp = page.properties['id'] || page.properties['userDefined:id'];
+        const taskId = idProp?.rich_text?.[0]?.plain_text;
+        if (taskId) pageMap[taskId] = page.id;
+    }
+
+    for (const { taskId, intro_block, intro_block_group } of notionUpdates) {
+        const pageId = pageMap[taskId];
+        if (!pageId) { console.log(`⚠️  Notion: не знайдено ${taskId}`); continue; }
+
+        const props = {};
+        if (intro_block)       props['intro_block']       = { rich_text: [{ text: { content: JSON.stringify(intro_block) } }] };
+        if (intro_block_group) props['intro_block_group'] = { rich_text: [{ text: { content: JSON.stringify(intro_block_group) } }] };
+
+        await notion.pages.update({ page_id: pageId, properties: props });
+        console.log(`🔄 Notion оновлено: ${taskId}`);
+    }
+    console.log(`Notion: ${notionUpdates.length} записів синхронізовано`);
+}
+
+syncTagsToNotion().catch(err => { console.error('Notion sync error:', err.message); });

@@ -288,7 +288,9 @@ allowed-tools: read, write
 
 ## Алгоритм генерації
 
-1. Прочитай `data/tasks.json` — визнач останній `id` і `day`
+> ⚠️ **Notion = єдине джерело правди.** `data/tasks.json` — артефакт, генерується скриптом. Не редагувати вручну.
+
+1. Прочитай `data/tasks.json` — визнач останній `id` і `day` (або запитай Notion)
 2. Визнач день курсу і тип (мікроурок / челендж)
 3. **Визнач режим валідації** → `navigation` / `drawing_navigation` / `drawing_shape`
 4. Задай поля відповідно до режиму:
@@ -297,14 +299,20 @@ allowed-tools: read, write
    - `navigation` → звичайна ціль, без `drawingPattern`
 5. Для мікроуроків: нова концепція = +1 блок, `stars: 1`
    - Якщо є новий блок якого не було у попередніх завданнях → заповни `intro_block` (або `intro_block_group` якщо 2+ блоки одночасно)
-   - Якщо в Notion task DB вже заповнено поле `intro_block`/`intro_block_group` → взяти з Notion
-   - Якщо в Notion пусто, але блок новий → вказати тільки `{ "id": "block_id" }` — label/колір/текст беруться автоматично з `BLOCK_DEFS` в `app/animations/intro_overlay.js`
+   - label/колір/текст беруться автоматично з `BLOCK_DEFS` в `app/animations/intro_overlay.js`
 6. Для челенджу: `stars: 3`, `attempt_limit: 2`, `rollback_to_day: N`
 7. Не повторювати персонажа підряд
 8. Перевір: `solution` містить тільки блоки з `available_blocks`
 9. Перевір координати в межах 600×450, крок сітки = 50px
-10. Append нові завдання до `data/tasks.json` (не перезаписуй)
-11. Запусти скрипт тегування: `node scripts/tag-intro-blocks.js` — він автоматично проставить `intro_block`/`intro_block_group` для нових завдань де вперше з'являється нове сімейство блоків
+10. **Зберегти нове завдання в Notion** (Database: https://www.notion.so/97e704a90a3a405f977e3e4ce0f1b77a)
+    - Всі поля задачі → відповідні колонки Notion
+    - JSON-поля (`available_blocks`, `solution`, `obstacles`, `drawingPattern`, `drawing_guide`, `intro_block`, `intro_block_group`) → зберігати як JSON-рядок у text-колонці
+11. Запусти тегування і регенерацію:
+    ```
+    node scripts/tag-intro-blocks.js && node scripts/notion-export.js
+    ```
+    - `tag-intro-blocks.js` — проставляє `intro_block`/`intro_block_group` в tasks.json **і Notion**
+    - `notion-export.js` — регенерує `data/tasks.json` з Notion
 
 ---
 
