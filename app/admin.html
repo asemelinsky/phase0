@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адмінпанель — Кодомандри</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 3rem;
+        }
+        header {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #94a3b8;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.14); }
+        h1 { font-size: 1.25rem; font-weight: 700; }
+        .badge {
+            font-size: 0.7rem;
+            background: #7c3aed;
+            color: #fff;
+            border-radius: 0.4rem;
+            padding: 0.2rem 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        main {
+            width: 100%;
+            max-width: 540px;
+            padding: 0 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            border: 1px solid #334155;
+        }
+        .provider-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .provider-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 0.75rem;
+            padding: 0.9rem 1.1rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            color: #e2e8f0;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: border-color 0.15s, background 0.15s;
+            text-align: left;
+            width: 100%;
+        }
+        .provider-btn:hover { border-color: #7c3aed; background: #1a1f35; }
+        .provider-btn.active { border-color: #7c3aed; background: #1a1035; }
+        .provider-btn.active .check { display: block; }
+        .provider-btn .check { display: none; color: #a78bfa; font-size: 1.2rem; }
+        .provider-meta { font-size: 0.75rem; color: #64748b; font-weight: 400; margin-top: 0.2rem; }
+        .no-key { font-size: 0.7rem; color: #ef4444; margin-top: 0.15rem; }
+
+        .deploy-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+            align-items: center;
+        }
+        .deploy-btn {
+            flex: 1;
+            background: #0f4c2a;
+            border: 1px solid #16a34a;
+            border-radius: 0.6rem;
+            padding: 0.7rem 1rem;
+            color: #4ade80;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .deploy-btn:hover { background: #0f5c32; }
+        .deploy-btn:disabled { background: #1e293b; color: #475569; border-color: #334155; cursor: not-allowed; }
+        .deploy-status {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            flex: 1;
+            min-height: 1.2em;
+        }
+        .deploy-status.ok  { color: #4ade80; }
+        .deploy-status.err { color: #f87171; }
+        .deploy-status.loading { color: #f59e0b; }
+
+        .test-row { display: flex; gap: 0.75rem; align-items: flex-start; }
+        textarea {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.6rem;
+            padding: 0.7rem 0.9rem;
+            color: #e2e8f0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            outline: none;
+        }
+        textarea:focus { border-color: #7c3aed; }
+        .play-btn {
+            background: #7c3aed;
+            border: none;
+            border-radius: 0.6rem;
+            padding: 0.7rem 1.1rem;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            align-self: flex-end;
+        }
+        .play-btn:disabled { background: #334155; cursor: not-allowed; }
+        .test-result { font-size: 0.8rem; margin-top: 0.5rem; color: #94a3b8; min-height: 1.2em; }
+        .test-result.ok  { color: #4ade80; }
+        .test-result.err { color: #f87171; }
+        audio { width: 100%; margin-top: 0.75rem; height: 36px; }
+
+        .status-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #94a3b8; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+        .dot.loading { background: #f59e0b; }
+        .vercel-note { font-size: 0.75rem; color: #475569; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+<header>
+    <button class="back-btn" onclick="history.back()">← Назад</button>
+    <h1>Адмінпанель</h1>
+    <span class="badge">ADMIN</span>
+</header>
+
+<main>
+
+    <!-- TTS Voice -->
+    <section class="card">
+        <div class="section-title">🎙️ Голос TTS</div>
+        <div class="provider-list" id="providerList">
+            <div style="color:#64748b;font-size:0.85rem">Завантаження...</div>
+        </div>
+        <div class="deploy-row" id="deployRow" style="display:none">
+            <button class="deploy-btn" id="deployBtn" onclick="deployToVercel()">🚀 Зберегти на Vercel</button>
+            <div class="deploy-status" id="deployStatus"></div>
+        </div>
+        <div class="vercel-note" id="vercelNote"></div>
+    </section>
+
+    <!-- Test -->
+    <section class="card">
+        <div class="section-title">▶ Тест голосу</div>
+        <div class="test-row">
+            <textarea id="testText" rows="2">Молодець! Ти впорався із завданням! 🎉</textarea>
+            <button class="play-btn" id="playBtn" onclick="testVoice()">▶</button>
+        </div>
+        <div class="test-result" id="testResult"></div>
+        <audio id="testAudio" controls style="display:none"></audio>
+    </section>
+
+    <!-- Status -->
+    <section class="card">
+        <div class="section-title">📡 Статус</div>
+        <div class="status-row">
+            <div class="dot" id="statusDot"></div>
+            <span id="statusText">Перевірка сервера...</span>
+        </div>
+    </section>
+
+</main>
+
+<script>
+let activeProvider = null;
+let hasVercelToken = false;
+
+const PROVIDERS = [
+    { id: 'cartesia',         label: '⚡ Cartesia Sonic 3', meta: '$15–20/1М · 40ms' },
+    { id: 'elevenlabs',       label: '🎙️ ElevenLabs',        meta: '$130–220/1М · ~300ms' },
+    { id: 'google_translate', label: '☁️ Google Translate',  meta: 'Безкоштовно · fallback' },
+];
+
+async function loadStatus() {
+    try {
+        const r = await fetch('/api/admin/tts');
+        const d = await r.json();
+        activeProvider = d.active;
+        hasVercelToken = d.hasVercelToken;
+        renderProviders(d.providers);
+        document.getElementById('statusDot').classList.remove('loading');
+        document.getElementById('statusText').textContent = `Активний: ${activeProvider}`;
+
+        if (hasVercelToken) {
+            document.getElementById('deployRow').style.display = 'flex';
+        } else {
+            document.getElementById('vercelNote').textContent = '⚠️ VERCEL_TOKEN не вказано — переключення лише локально';
+        }
+    } catch(e) {
+        document.getElementById('statusDot').style.background = '#ef4444';
+        document.getElementById('statusText').textContent = 'Сервер не відповідає';
+    }
+}
+
+function renderProviders(serverProviders) {
+    const list = document.getElementById('providerList');
+    list.innerHTML = '';
+    PROVIDERS.forEach(p => {
+        const sp = serverProviders.find(s => s.id === p.id);
+        const hasKey = sp ? sp.hasKey : true;
+        const btn = document.createElement('button');
+        btn.className = 'provider-btn' + (p.id === activeProvider ? ' active' : '');
+        btn.innerHTML = `
+            <div>
+                <div>${p.label}</div>
+                <div class="provider-meta">${p.meta}</div>
+                ${!hasKey ? '<div class="no-key">⚠️ API ключ не вказано</div>' : ''}
+            </div>
+            <span class="check">✓</span>
+        `;
+        btn.onclick = () => switchProvider(p.id);
+        list.appendChild(btn);
+    });
+}
+
+async function switchProvider(id) {
+    const r = await fetch('/api/admin/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: id }),
+    });
+    if (r.ok) {
+        activeProvider = id;
+        document.querySelectorAll('.provider-btn').forEach((btn, i) => {
+            const pid = PROVIDERS[i].id;
+            btn.classList.toggle('active', pid === id);
+            btn.querySelector('.check').style.display = pid === id ? 'block' : 'none';
+        });
+        document.getElementById('statusText').textContent = `Активний: ${id}`;
+        document.getElementById('deployStatus').textContent = '';
+    }
+}
+
+async function deployToVercel() {
+    const btn = document.getElementById('deployBtn');
+    const status = document.getElementById('deployStatus');
+    btn.disabled = true;
+    status.textContent = '⏳ Оновлюю Vercel...';
+    status.className = 'deploy-status loading';
+    try {
+        const r = await fetch('/api/admin/tts-deploy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: activeProvider }),
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || r.status);
+        status.textContent = `✅ Деплой запущено · ${d.deployId?.slice(0,16)}...`;
+        status.className = 'deploy-status ok';
+    } catch(e) {
+        status.textContent = `❌ ${e.message}`;
+        status.className = 'deploy-status err';
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function testVoice() {
+    const text = document.getElementById('testText').value.trim();
+    if (!text) return;
+    const btn = document.getElementById('playBtn');
+    const result = document.getElementById('testResult');
+    const audio = document.getElementById('testAudio');
+    btn.disabled = true;
+    btn.textContent = '⏳';
+    result.textContent = 'Генерую...';
+    result.className = 'test-result';
+    const t0 = Date.now();
+    try {
+        const r = await fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+        });
+        if (!r.ok) throw new Error(`${r.status}`);
+        const blob = await r.blob();
+        audio.src = URL.createObjectURL(blob);
+        audio.style.display = 'block';
+        audio.play();
+        result.textContent = `✅ ${activeProvider} · ${Date.now() - t0}ms`;
+        result.className = 'test-result ok';
+    } catch(e) {
+        result.textContent = `❌ Помилка: ${e.message}`;
+        result.className = 'test-result err';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '▶';
+    }
+}
+
+document.getElementById('statusDot').classList.add('loading');
+loadStatus();
+</script>
+</body>
+</html>

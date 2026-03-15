@@ -123,6 +123,35 @@ function ttsElevenLabs(text, { key, voice }, res, next) {
     req2.end();
 }
 
+function ttsCartesia(text, { key, voice }, res, next) {
+    voice = voice || '05ffab9c-d380-4909-8375-cd12f59238c3';
+    const body = JSON.stringify({
+        model_id: 'sonic-3',
+        transcript: text,
+        voice: { mode: 'id', id: voice },
+        output_format: { container: 'wav', encoding: 'pcm_f32le', sample_rate: 44100 },
+        speed: 'normal',
+    });
+    const req2 = https.request({
+        hostname: 'api.cartesia.ai',
+        path: '/tts/bytes',
+        method: 'POST',
+        headers: {
+            'X-API-Key': key,
+            'Cartesia-Version': '2025-04-16',
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body),
+        }
+    }, r => {
+        if (r.statusCode !== 200) { console.warn(`⚠️ Cartesia TTS: ${r.statusCode}`); r.resume(); return next(); }
+        res.setHeader('Content-Type', 'audio/wav');
+        r.pipe(res);
+    });
+    req2.on('error', err => { console.warn('⚠️ Cartesia TTS:', err.message); next(); });
+    req2.write(body);
+    req2.end();
+}
+
 function ttsGoogleCloud(text, { key, voice }, res, next) {
     voice = voice || 'uk-UA-Wavenet-D';
     const body = JSON.stringify({
@@ -191,7 +220,18 @@ function ttsGoogleTranslate(text, res, next) {
     req2.end();
 }
 
+// Runtime override: null = use .env chain, 'cartesia'|'elevenlabs'|'google_translate' = pinned
+let _ttsOverride = null;
+
 function getTTSChain() {
+    // Admin override — pinned provider
+    if (_ttsOverride) {
+        if (_ttsOverride === 'google_translate') return [{ name: 'google_translate' }];
+        const key   = _ttsOverride === 'cartesia'   ? process.env.TTS_1_KEY  : process.env.TTS_2_KEY;
+        const voice = _ttsOverride === 'cartesia'   ? process.env.TTS_1_VOICE : process.env.TTS_2_VOICE;
+        return [{ name: _ttsOverride, key, voice }, { name: 'google_translate' }];
+    }
+
     // test mode — тільки безкоштовний Google Translate
     if ((process.env.TTS_MODE || '').trim().replace(/^"|"$/g, '') === 'test') {
         console.log('🧪 TTS_MODE=test → google_translate only');
@@ -229,6 +269,7 @@ function runTTSChain(text, chain, i, res) {
     const next = () => runTTSChain(text, chain, i + 1, res);
     console.log(`🔊 TTS [${i + 1}/${chain.length}]: ${p.name}`);
     if (p.name === 'azure'            && p.key) return ttsAzure(text, p, res, next);
+    if (p.name === 'cartesia'         && p.key) return ttsCartesia(text, p, res, next);
     if (p.name === 'google_cloud'     && p.key) return ttsGoogleCloud(text, p, res, next);
     if (p.name === 'voicerss'         && p.key) return ttsVoiceRSS(text, p, res, next);
     if (p.name === 'elevenlabs'       && p.key) return ttsElevenLabs(text, p, res, next);
@@ -242,6 +283,80 @@ app.get('/api/tts-status', (req, res) => {
         mode: process.env.TTS_MODE || 'real',
         providers: chain.map(p => p.name),
     });
+});
+
+// ─── Admin TTS API ────────────────────────────────────────────────────────────
+const ALLOWED_PROVIDERS = ['cartesia', 'elevenlabs', 'google_translate'];
+const VERCEL_PROJECT_ID = 'prj_5By3fXmxlXi4NGBER4WJA4Yj82Wj';
+const VERCEL_TEAM_ID    = 'team_n2pkLuEo1ecBPfXX5tWrOLRc';
+
+app.get('/api/admin/tts', (_req, res) => {
+    res.json({
+        active: _ttsOverride || (process.env.TTS_1_PROVIDER || 'google_translate'),
+        override: _ttsOverride,
+        hasVercelToken: !!process.env.VERCEL_TOKEN,
+        providers: [
+            { id: 'cartesia',         label: '⚡ Cartesia Sonic 3',  hasKey: !!process.env.TTS_1_KEY },
+            { id: 'elevenlabs',       label: '🎙️ ElevenLabs',         hasKey: !!process.env.TTS_2_KEY },
+            { id: 'google_translate', label: '☁️ Google Translate',   hasKey: true },
+        ],
+    });
+});
+
+app.post('/api/admin/tts', (req, res) => {
+    const { provider } = req.body;
+    if (!ALLOWED_PROVIDERS.includes(provider)) {
+        return res.status(400).json({ error: 'Invalid provider' });
+    }
+    _ttsOverride = provider;
+    console.log(`🎛️ Admin: TTS переключено на ${provider}`);
+    res.json({ ok: true, active: _ttsOverride });
+});
+
+app.post('/api/admin/tts-deploy', async (req, res) => {
+    const { provider } = req.body;
+    const token = process.env.VERCEL_TOKEN;
+    if (!token) return res.status(500).json({ error: 'VERCEL_TOKEN не вказано в .env' });
+    if (!ALLOWED_PROVIDERS.includes(provider)) return res.status(400).json({ error: 'Invalid provider' });
+
+    const base = 'https://api.vercel.com';
+    const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+    const qs = `?teamId=${VERCEL_TEAM_ID}`;
+
+    try {
+        // 1. Знайти env var ID для TTS_1_PROVIDER
+        const listRes = await fetch(`${base}/v9/projects/${VERCEL_PROJECT_ID}/env${qs}`, { headers });
+        const listData = await listRes.json();
+        const envVar = (listData.envs || []).find(e => e.key === 'TTS_1_PROVIDER');
+
+        if (envVar) {
+            await fetch(`${base}/v9/projects/${VERCEL_PROJECT_ID}/env/${envVar.id}${qs}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ value: provider, target: ['production', 'preview'] }),
+            });
+        } else {
+            await fetch(`${base}/v10/projects/${VERCEL_PROJECT_ID}/env${qs}`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ key: 'TTS_1_PROVIDER', value: provider, type: 'plain', target: ['production', 'preview'] }),
+            });
+        }
+
+        // 2. Редеплой останнього деплою
+        const deployRes = await fetch(`${base}/v13/deployments/dpl_9GfZYbVhPCbE6PcSs18kQ2pKEGwR/redeploy${qs}`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({}),
+        });
+        const deployData = await deployRes.json();
+
+        console.log(`🚀 Admin: Vercel deploy → ${provider}, id=${deployData.id}`);
+        res.json({ ok: true, provider, deployId: deployData.id, url: deployData.url });
+    } catch (e) {
+        console.error('❌ Vercel API:', e.message);
+        res.status(500).json({ error: e.message });
+    }
 });
 
 app.post('/api/tts', (req, res) => {

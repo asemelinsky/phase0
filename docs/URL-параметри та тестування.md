@@ -89,6 +89,41 @@ localStorage.removeItem('warmup_v2_done_test_user')
 
 ---
 
+## Адмінпанель
+
+### Доступ
+```
+/app/admin.html
+```
+
+### Функції
+| Функція | Опис |
+|---------|------|
+| Вибір голосу TTS | Перемикання між Cartesia Sonic 3 / ElevenLabs / Google Translate |
+| Тест голосу | Введи текст → натисни ▶ → чуєш поточний голос + бачиш ms |
+| Зберегти на Vercel | Оновлює `TTS_1_PROVIDER` у Vercel env vars + запускає редеплой |
+
+### Перемикання провайдерів
+| Провайдер | Env var | Ціна | Затримка |
+|-----------|---------|------|----------|
+| `cartesia` | `TTS_1_PROVIDER=cartesia` | $15–20/1М | 40ms |
+| `elevenlabs` | `TTS_1_PROVIDER=elevenlabs` | $130–220/1М | ~300ms |
+| `google_translate` | `TTS_MODE=test` | Безкоштовно | ~300ms |
+
+### Вимоги (.env)
+```
+VERCEL_TOKEN=...       # vercel.com/account/tokens → Create Token (Full Access)
+TTS_1_KEY=...          # Cartesia API key
+TTS_2_KEY=...          # ElevenLabs API key
+```
+
+### Поведінка
+- **Локально**: перемикання миттєве (in-memory), скидається після рестарту сервера
+- **На Vercel**: кнопка "🚀 Зберегти на Vercel" — оновлює env var + редеплой (~30 сек)
+- Якщо `VERCEL_TOKEN` не вказано — кнопка деплою прихована, перемикання лише локально
+
+---
+
 ## Аватари
 
 | ID | Емодзі | Підпис |
